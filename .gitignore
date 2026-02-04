@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vs/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project: generated YOLO dataset and training runs
+nuImagesYoloDataset/
+runs/
+*.pt
+
+# Optional: uncomment to avoid committing the nuMini dataset (download separately)
+# nuimages-v1.0-mini/
