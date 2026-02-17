@@ -33,3 +33,6 @@ runs/
 
 # Optional: uncomment to avoid committing the nuMini dataset (download separately)
 # nuimages-v1.0-mini/
+
+# STREETS dataset (20GB+ with images)
+STREETS/
