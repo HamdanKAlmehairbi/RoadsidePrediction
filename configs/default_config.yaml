@@ -1,0 +1,74 @@
+# Federated Graph-Based Traffic Congestion Forecasting Configuration
+
+# Dataset settings
+data:
+  dataset: "streets"
+
+  # STREETS dataset settings
+  streets:
+    dataroot: "./STREETS"
+    train_year: 2018           # chronological split
+    test_year: 2019
+    train_freq: "10min"        # 2018 sampling rate
+    test_freq: "5min"          # 2019 sampling rate
+    use_images: false          # true = use CNN pipeline, false = counts only
+    max_count_normalization: 50
+
+  # Common settings
+  task: "regression"  # Congestion score [0, 1]
+  train_split: 0.8
+  val_split: 0.1
+  test_split: 0.1
+
+# Camera model settings (Stage 1: perception layer)
+camera:
+  input_size: [224, 224]
+  feature_dim: 128
+  backbone: "mobilenetv2"  # or "custom_small"
+  pretrained: true
+  dropout: 0.2
+
+# Graph forecasting model settings (Stage 4)
+graph:
+  model: "agcrn"              # "tgcn" or "agcrn"
+  hidden_dim: 64
+  input_steps: 12             # 1 hour input (at 5-min intervals)
+  forecast_steps: 3           # 15 min forecast
+  input_features: 1
+  dropout: 0.1
+  # T-GCN specific
+  adaptive_adj: true
+  embed_dim: 16
+  alpha: 0.5
+  # AGCRN specific
+  agcrn_embed_dim: 10
+  agcrn_num_layers: 2
+
+# Federated learning settings
+federated:
+  num_graph_clients: 10       # 10-20 for heterogeneity analysis
+  graph_client_partition: "community_subdivided"  # split communities into subgroups
+  rounds: 50
+  local_epochs: 5
+  batch_size: 32
+  lr: 0.001
+  aggregation: "fedavg"
+
+# Training settings
+training:
+  loss: "mse"
+  metrics: ["mse", "mae", "r2", "mape"]
+  optimizer: "adam"
+  weight_decay: 0.0001
+  scheduler: "cosine"
+  scheduler_params:
+    T_max: 50
+
+# Experiment settings
+experiments:
+  seed: 42
+  output_dir: "./results"
+  save_checkpoints: true
+  checkpoint_freq: 10
+  log_freq: 1
+  device: "auto"  # "auto", "cpu", or "cuda"

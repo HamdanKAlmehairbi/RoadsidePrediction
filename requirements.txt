@@ -1,11 +1,36 @@
-# nuImages nuMini + YOLO starter
+# Federated Graph-Based Traffic Congestion Forecasting
 # IMPORTANT: Use Python 3.9, 3.10, 3.11 or 3.12 (not 3.13).
-# nuscenes-devkit needs numpy<2, which has no pre-built wheel for 3.13;
-# pip would try to build numpy from source and fail on Windows without a C compiler.
-# Create a conda env:  conda create -n nuimages python=3.12
-# Then:  conda activate nuimages   and   pip install -r requirements.txt
-nuscenes-devkit
-ultralytics
-matplotlib
-opencv-python
-PyYAML
+# PyTorch is not compatible with Python 3.13.
+# Create a conda env:  conda create -n streets python=3.11
+# Then:  conda activate streets   and   pip install -r requirements.txt
+
+# Core ML
+torch>=2.0.0
+torchvision>=0.15.0
+numpy>=1.24.0
+
+# Data processing
+pandas>=2.0.0
+
+# Image processing
+Pillow>=9.0.0
+opencv-python>=4.7.0
+
+# Configuration
+PyYAML>=6.0
+omegaconf>=2.3.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Utilities
+tqdm>=4.65.0
+scikit-learn>=1.2.0
+
+# Testing
+pytest>=7.3.0
+pytest-cov>=4.1.0
+
+# Logging
+tensorboard>=2.13.0
