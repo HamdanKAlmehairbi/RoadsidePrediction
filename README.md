@@ -1,156 +1,113 @@
-# Build with Agent Team
+# SEAL Dashboard
 
-A Claude Code skill for building projects using [Agent Teams](https://www.anthropic.com/news/claude-opus-4-6) — Anthropic's multi-agent collaboration feature where multiple Claude instances work in parallel, communicate with each other, and coordinate autonomously. Give it a plan document describing what you want to build, and it spawns a team of specialized agents in tmux split panes to build it together.
+A real-time traffic simulation dashboard for the **SEAL** (Smart Edge-Assisted Learning) federated reinforcement learning framework. Visualizes AI-controlled traffic lights learning to optimize traffic flow across SUMO grid networks.
 
-Once set up, it's as simple as:
+## What It Does
+
+SUMO simulates a city grid with cars and traffic lights. This project replaces fixed-timer traffic lights with AI agents that learn optimal signal timing through reinforcement learning. Three approaches are compared:
+
+- **SARL** — Single shared model for all intersections
+- **MARL** — Independent model per intersection, no sharing
+- **FedRL** — Independent models that periodically share knowledge via an edge server (36% less communication than MARL, ~2% traffic performance trade-off)
+
+The dashboard streams live simulation state (vehicle positions, speeds, traffic light phases) from SUMO via WebSocket and renders an animated bird's-eye view on an HTML Canvas.
+
+## Architecture
+
+```
+FrontEnd/          React + Vite + shadcn/ui + Tailwind + Recharts + Canvas API
+    │  REST + WebSocket
+BackEnd/           FastAPI + uvicorn (SEAL framework copied in)
+    │  TraCI (Python API)
+SUMO               installed on host machine separately
+```
+
+## Pages
+
+| Route | Description |
+|-------|-------------|
+| `/` | Dashboard overview with stats and how-it-works |
+| `/simulation` | Live simulation canvas with vehicle animation |
+| `/compare` | Side-by-side policy comparison (e.g., FedRL vs MARL) |
+| `/training` | Train agents and watch reward curves in real time |
+| `/communication` | Communication cost analysis charts and tables |
+
+## Quick Start
+
+### Prerequisites
+
+- Python 3.9+
+- Node.js 18+
+- SUMO (optional — runs in mock mode without it)
+
+### Backend
 
 ```bash
-/build-with-agent-team [plan-path] [num-agents]
+cd BackEnd
+pip install -r requirements.txt
+python -m uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-## Prerequisites
-
-### 1. Install tmux
-
-Agent teams use tmux for split-pane visualization so you can see all agents working simultaneously.
-
-**macOS:**
-```bash
-brew install tmux
-```
-
-**Linux (Ubuntu/Debian):**
-```bash
-sudo apt update && sudo apt install tmux
-```
-
-**Linux (Fedora/RHEL):**
-```bash
-sudo dnf install tmux
-```
-
-**Windows (WSL required):**
-
-Agent teams require WSL (Windows Subsystem for Linux). Native Windows is not supported.
-
-```powershell
-# 1. Install WSL from PowerShell (Admin)
-wsl --install
-
-# 2. Restart your computer
-
-# 3. Open WSL and install tmux
-sudo apt update && sudo apt install tmux
-```
-
-Verify installation:
-```bash
-tmux -V
-```
-
-### 2. Enable Agent Teams
-
-Agent teams are experimental and disabled by default. Enable by adding to `~/.claude/settings.json`:
-
-```json
-{
-  "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
-  }
-}
-```
-
-Or export in your shell profile (`~/.bashrc` or `~/.zshrc`):
-```bash
-export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
-```
-
-> **tmux note:** Starting a tmux session opens a new shell that does not inherit environment variables from your current terminal. If you enable agent teams via `export`, you must run that export **inside the tmux session**, or add it to your shell profile (`~/.bashrc` / `~/.zshrc`) so it loads automatically. Enter tmux first, then set the variable and launch Claude from there. The `settings.json` approach avoids this issue entirely.
-
-## Installation
-
-Copy the skill to your personal skills directory:
+### Frontend
 
 ```bash
-cp -r build-with-agent-team ~/.claude/skills/
+cd FrontEnd
+npm install
+npx vite --port 5173
 ```
 
-Or for project-level use:
-```bash
-cp -r build-with-agent-team .claude/skills/
+Open `http://localhost:5173` in your browser.
+
+### Installing SUMO (optional)
+
+Without SUMO installed, the backend runs in **mock mode** with simulated vehicle data. To use real simulations:
+
+1. Install SUMO from [eclipse.dev/sumo](https://eclipse.dev/sumo/)
+2. Set the `SUMO_HOME` environment variable
+3. Restart the backend — TraCI will be detected automatically
+
+## API
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/networks` | GET | List available topologies |
+| `/api/network/{topology}` | GET | Road layout (nodes, edges, bounds) |
+| `/api/weights` | GET | List trained weight files |
+| `/api/simulate` | POST | Start a simulation job |
+| `/api/train` | POST | Start a training job |
+| `/api/results/{job_id}` | GET | Get job results |
+| `/ws/simulate/{job_id}` | WS | Stream vehicle positions + traffic light states |
+| `/ws/train/{job_id}` | WS | Stream episode reward updates |
+
+## Network Topologies
+
+Three SUMO grid networks are included:
+
+- `grid-3x3` — 9 intersections (400x400)
+- `grid-5x5` — 25 intersections (600x600)
+- `grid-7x7` — 49 intersections (800x800)
+
+## Project Structure
+
 ```
+BackEnd/
+├── seal/                    # SEAL RL framework (copied from SUMO-FedRL-main/)
+├── configs/SMARTCOMP/       # SUMO .net.xml network files
+├── example_weights/         # Pre-trained .pkl weight files
+└── api/                     # FastAPI application
+    ├── main.py              # App setup, CORS, router mounting
+    ├── jobs.py              # In-memory job store
+    ├── routes/              # REST endpoints
+    └── ws/                  # WebSocket endpoints
 
-## Create Your Plan
-
-Write a markdown document describing what you want to build. This works for:
-
-- **Greenfield projects**: A new app, API, or system from scratch
-- **Brownfield features**: A new feature in an existing codebase
-
-Your plan should be detailed enough that multiple agents could divide the work. Include:
-
-- What you're building and why
-- Tech stack and architecture
-- Project structure
-- Key components and how they interact
-- Data models or API contracts
-- Acceptance criteria
-
-See `example-plan/session-manager-plan.md` for an example.
-
-## Usage
-
-```bash
-/build-with-agent-team [plan-path] [num-agents]
+FrontEnd/
+└── src/
+    ├── components/
+    │   ├── SimCanvas.tsx    # Canvas2D renderer (roads, vehicles, signals)
+    │   └── ui/              # shadcn/ui primitives
+    ├── hooks/
+    │   ├── useSimStream.ts  # WebSocket hook for simulation frames
+    │   └── useTrainStream.ts# WebSocket hook for training episodes
+    ├── pages/               # 5 route pages
+    └── lib/api.ts           # API client functions
 ```
-
-**Parameters:**
-
-| Parameter | Required | Description |
-|-----------|----------|-------------|
-| `plan-path` | Yes | Path to your plan markdown file |
-| `num-agents` | No | Number of agents to spawn. If omitted, determined automatically based on the plan's complexity |
-
-**Examples:**
-
-```bash
-# Let the skill determine team size
-/build-with-agent-team ./plans/my-project.md
-
-# Specify 3 agents
-/build-with-agent-team ./plans/my-project.md 3
-
-# Build a feature in existing codebase
-/build-with-agent-team ./docs/new-auth-feature.md 2
-```
-
-The skill will:
-1. Read your plan
-2. Analyze it to determine agent roles (frontend, backend, database, etc.)
-3. Spawn agents in tmux split panes
-4. Coordinate collaboration between agents
-5. Ensure agents communicate and challenge each other's work
-
-## Agent Teams vs Subagents
-
-Claude Code has two ways to parallelize work. Choose based on whether your workers need to communicate:
-
-| | Subagents | Agent Teams |
-|---|-----------|-------------|
-| **Context** | Runs within main session | Each agent has its own session |
-| **Communication** | Reports back to main agent only | Agents message each other directly |
-| **Coordination** | Main agent manages all work | Shared task list, self-coordination |
-| **Visibility** | Results summarized to main context | Each agent visible in tmux pane |
-| **Best for** | Quick, focused tasks (research, exploration) | Complex builds requiring collaboration |
-| **Token cost** | Lower (results summarized) | Higher (each agent is a separate instance) |
-
-**Use subagents when:**
-- Task is quick and isolated
-- You only need the result, not the process
-- Cost-sensitive
-
-**Use agent teams when:**
-- Multiple components need to integrate (frontend + backend + database)
-- Agents need to agree on interfaces and contracts
-- You want to see parallel progress in real-time
-- Building something complex enough to warrant coordination overhead
