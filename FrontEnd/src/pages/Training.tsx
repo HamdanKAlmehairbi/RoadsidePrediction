@@ -151,7 +151,7 @@ const Training = () => {
                 {fedRoundEpisodes.map(ep => (
                   <ReferenceLine key={ep} x={ep} stroke="hsl(168, 76%, 40%)" strokeDasharray="4 4" opacity={0.4} />
                 ))}
-                <Line type="monotone" dataKey="reward" name={trainer} stroke="hsl(168, 76%, 40%)" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="reward" name={trainer} stroke="hsl(168, 76%, 40%)" strokeWidth={2} dot={false} isAnimationActive={false} />
               </LineChart>
             </ResponsiveContainer>
           </CardContent>

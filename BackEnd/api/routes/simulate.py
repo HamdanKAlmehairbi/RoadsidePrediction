@@ -158,6 +158,16 @@ def _run_traci_simulation(job_id: str, weight_id: str, topology: str, seed: int,
     }
 
 
+def _is_near_intersection(veh, intersections, threshold=50):
+    """Return True if vehicle is within threshold distance of any intersection."""
+    for inter in intersections:
+        dx = veh["x"] - inter["x"]
+        dy = veh["y"] - inter["y"]
+        if (dx * dx + dy * dy) < threshold * threshold:
+            return True
+    return False
+
+
 def _run_mock_simulation(job_id: str, topology: str, seed: int, queue, loop):
     """Generate realistic mock simulation frames."""
     import time
@@ -181,7 +191,7 @@ def _run_mock_simulation(job_id: str, topology: str, seed: int, queue, loop):
             intersections.append({"id": node_id, "x": x, "y": y})
 
     # Generate initial vehicles on road segments
-    num_vehicles = grid_n * grid_n * 3
+    num_vehicles = grid_n * grid_n * 5
     vehicles = []
     for i in range(num_vehicles):
         # Place vehicles along random road segments
@@ -234,21 +244,48 @@ def _run_mock_simulation(job_id: str, topology: str, seed: int, queue, loop):
                             best_inter = inter
                             best_dist = dist
 
-            if best_inter is not None and best_dist < 20:
+            if best_inter is not None and best_dist < 45:
                 idx = inter_idx[best_inter["id"]]
-                phase_idx = ((step // 30) + idx) % len(tls_phases)
+                phase_idx = ((step // 80) + idx) % len(tls_phases)
                 phase = tls_phases[phase_idx]
                 # First half of phase = horizontal, second half = vertical
                 half = len(phase) // 2
                 direction_chars = phase[:half] if is_horizontal else phase[half:]
-                is_red = all(c == 'r' for c in direction_chars)
-                if is_red:
+                should_stop = all(c in ('r', 'y') for c in direction_chars)
+                if should_stop:
                     v["speed"] = max(0.0, v["speed"] - 2.0)
+                    # Hard stop near intersection — acts as stop line
+                    if best_dist < 8:
+                        v["speed"] = 0.0
                 else:
-                    v["speed"] = min(13.89, v["speed"] + 0.5)
+                    v["speed"] = min(13.89, v["speed"] + 1.5)
             else:
                 # No intersection nearby — accelerate back toward normal speed
-                v["speed"] = min(13.89, v["speed"] + 0.5)
+                v["speed"] = min(13.89, v["speed"] + 1.5)
+
+            # Vehicle queuing: brake if a halted vehicle is ahead on the same road
+            for other in vehicles:
+                if other["id"] == v["id"]:
+                    continue
+                same_road = False
+                ahead_dist = 0.0
+                if is_horizontal:
+                    if abs(other["y"] - v["y"]) < 5:
+                        if v["angle"] < 180:  # eastbound
+                            ahead_dist = other["x"] - v["x"]
+                        else:
+                            ahead_dist = v["x"] - other["x"]
+                        same_road = True
+                else:
+                    if abs(other["x"] - v["x"]) < 5:
+                        if v["angle"] < 90 or v["angle"] > 270:  # northbound
+                            ahead_dist = other["y"] - v["y"]
+                        else:
+                            ahead_dist = v["y"] - other["y"]
+                        same_road = True
+                if same_road and 0 < ahead_dist < 15 and other["speed"] < 0.5 and _is_near_intersection(other, intersections):
+                    v["speed"] = max(0.0, v["speed"] - 2.0)
+                    break
 
             # Small random perturbation for realism
             v["speed"] = max(0.0, min(13.89, v["speed"] + rng.uniform(-0.3, 0.3)))
@@ -266,18 +303,20 @@ def _run_mock_simulation(job_id: str, topology: str, seed: int, queue, loop):
                 v["x"] = col * spacing + rng.choice([-1.6, 1.6])
                 v["y"] = rng.uniform(spacing, max_coord - spacing)
                 v["angle"] = rng.choice([0.0, 180.0])
+                v["speed"] = rng.uniform(8.0, 13.89)
             if v["y"] < 0 or v["y"] > max_coord:
                 # Re-place on a random road row
                 row = rng.randint(1, grid_n)
                 v["y"] = row * spacing + rng.choice([-1.6, 1.6])
                 v["x"] = rng.uniform(spacing, max_coord - spacing)
                 v["angle"] = rng.choice([90.0, 270.0])
+                v["speed"] = rng.uniform(8.0, 13.89)
 
         if step % 2 == 0:
             # Build traffic light states
             tls_data = []
             for idx, inter in enumerate(intersections):
-                phase_idx = ((step // 30) + idx) % len(tls_phases)
+                phase_idx = ((step // 80) + idx) % len(tls_phases)
                 occ = rng.uniform(0.1, 0.8)
                 halt_occ = rng.uniform(0.0, occ)
                 reward = -(occ + halt_occ) ** 2
