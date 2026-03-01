@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { SimCanvas } from "@/components/SimCanvas";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useSimStream } from "@/hooks/useSimStream";
 import { getNetworks, getNetwork, getWeights, startSimulation } from "@/lib/api";
 
@@ -48,8 +49,8 @@ const Compare = () => {
       lastStepRef.current = stepToAdd;
       setChartData(prev => [...prev, {
         t: stepToAdd,
-        A: frameA?.metrics.mean_reward ?? (prev.length > 0 ? prev[prev.length - 1].A : 0),
-        B: frameB?.metrics.mean_reward ?? (prev.length > 0 ? prev[prev.length - 1].B : 0),
+        A: frameA?.metrics?.mean_reward ?? (prev.length > 0 ? prev[prev.length - 1].A : 0),
+        B: frameB?.metrics?.mean_reward ?? (prev.length > 0 ? prev[prev.length - 1].B : 0),
       }]);
     }
   }, [frameA, frameB]);
@@ -74,30 +75,31 @@ const Compare = () => {
   const metrics = [
     {
       label: "Halted",
-      a: frameA?.metrics.total_halted ?? 0,
-      b: frameB?.metrics.total_halted ?? 0,
+      a: frameA?.metrics?.total_halted ?? 0,
+      b: frameB?.metrics?.total_halted ?? 0,
       unit: "",
-      better: (frameA?.metrics.total_halted ?? 0) < (frameB?.metrics.total_halted ?? 0) ? "a" as const : "b" as const,
+      better: (frameA?.metrics?.total_halted ?? 0) < (frameB?.metrics?.total_halted ?? 0) ? "a" as const : "b" as const,
     },
     {
       label: "Speed",
-      a: Number((frameA?.metrics.mean_speed ?? 0).toFixed(1)),
-      b: Number((frameB?.metrics.mean_speed ?? 0).toFixed(1)),
+      a: Number((frameA?.metrics?.mean_speed ?? 0).toFixed(1)),
+      b: Number((frameB?.metrics?.mean_speed ?? 0).toFixed(1)),
       unit: " m/s",
-      better: (frameA?.metrics.mean_speed ?? 0) > (frameB?.metrics.mean_speed ?? 0) ? "a" as const : "b" as const,
+      better: (frameA?.metrics?.mean_speed ?? 0) > (frameB?.metrics?.mean_speed ?? 0) ? "a" as const : "b" as const,
     },
     {
       label: "Reward",
-      a: Number((frameA?.metrics.mean_reward ?? 0).toFixed(2)),
-      b: Number((frameB?.metrics.mean_reward ?? 0).toFixed(2)),
+      a: Number((frameA?.metrics?.mean_reward ?? 0).toFixed(2)),
+      b: Number((frameB?.metrics?.mean_reward ?? 0).toFixed(2)),
       unit: "",
-      better: (frameA?.metrics.mean_reward ?? 0) > (frameB?.metrics.mean_reward ?? 0) ? "a" as const : "b" as const,
+      better: (frameA?.metrics?.mean_reward ?? 0) > (frameB?.metrics?.mean_reward ?? 0) ? "a" as const : "b" as const,
     },
   ];
 
   const betterPolicy = metrics.filter(m => m.better === "b").length > metrics.filter(m => m.better === "a").length ? "B" : "A";
 
   return (
+    <ErrorBoundary>
     <div className="space-y-4">
       {/* Controls */}
       <div className="flex flex-wrap items-center gap-3 bg-card border border-border rounded-lg p-3">
@@ -129,6 +131,30 @@ const Compare = () => {
         <Button className="bg-seal-blue hover:bg-seal-blue/90 text-white ml-auto" onClick={handleRunBoth}>
           Run Both
         </Button>
+      </div>
+
+      {/* Legend */}
+      <div className="flex items-center gap-4 text-xs text-muted-foreground px-1">
+        <div className="flex items-center gap-1.5">
+          <span className="inline-block w-3 h-2 rounded-sm" style={{ background: "#e2e8f0" }} />
+          <span>Moving</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="inline-block w-3 h-2 rounded-sm" style={{ background: "#ef4444" }} />
+          <span>Halted</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="inline-block w-3 h-3 rounded-full" style={{ background: "#22c55e" }} />
+          <span>Green</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="inline-block w-3 h-3 rounded-full" style={{ background: "#eab308" }} />
+          <span>Yellow</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="inline-block w-3 h-3 rounded-full" style={{ background: "#ef4444" }} />
+          <span>Red</span>
+        </div>
       </div>
 
       {/* Split View */}
@@ -188,6 +214,7 @@ const Compare = () => {
         </CardContent>
       </Card>
     </div>
+    </ErrorBoundary>
   );
 };
 

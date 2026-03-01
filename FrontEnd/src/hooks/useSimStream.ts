@@ -37,7 +37,12 @@ export function useSimStream(jobId: string | null) {
   }, [jobId]);
 
   useEffect(() => {
-    if (jobId) connect();
+    if (jobId) {
+      setLatestFrame(null);
+      setIsDone(false);
+      frameBufferRef.current = [];
+      connect();
+    }
     return () => wsRef.current?.close();
   }, [jobId, connect]);
 

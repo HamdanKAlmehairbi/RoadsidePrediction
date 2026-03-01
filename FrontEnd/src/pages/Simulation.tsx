@@ -168,6 +168,33 @@ const Simulation = () => {
             </ResponsiveContainer>
           </CardContent>
         </Card>
+        <Card className="bg-card border-border">
+          <CardContent className="p-4">
+            <p className="text-xs text-muted-foreground mb-2">Legend</p>
+            <div className="space-y-1.5 text-xs">
+              <div className="flex items-center gap-2">
+                <span className="inline-block w-3 h-2 rounded-sm" style={{ background: "#e2e8f0" }} />
+                <span>Moving vehicle</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="inline-block w-3 h-2 rounded-sm" style={{ background: "#ef4444" }} />
+                <span>Halted vehicle</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="inline-block w-3 h-3 rounded-full" style={{ background: "#22c55e" }} />
+                <span>Green light</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="inline-block w-3 h-3 rounded-full" style={{ background: "#eab308" }} />
+                <span>Yellow light</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="inline-block w-3 h-3 rounded-full" style={{ background: "#ef4444" }} />
+                <span>Red light</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
     </ErrorBoundary>

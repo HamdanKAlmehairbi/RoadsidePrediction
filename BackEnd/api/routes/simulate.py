@@ -202,9 +202,57 @@ def _run_mock_simulation(job_id: str, topology: str, seed: int, queue, loop):
     tls_phases = ["GGrr", "rrGG", "yyrr", "rryy"]
     total_steps = 300
 
+    # Pre-compute a lookup from intersection id to index (for TLS phase lookup)
+    inter_idx = {inter["id"]: i for i, inter in enumerate(intersections)}
+
     for step in range(total_steps):
         # Update vehicle positions
         for v in vehicles:
+            # --- Red-light stopping logic ---
+            is_horizontal = abs(v["angle"] - 90) < 10 or abs(v["angle"] - 270) < 10
+            best_inter = None
+            best_dist = float("inf")
+            for inter in intersections:
+                if is_horizontal:
+                    # Must be on same row (within 30% of spacing)
+                    if abs(v["y"] - inter["y"]) < spacing * 0.3:
+                        if v["angle"] < 180:  # eastbound
+                            dist = inter["x"] - v["x"]
+                        else:  # westbound
+                            dist = v["x"] - inter["x"]
+                        if 0 < dist < best_dist:
+                            best_inter = inter
+                            best_dist = dist
+                else:
+                    # Vertical — must be on same column
+                    if abs(v["x"] - inter["x"]) < spacing * 0.3:
+                        if v["angle"] < 90 or v["angle"] > 270:  # northbound
+                            dist = inter["y"] - v["y"]
+                        else:  # southbound
+                            dist = v["y"] - inter["y"]
+                        if 0 < dist < best_dist:
+                            best_inter = inter
+                            best_dist = dist
+
+            if best_inter is not None and best_dist < 20:
+                idx = inter_idx[best_inter["id"]]
+                phase_idx = ((step // 30) + idx) % len(tls_phases)
+                phase = tls_phases[phase_idx]
+                # First half of phase = horizontal, second half = vertical
+                half = len(phase) // 2
+                direction_chars = phase[:half] if is_horizontal else phase[half:]
+                is_red = all(c == 'r' for c in direction_chars)
+                if is_red:
+                    v["speed"] = max(0.0, v["speed"] - 2.0)
+                else:
+                    v["speed"] = min(13.89, v["speed"] + 0.5)
+            else:
+                # No intersection nearby — accelerate back toward normal speed
+                v["speed"] = min(13.89, v["speed"] + 0.5)
+
+            # Small random perturbation for realism
+            v["speed"] = max(0.0, min(13.89, v["speed"] + rng.uniform(-0.3, 0.3)))
+
             rad = math.radians(v["angle"])
             dx = math.sin(rad) * v["speed"] * 0.1
             dy = math.cos(rad) * v["speed"] * 0.1
@@ -224,9 +272,6 @@ def _run_mock_simulation(job_id: str, topology: str, seed: int, queue, loop):
                 v["y"] = row * spacing + rng.choice([-1.6, 1.6])
                 v["x"] = rng.uniform(spacing, max_coord - spacing)
                 v["angle"] = rng.choice([90.0, 270.0])
-
-            # Randomly adjust speed
-            v["speed"] = max(0.0, min(13.89, v["speed"] + rng.uniform(-0.5, 0.5)))
 
         if step % 2 == 0:
             # Build traffic light states

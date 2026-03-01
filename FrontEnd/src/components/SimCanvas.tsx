@@ -8,12 +8,18 @@ interface SimCanvasProps {
   className?: string;
 }
 
-function tlsColor(state: string): string {
-  if (!state) return "#6b7280";
-  const s = state.toLowerCase();
-  if (s.includes("g")) return "#22c55e";
-  if (s.includes("y")) return "#eab308";
-  return "#ef4444";
+function tlsColors(state: string): [string, string] {
+  if (!state || state.length < 2) return ["#6b7280", "#6b7280"];
+  const mid = Math.floor(state.length / 2);
+  const firstHalf = state.slice(0, mid);
+  const secondHalf = state.slice(mid);
+  const dominantColor = (s: string) => {
+    const lower = s.toLowerCase();
+    if (lower.includes("g")) return "#22c55e";
+    if (lower.includes("y")) return "#eab308";
+    return "#ef4444";
+  };
+  return [dominantColor(firstHalf), dominantColor(secondHalf)];
 }
 
 function lerpAngle(a: number, b: number, t: number): number {
@@ -38,8 +44,10 @@ export function SimCanvas({ layout, frame, className }: SimCanvasProps) {
   layoutRef.current = layout;
 
   // When frame prop changes, shift frames for interpolation
+  // Once a done frame is received, freeze the canvas on that frame.
   useEffect(() => {
     if (!frame) return;
+    if (currFrameRef.current?.done && frame.done) return;
     prevFrameRef.current = currFrameRef.current;
     currFrameRef.current = frame;
     frameArrivalRef.current = Date.now();
@@ -147,20 +155,31 @@ export function SimCanvas({ layout, frame, className }: SimCanvasProps) {
       // Use current frame for TLS (no interpolation needed for signals)
       const currFrame = currFrameRef.current;
 
-      // Draw intersection circles (nodes)
+      // Draw intersection circles (nodes) with split semicircles for TLS
       const nodeRadius = Math.max(10, scale * 8);
       for (const node of currentLayout.nodes) {
         const [cx, cy] = toCanvas(node.x, node.y);
         const tls = currFrame?.traffic_lights?.find((t) => t.id === node.id);
-        if (tls) {
-          ctx.beginPath();
-          ctx.arc(cx, cy, nodeRadius + 4, 0, Math.PI * 2);
-          ctx.fillStyle = tlsColor(tls.state) + "40";
-          ctx.fill();
-        }
+        const [color1, color2] = tls ? tlsColors(tls.state) : ["#6b7280", "#6b7280"];
+
+        // Glow
         ctx.beginPath();
-        ctx.arc(cx, cy, nodeRadius, 0, Math.PI * 2);
-        ctx.fillStyle = tls ? tlsColor(tls.state) : "#6b7280";
+        ctx.arc(cx, cy, nodeRadius + 4, 0, Math.PI * 2);
+        ctx.fillStyle = color1 + "40";
+        ctx.fill();
+
+        // Left semicircle (direction 1)
+        ctx.beginPath();
+        ctx.arc(cx, cy, nodeRadius, Math.PI * 0.5, Math.PI * 1.5);
+        ctx.closePath();
+        ctx.fillStyle = color1;
+        ctx.fill();
+
+        // Right semicircle (direction 2)
+        ctx.beginPath();
+        ctx.arc(cx, cy, nodeRadius, Math.PI * 1.5, Math.PI * 0.5);
+        ctx.closePath();
+        ctx.fillStyle = color2;
         ctx.fill();
       }
 

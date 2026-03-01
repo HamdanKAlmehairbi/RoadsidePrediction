@@ -1,4 +1,4 @@
-# SEAL Dashboard — Bug Fix Plan
+# SEAL Dashboard — Bug Fix Plan (Round 2)
 
 > Use with: `/build-with-agent-team tasks/bugfix-plan.md 2`
 
@@ -8,7 +8,7 @@
 
 - `CLAUDE.md` — hard rules, file-structure update requirement
 - `BUILD-RULE.md` — workflow: plan mode, verification, lessons.md
-- `PROJECT-PLAN.md` — full spec, API contract, page designs, acceptance criteria
+- `PROJECT-PLAN.md` — full spec, API contract, page designs
 - `file-structure.md` — current project tree
 
 ## Architecture
@@ -23,55 +23,149 @@ SUMO-FedRL-main/ (read-only) →  BackEnd/
 
 ---
 
-## Bug 1 — CRITICAL: Simulation page goes blank (grey screen)
+## Bug 1 — Simulation page clears/resets after simulation ends
 
-**What happens:** On the Simulation page (`/simulation`), a few seconds after starting a simulation, the entire page turns to the background colour (`#0f1117`). Everything disappears — the dashboard layout, top nav, sidebar, controls, canvas, metrics — all gone. Only the blank background remains.
+**What happens:** The Simulation page no longer blackscreens (the ErrorBoundary fixed that), but when the simulation finishes, the canvas empties — all vehicles disappear, traffic light colours reset, and it returns to showing just the bare road grid. The final state should freeze on screen.
 
-**Where to look:**
-- `FrontEnd/src/pages/Simulation.tsx` — the page component; likely an unhandled error or state change that unmounts the entire layout
-- `FrontEnd/src/hooks/useSimStream.ts` — WebSocket hook; may throw or set state that triggers a full re-render / error boundary
-- `FrontEnd/src/components/SimCanvas.tsx` — Canvas 2D renderer; may throw during animation frame
-- `FrontEnd/src/components/DashboardLayout.tsx` — layout wrapper; check if an error propagates up and kills it
-- `BackEnd/api/ws/simulate.py` — WebSocket endpoint; check if it closes unexpectedly or sends malformed frames
+**Root cause analysis:**
 
-**Likely root causes to investigate:**
-1. Uncaught exception in SimCanvas `requestAnimationFrame` loop or useSimStream that propagates up and unmounts the page
-2. WebSocket `onclose`/`onerror` handler sets state that causes the page to go blank
-3. React error boundary (or lack of one) catching a render error and showing nothing
-4. Backend WebSocket closes after simulation ends (`done: true`) and frontend doesn't handle the close gracefully
-5. Canvas ref becomes null after a re-render, causing a crash on the next animation frame
+The `done` frame arrives from the backend with `done: true`. In `useSimStream.ts` line 30–33:
+```typescript
+if (frame.done) {
+  setIsDone(true);
+  ws.close();
+}
+```
+The WebSocket closes, which triggers `onclose` → `setIsConnected(false)`. The `latestFrame` state still holds the done frame with vehicles — so far so good.
+
+However the issue is likely that after the WS closes, the `latestFrame` is the `done` frame (which DOES have vehicles from the backend — see `BackEnd/api/routes/simulate.py` lines 272–286), but something in the React render cycle or SimCanvas causes the vehicles to not render. Investigate:
+
+1. **SimCanvas early return** (`SimCanvas.tsx` line 168–171): `if (!currFrame || !currFrame.vehicles || currFrame.vehicles.length === 0)` — if the done frame's vehicles array is somehow empty after serialization, the canvas would show roads only and return before drawing vehicles
+2. **Frame ref getting cleared**: The `currFrameRef` is a ref, but if the component re-mounts for any reason after done, the ref resets to `null`
+3. **State update timing**: The `setLatestFrame(frame)` and `ws.close()` happen synchronously in the same handler. Check if the close triggers a re-render that somehow nulls out state before the frame is painted
+
+**Files to examine and fix:**
+- `FrontEnd/src/hooks/useSimStream.ts` — the done/close handling
+- `FrontEnd/src/components/SimCanvas.tsx` — the early return condition at line 168
+- `FrontEnd/src/pages/Simulation.tsx` — check if any state change on `isDone` causes re-render that affects frame display
+
+**The fix should ensure:**
+- When `done: true` arrives, `latestFrame` is preserved and the canvas keeps drawing the final frame indefinitely
+- The rAF loop keeps running after done (it already does — it has `[]` deps), but make sure `currFrameRef` isn't nulled
+- Consider: stop shifting `prevFrameRef`/`currFrameRef` once done, so the canvas freezes on the last rendered state
 
 **Acceptance criteria:**
-- [ ] Simulation page remains fully rendered (nav, sidebar, controls, metrics) throughout the entire simulation and after it ends
-- [ ] When simulation completes (`done: true`), the page stays visible with final state shown
-- [ ] No uncaught errors in the browser console during or after simulation
+- [ ] After simulation completes, vehicles remain visible on canvas in their final positions
+- [ ] Traffic light colours remain showing final state
+- [ ] Metrics sidebar still shows final values (halted, speed, reward, timestep)
+- [ ] "Done" label appears in controls bar
+- [ ] User can click "Run Simulation" again to start a new run
 
 ---
 
-## Bug 2 — LOW PRIORITY: Vehicle jitter during simulation
+## Bug 2 — Compare page blackscreens
 
-**What happens:** Cars on the SimCanvas jitter/stutter as they move instead of gliding smoothly along roads. The movement is visually choppy.
+**What happens:** The Compare page (`/compare`) still goes completely blank after starting a simulation — the entire page disappears to background colour `#0f1117`.
 
-**Where to look:**
-- `FrontEnd/src/components/SimCanvas.tsx` — rendering loop; check how vehicle positions are drawn each frame
-- `FrontEnd/src/hooks/useSimStream.ts` — check if frames are being buffered and interpolated, or just painted raw
-- `PROJECT-PLAN.md` line 427 — specifies: "The frontend should interpolate vehicle positions between frames for smooth animation"
+**Root cause:** `Compare.tsx` does NOT have an `<ErrorBoundary>` wrapper. The Simulation page was fixed by adding one (see `Simulation.tsx` lines 69 and 173), but the same fix was never applied to Compare.
 
-**Likely root causes:**
-1. No interpolation between WebSocket frames — vehicles jump directly from position A to position B every ~100ms instead of smoothly transitioning over 6-7 `requestAnimationFrame` ticks
-2. Canvas is being cleared and redrawn on every WebSocket message instead of on every `requestAnimationFrame` tick
-3. Vehicle positions are snapping to integer pixels (rounding) instead of using sub-pixel rendering
-4. The animation loop is tied to WebSocket message rate (~10fps) instead of `requestAnimationFrame` rate (~60fps)
+When either `useSimStream` or `SimCanvas` throws an error on the Compare page, there is no error boundary to catch it. The error propagates up to the React root and unmounts the entire page.
 
-**The fix (from the spec):**
-- Buffer the latest two frames from WebSocket
-- On each `requestAnimationFrame` tick, linearly interpolate each vehicle's `x`, `y`, and `angle` between the previous frame and the current frame based on elapsed time
-- This gives smooth 60fps visual movement even though data arrives at ~10fps
+**Files to fix:**
+- `FrontEnd/src/pages/Compare.tsx` — wrap the return JSX in `<ErrorBoundary>` (same pattern as `Simulation.tsx`)
+- `FrontEnd/src/components/ErrorBoundary.tsx` — verify it exists and renders a fallback UI instead of blank
+
+Additionally, `Compare.tsx` has TWO SimCanvas and TWO useSimStream instances running simultaneously — double the chance of an uncaught error. The fix from Bug 1 (preserving frame state on done) must also work correctly when two streams finish at different times.
+
+**The fix:**
+1. Add `<ErrorBoundary>` wrapper around the Compare page's JSX (import already exists in the project — check `FrontEnd/src/components/ErrorBoundary.tsx`)
+2. Ensure both streams' done states are handled independently — one finishing should not clear the other's canvas
+3. Test that the page stays rendered even if one stream errors
 
 **Acceptance criteria:**
-- [ ] Vehicles glide smoothly across the canvas without visible jumping or stuttering
-- [ ] Animation runs at browser's `requestAnimationFrame` rate (~60fps)
-- [ ] Interpolation handles edge cases: new vehicles appearing mid-frame, vehicles disappearing
+- [ ] Compare page stays fully rendered throughout simulation and after both finish
+- [ ] Both canvases show vehicles simultaneously
+- [ ] If one simulation finishes before the other, its canvas freezes while the other continues
+- [ ] No console errors
+
+---
+
+## Bug 3 — Traffic lights never show red
+
+**What happens:** Intersection circles only appear green or yellow, never red. This makes it look like traffic lights aren't working properly.
+
+**Root cause:** The `tlsColor` function in `SimCanvas.tsx` lines 11–17 is too simplistic:
+```typescript
+function tlsColor(state: string): string {
+  if (!state) return "#6b7280";
+  const s = state.toLowerCase();
+  if (s.includes("g")) return "#22c55e";   // ANY green lane → whole intersection green
+  if (s.includes("y")) return "#eab308";
+  return "#ef4444";                         // only "rrrr" reaches here
+}
+```
+
+SUMO TLS state strings encode **per-lane** phases. For example `"GGrr"` means lanes 0–1 are green, lanes 2–3 are red. The mock simulation cycles through `["GGrr", "rrGG", "yyrr", "rryy"]` — every single one contains either `g` or `y`, so the function NEVER returns red.
+
+**The fix:** Change `tlsColor` to show the **dominant** phase — count the characters and pick whichever has the majority. Or better yet, render the intersection as a split circle (top half = one direction's phase, bottom half = other direction), so you can see that some lanes are green while others are red. This is more realistic and visually informative.
+
+A simpler first approach: take the FIRST half of the state string as one direction and the second half as the other, then render two semicircles. For `"GGrr"`: left semicircle green, right semicircle red.
+
+**Files to fix:**
+- `FrontEnd/src/components/SimCanvas.tsx` — replace `tlsColor` function and the intersection drawing code (lines 150–165)
+
+**Acceptance criteria:**
+- [ ] Intersections visually show that some directions are red while others are green
+- [ ] Phase changes are visible as the simulation runs (intersections alternate between states)
+- [ ] Yellow phase is visible during transitions
+
+---
+
+## Bug 4 — Cars never stop at red lights (mock mode)
+
+**What happens:** Vehicles move continuously and never stop at intersections, even when the traffic light is red. This makes the simulation look unrealistic.
+
+**Root cause:** The mock simulation in `BackEnd/api/routes/simulate.py` (function `_run_mock_simulation`, line 161–297) does not simulate traffic light interaction. Vehicles just move in a straight line with random speed adjustments (line 229: `v["speed"] = max(0.0, min(13.89, v["speed"] + rng.uniform(-0.5, 0.5)))`). They never check whether their nearest intersection's light is red.
+
+**The fix:** In the mock simulation loop, for each vehicle:
+1. Find the nearest intersection ahead of the vehicle (in its direction of travel)
+2. Check that intersection's current TLS phase for the vehicle's travel direction
+3. If the phase is red (`r`) and the vehicle is within ~20 units of the intersection, decelerate the vehicle toward 0 speed
+4. If the phase is green (`G` or `g`), let the vehicle accelerate back to normal speed
+5. If the vehicle's speed drops below 0.5, it counts as halted (this is already tracked at line 248)
+
+This makes the mock simulation visually convincing: vehicles approach intersections, stop on red, and go on green. The `total_halted` metric will now reflect actual stopped vehicles, and the red car colouring (speed < 0.5 → `#ef4444`) will appear at intersections naturally.
+
+**Files to fix:**
+- `BackEnd/api/routes/simulate.py` — modify `_run_mock_simulation` to add intersection-aware stopping logic
+
+**Acceptance criteria:**
+- [ ] Vehicles visibly slow down and stop near intersections when the light is red
+- [ ] Vehicles resume moving when the light turns green
+- [ ] Halted vehicles turn red on the canvas (this already works via `speed < 0.5` in SimCanvas)
+- [ ] The `total_halted` metric in the sidebar reflects actual stopped vehicles
+- [ ] Mock simulation still runs smoothly without performance issues
+
+---
+
+## Note: Red cars are halted vehicles (not a bug)
+
+The user noticed cars sometimes turn red. This is **intentional** per the design system in `PROJECT-PLAN.md`:
+- Vehicle colour: `#e2e8f0` (white/light grey) — moving normally
+- Halted vehicle: `#ef4444` (red) — speed < 0.5 m/s
+
+This is implemented in `SimCanvas.tsx` line 208: `ctx.fillStyle = drawSpeed < 0.5 ? "#ef4444" : "#e2e8f0"`
+
+However, there is no **legend** explaining this. The frontend agent should add a small legend overlay on the canvas or in the sidebar explaining colour codes:
+- White car = moving
+- Red car = halted (speed < 0.5 m/s)
+- Green circle = green light
+- Yellow circle = yellow light
+- Red circle = red light
+
+**File to fix:**
+- `FrontEnd/src/pages/Simulation.tsx` — add a small legend card in the sidebar or as a canvas overlay
+- `FrontEnd/src/pages/Compare.tsx` — same legend if space permits
 
 ---
 
@@ -80,34 +174,52 @@ SUMO-FedRL-main/ (read-only) →  BackEnd/
 ### Backend Agent
 - **Owns:** `BackEnd/`
 - **Does NOT touch:** `FrontEnd/`, `SUMO-FedRL-main/`, `LovableOutput/`
-- **Focus:** Investigate whether the WebSocket at `BackEnd/api/ws/simulate.py` sends malformed data, closes unexpectedly, or has timing issues that could cause the frontend to crash. Fix if needed.
+- **Priority order:**
+  1. **Bug 4** — Add intersection-aware stopping to mock simulation so vehicles stop at red lights and go on green
+  2. Verify the `done` frame (step 300) includes full vehicle + TLS data (it currently does — confirm no regression)
+  3. Verify WebSocket closes cleanly after done frame is sent
 
 ### Frontend Agent
 - **Owns:** `FrontEnd/`
 - **Does NOT touch:** `BackEnd/`, `SUMO-FedRL-main/`, `LovableOutput/`
-- **Focus:** Fix Bug 1 (grey screen) first — this is the critical issue. Then fix Bug 2 (jitter) by adding frame interpolation to SimCanvas. Add error boundaries to prevent full-page crashes.
+- **Priority order:**
+  1. **Bug 1** — Fix simulation page reset: preserve final frame on canvas after done
+  2. **Bug 2** — Add `<ErrorBoundary>` to Compare page + ensure both stream done states work independently
+  3. **Bug 3** — Fix `tlsColor` to show red phases (split circle or dominant-phase logic)
+  4. **Legend** — Add colour legend to Simulation and Compare pages
+  5. Run `npm run build` — must pass with 0 errors
+
+---
 
 ## Validation
 
-### After Bug 1 Fix
+### After Frontend Fixes
 ```bash
 cd FrontEnd && npm run build   # 0 errors
-# Start both servers, open /simulation
-# Run a simulation — page must stay fully rendered for the entire duration
-# After simulation ends — page must still be visible with final state
-# Check browser console — no uncaught errors
+# Start both servers
+# Simulation page:
+#   - Run simulation → vehicles animate → simulation ends → vehicles STAY on canvas
+#   - Traffic lights show red, green, and yellow phases
+#   - Legend is visible explaining colours
+# Compare page:
+#   - Run Both → both canvases animate → no blackscreen
+#   - When one finishes first, its canvas freezes, other continues
+#   - Page stays rendered after both finish
 ```
 
-### After Bug 2 Fix
+### After Backend Fixes
 ```bash
-# Start both servers, open /simulation
-# Run a simulation — vehicles should glide smoothly, no visible jitter
-# Compare visual smoothness at 1× and 5× speed
+cd BackEnd
+python -m uvicorn api.main:app --port 8000 --reload
+# Connect to WS /ws/simulate/{job_id}
+# Verify: vehicles slow down and stop near red-light intersections
+# Verify: halted count in metrics increases when lights are red
+# Verify: done frame still includes all vehicle + TLS data
 ```
 
 ### End-to-End
 1. Backend on `:8000`, frontend on `:5173`
-2. Navigate all 5 pages — no blank screens, no console errors
-3. Run simulation start to finish — page stays rendered, vehicles move smoothly
-4. Run Compare page — both canvases work, no blank screen
+2. Simulation: vehicles stop at red lights, move on green, canvas freezes at end with final state
+3. Compare: both canvases work, no blackscreen, both freeze at end
+4. All 5 pages — no blank screens, no console errors
 5. `SUMO-FedRL-main/` and `LovableOutput/` have zero modifications
