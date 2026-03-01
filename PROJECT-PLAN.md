@@ -316,7 +316,7 @@ The research metric page — explains why FedRL is worth using.
 
 ### Backend Agent
 - **Owns:** `BackEnd/`
-- **Does NOT touch:** `FrontEnd/`, `SUMO-FedRL-main/`
+- **Does NOT touch:** `FrontEnd/`, `SUMO-FedRL-main/`, `LovableOutput/`
 - **Responsibilities:**
   1. Copy `seal/`, `configs/SMARTCOMP/`, `example_weights/ICCPS/Final/`, `netfiles.py`
   2. Implement all REST endpoints and both WebSockets per contract above
@@ -329,6 +329,7 @@ The research metric page — explains why FedRL is worth using.
 ### Frontend Agent
 - **Owns:** `FrontEnd/`
 - **Does NOT touch:** `BackEnd/`, `SUMO-FedRL-main/`, `LovableOutput/`
+- **Note:** `LovableOutput/` was already copied into `FrontEnd/` during initial build. Do not re-copy — only edit `FrontEnd/` files directly.
 - **Responsibilities:**
   1. Copy `LovableOutput/seal-traffic-flow-main/` into `FrontEnd/` as the starting scaffold — do not regenerate from scratch
   2. Add `src/lib/api.ts` — typed wrappers for all REST calls (`BASE_URL = http://localhost:8000`)

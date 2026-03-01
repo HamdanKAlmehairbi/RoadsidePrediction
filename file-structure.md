@@ -2,6 +2,16 @@
 
 ```
 1-Sumo-FedRL/
+├── CLAUDE.md                       # Agent instructions — hard rules, architecture, known patterns
+├── BUILD-RULE.md                   # Workflow rules — plan mode, verification, lessons
+├── PROJECT-PLAN.md                 # Full spec — API contract, page designs, acceptance criteria
+├── README.md                       # Project overview, quick start, API summary
+├── SKILL.md                        # /build-with-agent-team skill definition
+├── file-structure.md               # This file — live project tree
+├── tasks/
+│   ├── todo.md                     # Current status and bug fix history
+│   ├── bugfix-plan.md              # Active bugfix task for agent team
+│   └── lessons.md                  # Lessons learned from past bugs and corrections
 ├── BackEnd/                        # FastAPI backend — SEAL Dashboard API
 │   ├── seal/                       # Copied from SUMO-FedRL-main/seal/
 │   ├── configs/SMARTCOMP/          # Copied .net.xml files (3x3, 5x5, 7x7)
