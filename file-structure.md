@@ -24,7 +24,54 @@
 │           ├── __init__.py
 │           ├── simulate.py         # WS /ws/simulate/{job_id} — streams vehicle+TLS frames
 │           └── train.py            # WS /ws/train/{job_id} — streams episode rewards
-├── FrontEnd/                       # (empty — frontend to be developed)
+├── FrontEnd/                       # React dashboard — copied from LovableOutput, wired to BackEnd API
+│   ├── index.html
+│   ├── package.json                # React 18, Vite, shadcn/ui, Recharts, React Router, React Query
+│   ├── package-lock.json
+│   ├── bun.lockb
+│   ├── components.json             # shadcn/ui config
+│   ├── vite.config.ts              # Vite dev server on :5173
+│   ├── tailwind.config.ts          # Dark theme + SEAL accent colours
+│   ├── tsconfig.json / tsconfig.app.json / tsconfig.node.json
+│   ├── vitest.config.ts
+│   ├── eslint.config.js
+│   ├── postcss.config.js
+│   ├── public/
+│   │   ├── favicon.ico
+│   │   ├── placeholder.svg
+│   │   └── robots.txt
+│   └── src/
+│       ├── main.tsx                # React app entry
+│       ├── App.tsx                 # BrowserRouter + QueryClientProvider + Toaster; all 5 routes
+│       ├── App.css
+│       ├── index.css               # Global CSS vars (#0f1117 bg, #1a1d27 card, SEAL colours)
+│       ├── vite-env.d.ts
+│       ├── lib/
+│       │   ├── utils.ts            # cn() Tailwind merge helper
+│       │   └── api.ts              # Typed REST wrappers — BASE_URL = http://localhost:8000
+│       ├── hooks/
+│       │   ├── use-mobile.tsx      # Mobile viewport hook (from Lovable)
+│       │   ├── use-toast.ts        # Toast notification hook (from Lovable)
+│       │   ├── useSimStream.ts     # WS /ws/simulate/{job_id} — drives SimCanvas animation
+│       │   └── useTrainStream.ts   # WS /ws/train/{job_id} — appends episode data to chart
+│       ├── components/
+│       │   ├── DashboardLayout.tsx  # Sidebar + TopNav + content wrapper
+│       │   ├── AppSidebar.tsx       # Collapsible sidebar (240px / icon-only)
+│       │   ├── TopNav.tsx           # Fixed header: SEAL logo + nav links
+│       │   ├── NavLink.tsx          # Active-state nav link wrapper
+│       │   ├── ErrorBoundary.tsx     # React error boundary — catches render errors, shows fallback UI
+│       │   ├── SimCanvas.tsx        # Canvas 2D renderer: roads, vehicles, TLS signals
+│       │   └── ui/                  # 40+ shadcn/ui primitives (button, card, select, table, chart…)
+│       ├── pages/
+│       │   ├── Index.tsx            # / — hero, 4 stat cards, How It Works, CTAs
+│       │   ├── Simulation.tsx       # /simulation — SimCanvas + useSimStream + controls + metrics
+│       │   ├── Training.tsx         # /training — useTrainStream + Recharts chart + status bar
+│       │   ├── Compare.tsx          # /compare — two SimCanvas + diff panel + dual-line chart
+│       │   ├── Communication.tsx    # /communication — stacked bar + Pareto scatter + table
+│       │   └── NotFound.tsx         # 404 page
+│       └── test/
+│           ├── example.test.ts
+│           └── setup.ts
 ├── LovableOutput/                  # Lovable-generated UI scaffold — source for FrontEnd/
 │   └── seal-traffic-flow-main/     # Root of the generated React project
 │       ├── index.html

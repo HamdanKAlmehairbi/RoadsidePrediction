@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Play, Pause } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { SimCanvas } from "@/components/SimCanvas";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useSimStream } from "@/hooks/useSimStream";
 import { getNetworks, getNetwork, getWeights, startSimulation } from "@/lib/api";
 
@@ -42,7 +43,7 @@ const Simulation = () => {
   useEffect(() => {
     if (latestFrame && latestFrame.step !== lastStepRef.current) {
       lastStepRef.current = latestFrame.step;
-      setRewardData(prev => [...prev, { t: latestFrame.step, reward: latestFrame.metrics.mean_reward }]);
+      setRewardData(prev => [...prev, { t: latestFrame.step, reward: latestFrame?.metrics?.mean_reward ?? 0 }]);
     }
   }, [latestFrame]);
 
@@ -65,6 +66,7 @@ const Simulation = () => {
   }, [rewardData]);
 
   return (
+    <ErrorBoundary>
     <div className="flex gap-4 h-[calc(100vh-5rem)]">
       {/* Main Area */}
       <div className="flex-1 flex flex-col gap-4">
@@ -113,8 +115,8 @@ const Simulation = () => {
       {/* Right Sidebar */}
       <div className="w-[280px] flex flex-col gap-3 shrink-0">
         {[
-          { label: "Halted Vehicles", value: latestFrame ? String(latestFrame.metrics.total_halted) : "—" },
-          { label: "Mean Speed", value: latestFrame ? `${latestFrame.metrics.mean_speed.toFixed(1)} m/s` : "— m/s" },
+          { label: "Halted Vehicles", value: latestFrame ? String(latestFrame?.metrics?.total_halted ?? 0) : "—" },
+          { label: "Mean Speed", value: latestFrame ? `${(latestFrame?.metrics?.mean_speed ?? 0).toFixed(1)} m/s` : "— m/s" },
         ].map(m => (
           <Card key={m.label} className="bg-card border-border">
             <CardContent className="p-4">
@@ -128,7 +130,7 @@ const Simulation = () => {
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground">Mean Reward</p>
             <p className="text-2xl font-mono font-bold">
-              {latestFrame ? latestFrame.metrics.mean_reward.toFixed(2) : "—"}
+              {latestFrame ? (latestFrame?.metrics?.mean_reward ?? 0).toFixed(2) : "—"}
             </p>
             <div className="h-8 mt-1">
               <ResponsiveContainer width="100%" height="100%">
@@ -168,6 +170,7 @@ const Simulation = () => {
         </Card>
       </div>
     </div>
+    </ErrorBoundary>
   );
 };
 

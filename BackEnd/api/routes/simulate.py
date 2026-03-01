@@ -139,8 +139,18 @@ def _run_traci_simulation(job_id: str, weight_id: str, topology: str, seed: int,
 
     conn.close()
 
-    # Send done frame
-    _put_frame(queue, {"step": total_steps, "done": True}, loop)
+    # Send done frame with last known data
+    _put_frame(queue, {
+        "step": total_steps,
+        "done": True,
+        "vehicles": vehicles,
+        "traffic_lights": traffic_lights,
+        "metrics": {
+            "total_halted": total_halted,
+            "mean_speed": round(mean_speed, 2),
+            "mean_reward": 0.0,
+        },
+    }, loop)
     jobs[job_id]["status"] = "complete"
     jobs[job_id]["results"] = {
         "trip_metrics": {"travel_time_s": 0.0, "waiting_time_s": 0.0, "time_loss_s": 0.0},
@@ -258,8 +268,22 @@ def _run_mock_simulation(job_id: str, topology: str, seed: int, queue, loop):
 
         time.sleep(0.016)  # ~60fps pacing for mock
 
-    # Send done frame
-    _put_frame(queue, {"step": total_steps, "done": True}, loop)
+    # Send done frame with last known data
+    _put_frame(queue, {
+        "step": total_steps,
+        "done": True,
+        "vehicles": [
+            {"id": v["id"], "x": round(v["x"], 1), "y": round(v["y"], 1),
+             "speed": round(v["speed"], 1), "angle": round(v["angle"], 1)}
+            for v in vehicles
+        ],
+        "traffic_lights": tls_data,
+        "metrics": {
+            "total_halted": total_halted,
+            "mean_speed": round(mean_speed, 2),
+            "mean_reward": round(mean_reward, 3),
+        },
+    }, loop)
     jobs[job_id]["status"] = "complete"
     jobs[job_id]["results"] = {
         "trip_metrics": {"travel_time_s": 99.2, "waiting_time_s": 27.1, "time_loss_s": 23.4},
