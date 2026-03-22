@@ -90,12 +90,12 @@ Plans:
   2. Cooperative reward with alpha parameter shows measurable effect
   3. Time-of-day curriculum demonstrates adaptation vs fixed-timing degradation
   4. All extensions selectable via API parameters
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: FedProx aggregation implementation
-- [ ] 04-02: Cooperative reward shaping
-- [ ] 04-03: Time-of-day demand curriculum with time encoding
+- [ ] 04-01-PLAN.md — FedProx proximal policy and FedPolicyTrainer integration
+- [ ] 04-02-PLAN.md — Cooperative reward shaping with alpha parameter
+- [ ] 04-03-PLAN.md — Time-of-day demand curriculum, time encoding, and API wiring for all Phase 4 params
 
 ### Phase 5: Advanced Extensions
 **Goal**: GNN, differential privacy, and emergency preemption for advanced research
@@ -144,4 +144,4 @@ Plans:
 
 ---
 *Roadmap created: 2026-03-22*
-*Last updated: 2026-03-22 after 03-05 completion (Evaluation Tests and Public API) — Phase 03 complete*
+*Last updated: 2026-03-22 after Phase 4 planning*
