@@ -28,6 +28,10 @@
 │       ├── baselines/
 │       │   ├── __init__.py
 │       │   └── max_pressure.py     # Max-pressure baseline: selects phase with highest upstream-downstream queue diff
+│       ├── evaluation/
+│       │   ├── __init__.py         # Package init for evaluation module
+│       │   ├── runner.py           # run_trial(): single evaluation episode for any trainer/topology; TrialResult dataclass; resolve_weights_path()
+│       │   └── baselines.py        # run_fixed_time_trial(), run_max_pressure_trial(), run_rl_trial() wrappers
 │       ├── routes/
 │       │   ├── __init__.py
 │       │   ├── networks.py         # GET /api/networks, GET /api/network/{topology}

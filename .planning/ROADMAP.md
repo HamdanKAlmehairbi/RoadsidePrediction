@@ -75,7 +75,7 @@ Plans:
 **Plans**: 5 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Evaluation runner and baselines (run_trial, fixed-time, max-pressure)
+- [x] 03-01-PLAN.md — Evaluation runner and baselines (run_trial, fixed-time, max-pressure)
 - [ ] 03-02-PLAN.md — Metrics computation and cross-topology transfer testing
 - [ ] 03-03-PLAN.md — Monte Carlo orchestration with seed control and aggregation
 - [ ] 03-04-PLAN.md — API endpoints (POST/GET/WS) and persistent JSON results store
@@ -137,11 +137,11 @@ Plans:
 | 0. Environment Setup | 2/2 | Complete | 2026-03-22 |
 | 1. Modernize SEAL Engine | 3/3 | Complete | 2026-03-22 |
 | 2. Wire Real Training + Simulation | 4/4 | Complete | 2026-03-22 |
-| 3. Evaluation Framework | 0/5 | Planned | - |
+| 3. Evaluation Framework | 1/5 | In progress | - |
 | 4. Core Extensions | 0/3 | Not started | - |
 | 5. Advanced Extensions | 0/3 | Not started | - |
 | 6. Frontend Enhancements | 0/3 | Not started | - |
 
 ---
 *Roadmap created: 2026-03-22*
-*Last updated: 2026-03-22 after Phase 3 planning*
+*Last updated: 2026-03-22 after 03-01 completion (evaluation runner)*
