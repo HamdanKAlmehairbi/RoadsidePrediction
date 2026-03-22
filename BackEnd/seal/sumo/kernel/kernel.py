@@ -1,4 +1,5 @@
 import numpy as np
+import os
 import time
 import traci
 import warnings
@@ -59,7 +60,12 @@ class SumoKernel():
             List[str]: The command line argument list of commands to be used for starting
                 SUMO.
         """
-        program_cmd = "sumo-gui" if self.config["gui"] == True else "sumo"
+        sumo_binary = "sumo-gui" if self.config["gui"] == True else "sumo"
+        sumo_home = os.environ.get("SUMO_HOME", "")
+        if sumo_home:
+            program_cmd = os.path.join(sumo_home, "bin", sumo_binary)
+        else:
+            program_cmd = sumo_binary
         command_args = [program_cmd]
         if verbose == 0:
             command_args.extend(["--no-warnings", "true"])

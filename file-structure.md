@@ -19,16 +19,21 @@
 │   ├── netfiles.py                 # Copied from SUMO-FedRL-main/netfiles.py
 │   ├── requirements.txt            # fastapi, uvicorn, websockets
 │   ├── README.md                   # Setup instructions, SUMO install guide, API docs
+│   ├── trained_weights/             # Output dir for newly trained weights (auto-created)
 │   └── api/
 │       ├── __init__.py
 │       ├── main.py                 # FastAPI app, CORS, router mounting
 │       ├── jobs.py                 # In-memory job store (job_id -> status/queue/results)
+│       ├── training_runner.py      # SEAL trainer wrapper: Ray singleton, per-episode streaming, topology mapping
+│       ├── baselines/
+│       │   ├── __init__.py
+│       │   └── max_pressure.py     # Max-pressure baseline: selects phase with highest upstream-downstream queue diff
 │       ├── routes/
 │       │   ├── __init__.py
 │       │   ├── networks.py         # GET /api/networks, GET /api/network/{topology}
-│       │   ├── weights.py          # GET /api/weights (scans weight directory tree)
-│       │   ├── simulate.py         # POST /api/simulate (launches SUMO/mock sim)
-│       │   ├── train.py            # POST /api/train (launches training/mock)
+│       │   ├── weights.py          # GET /api/weights (scans example_weights/ + trained_weights/)
+│       │   ├── simulate.py         # POST /api/simulate (RL policy / fixed-timing / max-pressure via SUMO)
+│       │   ├── train.py            # POST /api/train (real SEAL training with mock fallback)
 │       │   └── results.py          # GET /api/results/{job_id}
 │       └── ws/
 │           ├── __init__.py

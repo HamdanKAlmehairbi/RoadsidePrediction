@@ -7,8 +7,9 @@ from abc import ABC, abstractmethod
 from collections import defaultdict
 from pandas import DataFrame
 from seal.logging import *
-from ray.rllib.agents import (a3c, dqn, ppo)
-from ray.rllib.agents.callbacks import DefaultCallbacks
+from ray.rllib.algorithms.ppo import PPO, PPOConfig, PPOTorchPolicy
+from ray.rllib.algorithms.callbacks import DefaultCallbacks
+from ray.rllib.policy import Policy
 from time import ctime
 from typing import Any, Callable, Dict, List, Tuple
 
@@ -37,8 +38,8 @@ class BaseTrainer(ABC):
     out_weights_dir: str
     policy: str
     policy_mapping_fn: Callable
-    policy_type: ray.rllib.policy.Policy
-    trainer_type: ray.rllib.agents.trainer.Trainer
+    policy_type: type
+    algorithm_cls: type
 
     def __init__(
             self,
@@ -116,7 +117,7 @@ class BaseTrainer(ABC):
             raise NotImplementedError("Cannot load policy using abstract `BaseTrainer` "
                                       "class.")
         self.on_setup()
-        self.ray_trainer.restore(checkpoint)
+        self.ray_trainer.restore(str(checkpoint))
 
     # ------------------------------------------------------------------------- #
 
@@ -163,42 +164,39 @@ class BaseTrainer(ABC):
     # ------------------------------------------------------------------------- #
 
     def __load_policy_type(self) -> None:
-        if self.policy == "a3c":
-            self.trainer_type = a3c.A3CTrainer
-            self.policy_type = a3c.a3c_torch_policy
-        elif self.policy == "dqn":
-            self.trainer_type = dqn.DQNTrainer
-            self.policy_type = dqn.DQNTorchPolicy
-        elif self.policy == "ppo":
-            self.trainer_type = ppo.PPOTrainer
-            self.policy_type = ppo.PPOTorchPolicy
+        if self.policy == "ppo":
+            self.algorithm_cls = PPO
+            self.policy_type = PPOTorchPolicy
         else:
-            raise NotImplemented(f"Do not support policies for `{policy}`.")
+            raise NotImplementedError(f"Do not support policies for `{self.policy}`. "
+                                      f"Only 'ppo' is supported.")
 
     # ------------------------------------------------------------------------- #
 
-    def init_config(self) -> Dict[str, Any]:
-        config = {
-            "env_config": self.env_config_fn(),
-            "framework": "torch",
-            "log_level": self.log_level,
-            "lr": self.learning_rate,
-            "multiagent": {
-                "policies": self.policies,
-                "policy_mapping_fn": self.policy_mapping_fn
-            },
-            "num_gpus": self.num_gpus,
-            "num_workers": self.num_workers,
-            "seed": RAY_TRAINER_SEED,
-            "callbacks": self.communication_callback_cls,
-            # "train_batch_size": 100,
-            # "rollout_fragment_length": 100,
-            # "batch_mode": "complete_episodes",
-            # "horizon": 450, # NOTE: Will terminate the episode early (faster training).
-            #                 #       This value represents an hour / 8.
-        }
+    def init_config(self) -> PPOConfig:
+        config = (
+            PPOConfig()
+            .api_stack(
+                enable_rl_module_and_learner=False,
+                enable_env_runner_and_connector_v2=False,
+            )
+            .environment(
+                env=self.env,
+                env_config=self.env_config_fn(),
+            )
+            .framework("torch")
+            .debugging(log_level=self.log_level, seed=RAY_TRAINER_SEED)
+            .training(lr=self.learning_rate, gamma=self.gamma)
+            .multi_agent(
+                policies=self.policies,
+                policy_mapping_fn=self.policy_mapping_fn,
+            )
+            .resources(num_gpus=self.num_gpus)
+            .env_runners(num_env_runners=self.num_workers)
+            .callbacks(self.communication_callback_cls)
+        )
         if self.trainer_kwargs is not None:
-            config.update(self.trainer_kwargs)
+            config = config.update_from_dict(self.trainer_kwargs)
         return config
 
     def env_config_fn(self) -> Dict[str, Any]:
@@ -230,9 +228,10 @@ class BaseTrainer(ABC):
     # ------------------------------------------------------------------------- #
 
     def on_setup(self) -> None:
-        ray.init(include_dashboard=False)
-        self.ray_trainer = self.trainer_type(env=self.env,
-                                             config=self.init_config())
+        if not ray.is_initialized():
+            ray.init(ignore_reinit_error=True)
+        config = self.init_config()
+        self.ray_trainer = config.build()
         out_dir = self.out_checkpoint_dir
         self.model_path = os.path.join(out_dir, self.get_filename())
         self.training_data = defaultdict(list)
@@ -240,8 +239,22 @@ class BaseTrainer(ABC):
     def on_tear_down(self) -> DataFrame:
         self.ray_trainer.save(self.model_path)
         self.ray_trainer.stop()
-        ray.shutdown()
         return DataFrame.from_dict(self.training_data)
+
+    def _get_result_value(self, key, default=None):
+        """Safely access result dict keys, handling Ray 2.x nested structure."""
+        # Try direct access first (old API stack usually keeps flat keys)
+        if key in self._result:
+            return self._result[key]
+        # Try under env_runners (Ray 2.x new structure)
+        env_runners = self._result.get("env_runners", {})
+        if key in env_runners:
+            return env_runners[key]
+        # Try sampler_results (another possible location)
+        sampler = self._result.get("sampler_results", {})
+        if key in sampler:
+            return sampler[key]
+        return default
 
     def on_logging_step(self) -> None:
         status = "{}Ep. #{} | ranked={} | Mean reward: {:6.2f} | Mean length: {:4.2f} | Saved {} ({})"
@@ -249,8 +262,8 @@ class BaseTrainer(ABC):
             "" if self.trainer_name is None else f"[{self.trainer_name}] ",
             self._round+1,
             self.ranked,
-            self._result["episode_reward_mean"],
-            self._result["episode_len_mean"],
+            self._get_result_value("episode_reward_mean", 0.0),
+            self._get_result_value("episode_len_mean", 0.0),
             self.model_path.split(os.sep)[-1],
             ctime()
         ))

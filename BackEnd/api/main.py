@@ -12,8 +12,20 @@ from .ws.simulate import router as ws_simulate_router
 from .ws.train import router as ws_train_router
 
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="SEAL Dashboard API", version="1.0.0")
+
+
+@app.on_event("startup")
+def startup_init_ray():
+    """Initialize Ray on server startup (must be from main thread)."""
+    try:
+        from .training_runner import ensure_ray
+        ensure_ray()
+        logger.info("Ray initialized at server startup")
+    except Exception as e:
+        logger.warning("Ray init at startup failed (will retry on demand): %s", e)
 
 # CORS for frontend at localhost:5173
 app.add_middleware(

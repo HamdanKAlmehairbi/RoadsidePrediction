@@ -5,9 +5,10 @@ RESOURCES:
 '''
 
 from collections import defaultdict
-from ray.rllib.agents.callbacks import DefaultCallbacks
+from ray.rllib.algorithms.callbacks import DefaultCallbacks
 from ray.rllib.env import BaseEnv
-from ray.rllib.evaluation import MultiAgentEpisode, RolloutWorker
+from ray.rllib.evaluation import RolloutWorker
+from ray.rllib.evaluation.episode_v2 import EpisodeV2
 from ray.rllib.policy import Policy
 from seal.trainer.communication import *
 from typing import Dict
@@ -15,15 +16,13 @@ from typing import Dict
 
 class BaseCommCallback(DefaultCallbacks):
 
-    def on_episode_start(self, *, worker: RolloutWorker, base_env: BaseEnv,
-                         policies: Dict[str, Policy], episode: MultiAgentEpisode,
-                         env_index: int, **kwargs) -> None:
+    def on_episode_start(self, *, worker=None, base_env=None,
+                         policies=None, episode, env_index=0, **kwargs) -> None:
         self.comm_cost = defaultdict(int)
         episode.user_data["comm_cost"] = defaultdict(int)
 
-    def on_episode_end(self, *, worker: RolloutWorker, base_env: BaseEnv,
-                       policies: Dict[str, Policy], episode: MultiAgentEpisode,
-                       env_index: int, **kwargs) -> None:
+    def on_episode_end(self, *, worker=None, base_env=None,
+                       policies=None, episode, env_index=0, **kwargs) -> None:
         for key in self.comm_cost:
             comm_type, policy_id = key
             comm_type = comm_type.replace("_", "-")
@@ -37,6 +36,5 @@ class BaseCommCallback(DefaultCallbacks):
         # Reset the episode's data.
         episode.user_data["comm_cost"] = defaultdict(int)
 
-    def on_train_result(self, *, trainer, result: dict, **kwargs) -> None:
+    def on_train_result(self, *, algorithm=None, result: dict, **kwargs) -> None:
         result["callback_ok"] = True
-        # result["reward_this_iteration"] = self.iteration_reward

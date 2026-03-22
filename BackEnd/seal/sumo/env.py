@@ -1,6 +1,6 @@
 import numpy as np
 
-from gym import spaces
+from gymnasium import spaces
 from seal.sumo.config import *
 from seal.sumo.abstract_env import AbstractSumoEnv
 from typing import Any, Dict, List, Tuple
@@ -46,7 +46,7 @@ class SumoEnv(AbstractSumoEnv):
     def observation_spaces(self, tls_id) -> spaces.Space:
         return self.kernel.tls_hub[tls_id].observation_space
 
-    def step(self, action_dict: Dict[Any, int]) -> Tuple[Dict, Dict, Dict, Dict]:
+    def step(self, action_dict: Dict[Any, int]) -> Tuple[Dict, Dict, Dict, Dict, Dict]:
         if action_dict is not None:
             taken_action = self._do_action(action_dict)
         self.kernel.step()
@@ -54,11 +54,14 @@ class SumoEnv(AbstractSumoEnv):
         obs = self._observe()
         reward = {tls.id: self._get_reward(obs[tls.id])
                   for tls in self.kernel.tls_hub}
-        done = {"__all__": self.__get_done()}
+        is_done = self.__get_done()
+        # Ray RLLib old API stack uses terminated/truncated dicts with __all__ key
+        terminated = {"__all__": is_done and not self.__is_truncated()}
+        truncated = {"__all__": is_done and self.__is_truncated()}
         info = {tls.id: {"is_ranked": self.ranked,
                          "veh2tls_comms": tls.get_num_of_controlled_vehicles()}
                 for tls in self.kernel.tls_hub}
-        return obs, reward, done, info
+        return obs, reward, terminated, truncated, info
 
     def _do_action(self, actions: Dict[Any, int]) -> List[int]:
         """Perform the provided action for each trafficlight.
@@ -88,6 +91,12 @@ class SumoEnv(AbstractSumoEnv):
             return True
         else:
             return self.kernel.done()
+
+    def __is_truncated(self) -> bool:
+        """True when episode ends due to horizon limit, not natural termination."""
+        if self.horizon is not None and self.step_counter >= self.horizon:
+            return True
+        return False
 
     def _get_reward(self, obs: np.ndarray) -> float:
         """Negative reward function based on the number of halting vehicles, waiting time,

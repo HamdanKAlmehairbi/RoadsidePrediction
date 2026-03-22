@@ -4,7 +4,7 @@ import random
 import traci
 import xml.etree.ElementTree as ET
 
-from gym import spaces
+from gymnasium import spaces
 from scipy import stats
 from typing import List
 
@@ -47,8 +47,8 @@ class TrafficLight:
         self.ranked = ranked
 
     @property
-    def action_space(self) -> spaces.Box:
-        return spaces.Box(low=0, high=1, shape=(1,), dtype=int)
+    def action_space(self) -> spaces.Discrete:
+        return spaces.Discrete(2)  # 0 = stay, 1 = advance to next phase
 
     @property
     def observation_space(self) -> spaces.Tuple:

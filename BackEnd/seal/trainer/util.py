@@ -22,5 +22,5 @@ def get_env_config(**kwargs):
     }
     return config
 
-def eval_policy_mapping_fn(key) -> str:
+def eval_policy_mapping_fn(key, *args, **kwargs) -> str:
     return GLOBAL_POLICY_VAR

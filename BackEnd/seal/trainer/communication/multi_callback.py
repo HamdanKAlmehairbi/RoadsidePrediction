@@ -1,7 +1,6 @@
-from ray.rllib.env import BaseEnv
-from ray.rllib.evaluation import MultiAgentEpisode, RolloutWorker
 from seal.trainer.communication import *
 from seal.trainer.communication.base_callback import BaseCommCallback
+
 
 class MultiPolicyCommCallback(BaseCommCallback):
     '''
@@ -14,12 +13,9 @@ class MultiPolicyCommCallback(BaseCommCallback):
         * tls2edge_obs    += 0
         * veh2tls         += 1 (per vehicle)
     '''
-    def on_episode_step(self, *, worker: RolloutWorker, base_env: BaseEnv,
-                        episode: MultiAgentEpisode, env_index: int, **kwargs) -> None:
-        # For some reason, the results of this function return a set of tuples of
-        # identical keys... Not sure why, but that's why we only consider the 0th
-        # elements of tuples.
-        agent_ids = set([tuple[0] for tuple in episode.agent_rewards.keys()])
+    def on_episode_step(self, *, worker=None, base_env=None,
+                        episode, env_index=0, **kwargs) -> None:
+        agent_ids = set([pair[0] for pair in episode.agent_rewards.keys()])
         for idx in agent_ids:
             info_dict = episode.last_info_for(idx)
             self.comm_cost[EDGE2TLS_POLICY, idx] += 0

@@ -40,7 +40,7 @@ class FedPolicyTrainer(BaseTrainer):
         self.idx = self.get_key_count()
         self.incr_key_count()
         self.policy_config = {}
-        self.policy_mapping_fn = lambda agent_id: agent_id
+        self.policy_mapping_fn = lambda agent_id, *args, **kwargs: agent_id
         self.communication_callback_cls = FedRLCommCallback
         self.reward_tracker = defaultdict(float)
         self.episode_data = defaultdict(lambda: defaultdict(float))
@@ -67,21 +67,25 @@ class FedPolicyTrainer(BaseTrainer):
         self.training_data["fed_round"].append(aggregate_this_round)
         self.training_data["ranked"].append(self.ranked)
         self.training_data["weight_aggr_fn"].append(self.weight_fn)
-        for key, value in self._result.items():
-            self.training_data[key].append(value)
+        # Store key metrics from env_runners (Ray 2.x) or top-level (Ray 1.x)
+        env_runners = self._result.get("env_runners", self._result)
+        self.training_data["episode_reward_mean"].append(
+            env_runners.get("episode_reward_mean", 0.0))
+        self.training_data["episode_len_mean"].append(
+            env_runners.get("episode_len_mean", 0.0))
 
         # Track the reward for this policy during this training step. This is only
         # used for the FedAvg subroutine in the AGGREGATION step.
         parsed_data = DataParser(self._result)
+        policy_reward_mean = self._get_result_value("policy_reward_mean", {})
         for policy in self.policies:
             if policy != GLOBAL_POLICY_VAR:
                 self.episode_data[policy]["reward"] += parsed_data.policy_reward(
                     policy)
                 self.episode_data[policy]["num_vehicles"] += parsed_data.num_vehicles(
                     policy)
-                #
                 self.reward_tracker[policy] += \
-                    self._result["policy_reward_mean"].get(policy, MIN_REWARD)
+                    policy_reward_mean.get(policy, MIN_REWARD)
 
         # Aggregate the weights via the Federated Averaging algorithm.
         if aggregate_this_round:
@@ -183,8 +187,8 @@ class FedPolicyTrainer(BaseTrainer):
             self._round+1,
             self.ranked,
             aggregate_this_round,
-            self._result["episode_reward_mean"],
-            self._result["episode_len_mean"],
+            self._get_result_value("episode_reward_mean", 0.0),
+            self._get_result_value("episode_len_mean", 0.0),
             self.model_path.split(os.sep)[-1],
             ctime()
         ))

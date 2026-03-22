@@ -6,53 +6,35 @@ class DataParser:
 
     def __init__(self, result_data) -> None:
         self.result_data = deepcopy(result_data)
+        # Ray 2.x nests stats under "env_runners"; Ray 1.x has them at top level
+        env_runners = self.result_data.get("env_runners", {})
+        self._hist_stats = env_runners.get("hist_stats",
+                               self.result_data.get("hist_stats", {}))
+        self._episodes_this_iter = env_runners.get("episodes_this_iter",
+                                       self.result_data.get("episodes_this_iter", 1))
 
     def episode_reward(self, iteration: int = -1) -> float:
-        reward = self.result_data["hist_stats"]["episode_reward"][iteration]
+        reward = self._hist_stats["episode_reward"][iteration]
         return reward
 
     def policy_reward(self, policy_id: str, iteration: int = -1) -> float:
-        """Gets the reward that the passed in policy received during training iteration
-           (`iteration`). By default, the returned policy reward will be the most recent.
-
-        Args:
-            policy_id (str): ID of the policy.
-            iteration (int, optional): Iteration index during the episode. Defaults to -1.
-
-        Returns:
-            float: Policy reward during the specified iteration of the results.
-        """
         policy_key = f"policy_{policy_id}_reward"
-        reward = self.result_data["hist_stats"][policy_key][iteration]
-        return reward
+        if policy_key in self._hist_stats:
+            reward = self._hist_stats[policy_key][iteration]
+            return reward
+        return 0.0
 
     def episode_comm_cost(self, comm_type: str = None, iteration: int = -1) -> int:
-        """Gets the total communication cost for either a specified communication type
-           (`comm_type`) or, by default, across all communication types (i.e.,
-           `comm_type=None`). This is done for the specified `iteration`, which by
-           default is to consider the most recent comm_cost.
-
-        Args:
-            comm_type (str, optional): Communication type to return. Defaults to None.
-            iteration (int, optional): Which iteration to consider. Defaults to -1.
-
-        Raises:
-            ValueError: This might occur for some reason unknown at this point.
-
-        Returns:
-            int: Communication costs based on specified arguments.
-        """
         if comm_type is None:
             return sum(self.episode_comm_cost(c, iteration)
                        for c in COMM_TYPES)
         else:
             assert comm_type in COMM_TYPES
             query = f"comm={comm_type}"
-            for key in self.result_data["hist_stats"]:
+            for key in self._hist_stats:
                 if query in key:
-                    return self.result_data["hist_stats"][key][iteration]
-            raise ValueError("Somehow, an error occurred when trying to get "
-                             "communication cost.")
+                    return self._hist_stats[key][iteration]
+            return 0
 
     def policy_comm_cost(
         self,
@@ -61,24 +43,28 @@ class DataParser:
         iteration: int = None
     ) -> int:
         policy_key = f"policy_{policy_id}_comm={comm_type}"
+        if policy_key not in self._hist_stats:
+            return 0
         if iteration is None:
-            i = self.results_data["episodes_this_iter"]
-            comm_cost = sum(self.result_data["hist_stats"][policy_key][-i:])
+            i = self._episodes_this_iter
+            comm_cost = sum(self._hist_stats[policy_key][-i:])
         else:
-            comm_cost = self.result_data["hist_stats"][policy_key][iteration]
+            comm_cost = self._hist_stats[policy_key][iteration]
         return comm_cost
 
     def num_vehicles(self, policy_id: str, iteration=None) -> int:
         policy_key = f"policy_{policy_id}_comm={VEH2TLS_COMM}"
+        if policy_key not in self._hist_stats:
+            return 0
         if iteration is None:
-            i = self.result_data["episodes_this_iter"]
-            n_vehicles = sum(self.result_data["hist_stats"][policy_key][-i:])
+            i = self._episodes_this_iter
+            n_vehicles = sum(self._hist_stats[policy_key][-i:])
         else:
-            n_vehicles = self.result_data["hist_stats"][policy_key][iteration]
+            n_vehicles = self._hist_stats[policy_key][iteration]
         return n_vehicles
-
-    ## -------------------------------------------------------------------------------- ##
 
     @property
     def episode_reward_max(self) -> float:
-        return self.result_data.episode_reward_max
+        env_runners = self.result_data.get("env_runners", {})
+        return env_runners.get("episode_reward_max",
+                   self.result_data.get("episode_reward_max", 0.0))

@@ -65,14 +65,53 @@ def _run_training_sync(job_id: str, trainer: str, aggr: Optional[str],
 
 
 def _put_frame(queue, frame, loop):
-    """Thread-safe put into asyncio queue."""
-    future = asyncio.run_coroutine_threadsafe(queue.put(frame), loop)
+    """Thread-safe put into asyncio queue. Drops oldest frame if queue is full."""
+    async def _put_or_drop():
+        if queue.full():
+            try:
+                queue.get_nowait()  # Drop oldest frame
+            except asyncio.QueueEmpty:
+                pass
+        await queue.put(frame)
+    future = asyncio.run_coroutine_threadsafe(_put_or_drop(), loop)
     future.result(timeout=10)
 
 
 def _run_real_training(job_id, trainer, aggr, topology, ranked, n_episodes, fed_step, queue, loop):
-    """Attempt real training with SEAL framework."""
-    raise NotImplementedError("Real training requires Ray RLLib + SUMO")
+    """Run real training with SEAL framework (Ray RLLib + SUMO)."""
+    from ..training_runner import create_trainer, run_training_loop
+
+    seal_trainer = create_trainer(
+        trainer_type=trainer,
+        topology=topology,
+        ranked=ranked,
+        fed_step=fed_step,
+        aggr=aggr,
+        n_episodes=n_episodes,
+    )
+
+    def on_episode(ep_num, episode_data):
+        _put_frame(queue, episode_data, loop)
+
+    result = run_training_loop(
+        trainer=seal_trainer,
+        n_episodes=n_episodes,
+        on_episode_done=on_episode,
+    )
+
+    # Extract comm costs from training data if available
+    comm_costs = {}
+    training_data = result.get("training_data", {})
+    # Comm costs are tracked in the callback hist_data, not directly in training_data.
+    # For now, provide placeholder structure; Phase 3 evaluation will compute these properly.
+
+    jobs[job_id]["status"] = "complete"
+    jobs[job_id]["results"] = {
+        "rewards": result["rewards"],
+        "weights_path": result.get("weights_path"),
+        "trip_metrics": {},  # Populated by evaluation in Phase 3
+        "comm_costs": comm_costs,
+    }
 
 
 def _run_mock_training(job_id: str, trainer: str, aggr: Optional[str],

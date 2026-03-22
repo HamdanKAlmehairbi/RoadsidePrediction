@@ -21,7 +21,7 @@ class SinglePolicyTrainer(BaseTrainer):
         self.idx = self.get_key_count()
         self.incr_key_count()
         self.policy_config = {}
-        self.policy_mapping_fn = lambda _: SinglePolicyTrainer.POLICY_KEY
+        self.policy_mapping_fn = lambda _, *args, **kwargs: SinglePolicyTrainer.POLICY_KEY
         self.communication_callback_cls = SinglePolicyCommCallback
 
     def on_make_final_policy(self) -> Weights:
@@ -34,8 +34,11 @@ class SinglePolicyTrainer(BaseTrainer):
         self.training_data["fed_round"].append(False)
         self.training_data["ranked"].append(self.ranked)
         self.training_data["weight_aggr_fn"].append(None)
-        for key, value in self._result.items():
-            self.training_data[key].append(value)
+        env_runners = self._result.get("env_runners", self._result)
+        self.training_data["episode_reward_mean"].append(
+            env_runners.get("episode_reward_mean", 0.0))
+        self.training_data["episode_len_mean"].append(
+            env_runners.get("episode_len_mean", 0.0))
 
     def on_policy_setup(self) -> Dict[str, Tuple[Any]]:
         dummy_env = self.env(config=self.env_config_fn())

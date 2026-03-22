@@ -1,7 +1,7 @@
 import numpy as np
 
 from seal.sumo.config import NUM_TLS_STATES, N_RANKED_FEATURES, N_UNRANKED_FEATURES, SPACE_DTYPE
-from gym.spaces import *
+from gymnasium.spaces import *
 from typing import Any
 
 

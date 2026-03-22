@@ -1,4 +1,4 @@
-import gym
+import gymnasium
 import numpy as np
 import os
 import random
@@ -6,7 +6,7 @@ import random
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Tuple
 
-from ray.rllib.env import MultiAgentEnv
+from ray.rllib.env.multi_agent_env import MultiAgentEnv
 from seal.sumo.config import *
 from seal.sumo.kernel.kernel import SumoKernel
 from seal.sumo.timer import ActionTimer
@@ -49,21 +49,25 @@ class AbstractSumoEnv(ABC, MultiAgentEnv):
         # self.road_capacity = self.kernel.get_road_capacity()
         self.reset()
 
-    def reset(self) -> Any:
+    def reset(self, *, seed=None, options=None) -> Tuple[Any, Dict]:
         """Start the simulation and get details surrounding the world.
 
         Returns
         -------
-        Any
-            The observation of the state space upon resetting the simulation/environment.
+        Tuple[Any, Dict]
+            The observation and info dict upon resetting the simulation/environment.
         """
+        if seed is not None:
+            self.seed(seed)
         self.step_counter = 0
         if self.rand_routes_on_reset or self.__first_rand_routes_flag:
             self.rand_routes()
             self.__first_rand_routes_flag = False
         self.kernel.start()
         self.action_timer.restart()
-        return self._observe()
+        obs = self._observe()
+        info = {agent_id: {} for agent_id in obs}
+        return obs, info
 
     def rand_routes(self) -> None:
         """Generate random routes based on the details in the configuration
@@ -101,7 +105,7 @@ class AbstractSumoEnv(ABC, MultiAgentEnv):
     ## .....ABSTRACT METHODS THAT NEED TO BE IMPLEMENTED BY CHILDREN CLASSES..... ##
     ## ============================================================================== ##
     @abstractmethod
-    def step(self, actions) -> Tuple[Any, Any, Any, Any]:
+    def step(self, actions) -> Tuple[Any, Any, Any, Any, Any]:
         raise NotImplementedError("Cannot be called from Abstract "
                                   "Class `AbstractSumoEnv`.")
 

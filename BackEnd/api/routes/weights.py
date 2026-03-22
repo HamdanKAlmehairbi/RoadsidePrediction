@@ -3,21 +3,23 @@ from fastapi import APIRouter
 
 router = APIRouter()
 
-WEIGHTS_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "example_weights", "ICCPS", "Final")
-WEIGHTS_DIR = os.path.normpath(WEIGHTS_DIR)
+EXAMPLE_WEIGHTS_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "example_weights", "ICCPS", "Final")
+EXAMPLE_WEIGHTS_DIR = os.path.normpath(EXAMPLE_WEIGHTS_DIR)
+
+TRAINED_WEIGHTS_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "trained_weights")
+TRAINED_WEIGHTS_DIR = os.path.normpath(TRAINED_WEIGHTS_DIR)
 
 # Cache: weight_id -> absolute file path
 _weight_map = {}
 
 
-def _build_weight_map():
-    """Walk the weights directory tree and build id -> filepath mapping."""
-    _weight_map.clear()
-    if not os.path.isdir(WEIGHTS_DIR):
+def _scan_example_weights():
+    """Scan pre-trained example weights (ICCPS Final)."""
+    if not os.path.isdir(EXAMPLE_WEIGHTS_DIR):
         return
 
-    for trainer_name in os.listdir(WEIGHTS_DIR):
-        trainer_path = os.path.join(WEIGHTS_DIR, trainer_name)
+    for trainer_name in os.listdir(EXAMPLE_WEIGHTS_DIR):
+        trainer_path = os.path.join(EXAMPLE_WEIGHTS_DIR, trainer_name)
         if not os.path.isdir(trainer_path):
             continue
         for topo_name in os.listdir(trainer_path):
@@ -37,7 +39,51 @@ def _build_weight_map():
                     "aggr": aggr,
                     "topology": topology,
                     "ranked": ranked,
+                    "source": "example",
                 }
+
+
+def _scan_trained_weights():
+    """Scan newly trained weights from BackEnd/trained_weights/.
+
+    Expected structure: trained_weights/weights/<TrainerSubDir>/<net_dir>/<ranked>.pkl
+    e.g. trained_weights/weights/FedRL/grid-3x3/ranked.pkl
+    """
+    weights_root = os.path.join(TRAINED_WEIGHTS_DIR, "weights")
+    if not os.path.isdir(weights_root):
+        return
+
+    for trainer_name in os.listdir(weights_root):
+        trainer_path = os.path.join(weights_root, trainer_name)
+        if not os.path.isdir(trainer_path):
+            continue
+        for topo_name in os.listdir(trainer_path):
+            topo_path = os.path.join(trainer_path, topo_name)
+            if not os.path.isdir(topo_path):
+                continue
+            for filename in os.listdir(topo_path):
+                if not filename.endswith(".pkl"):
+                    continue
+                filepath = os.path.join(topo_path, filename)
+                stem = filename.rsplit(".", 1)[0]  # "ranked" or "unranked"
+                ranked = "unranked" not in stem
+                topo_short = topo_name.replace("grid-", "")
+                weight_id = f"trained-{trainer_name.lower()}-{topo_short}-{stem}"
+                _weight_map[weight_id] = {
+                    "filepath": filepath,
+                    "trainer": trainer_name,
+                    "aggr": None,
+                    "topology": topo_name,
+                    "ranked": ranked,
+                    "source": "trained",
+                }
+
+
+def _build_weight_map():
+    """Walk all weight directories and build id -> filepath mapping."""
+    _weight_map.clear()
+    _scan_example_weights()
+    _scan_trained_weights()
 
 
 def _parse_weight_file(trainer_name: str, topo_name: str, filename: str):
@@ -100,6 +146,7 @@ def list_weights():
             "aggr": info["aggr"],
             "topology": info["topology"],
             "ranked": info["ranked"],
+            "source": info.get("source", "example"),
         })
 
     return {"weights": weights}
