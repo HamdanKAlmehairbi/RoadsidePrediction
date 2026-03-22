@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in_progress
-stopped_at: Completed 03-03-PLAN.md (Monte Carlo orchestration)
-last_updated: "2026-03-22T16:08:02Z"
+stopped_at: Completed 03-04-PLAN.md (Evaluation API and Storage)
+last_updated: "2026-03-22T16:17:00Z"
 progress:
   total_phases: 7
   completed_phases: 0
   total_plans: 5
-  completed_plans: 3
+  completed_plans: 4
 ---
 
 # Project State
@@ -24,19 +24,19 @@ See: .planning/PROJECT.md (updated 2026-03-22)
 ## Current Position
 
 Phase: 03 (Evaluation Framework) — EXECUTING
-Plan: 4 of 5
+Plan: 5 of 5
 Status: In progress
-Last activity: 2026-03-22 — Completed 03-03-PLAN.md
+Last activity: 2026-03-22 — Completed 03-04-PLAN.md
 
-Progress: ███░░ (3/5 plans in phase 03)
+Progress: ████░ (4/5 plans in phase 03)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 12 (Phases 0-2 + 03-01, 03-02, 03-03)
+- Total plans completed: 13 (Phases 0-2 + 03-01, 03-02, 03-03, 03-04)
 - Average duration: N/A (bulk session)
-- Total execution time: ~3 hours (single session) + 12 min (03-01) + ~10 min (03-02) + 2 min (03-03)
+- Total execution time: ~3 hours (single session) + 12 min (03-01) + ~10 min (03-02) + 2 min (03-03) + 8 min (03-04)
 
 **By Phase:**
 
@@ -45,7 +45,7 @@ Progress: ███░░ (3/5 plans in phase 03)
 | 0. Env Setup | 2 | ~20 min | ~10 min |
 | 1. SEAL Engine | 3 | ~45 min | ~15 min |
 | 2. Wire API | 4 | ~90 min | ~22 min |
-| 3. Evaluation Framework | 3/5 done | ~24 min | ~8 min |
+| 3. Evaluation Framework | 4/5 done | ~32 min | ~8 min |
 
 ## Accumulated Context
 
@@ -65,6 +65,10 @@ Recent decisions affecting current work:
 - [Phase 3, 03-03]: Weights resolved once before N-run loop — fast-fail on missing weights
 - [Phase 3, 03-03]: on_progress callback exceptions swallowed — UI errors never abort campaigns
 - [Phase 3, 03-03]: seed = base_seed + i for deterministic reproducibility across runs
+- [Phase 3, 03-04]: Dual-path result lookup (in-memory fast path, disk slow path for restart)
+- [Phase 3, 03-04]: json.dump(default=str) for safe serialization of arbitrary result types
+- [Phase 3, 03-04]: Error results also persisted to disk so GET always returns useful response
+- [Phase 3, 03-04]: include_transfer defaults False — transfer matrix is opt-in (expensive)
 
 ### Pending Todos
 
@@ -72,11 +76,11 @@ None.
 
 ### Blockers/Concerns
 
-- Large grid topologies (5x5, 7x7) may be slow for interactive evaluation — consider async jobs
+- Large grid topologies (5x5, 7x7) may be slow for interactive evaluation — async jobs mitigates this (now implemented in 03-04)
 - Need to verify pre-trained weight compatibility for transfer testing
 
 ## Session Continuity
 
-Last session: 2026-03-22 16:08
-Stopped at: Completed 03-03-PLAN.md
+Last session: 2026-03-22 16:17
+Stopped at: Completed 03-04-PLAN.md
 Resume file: None
