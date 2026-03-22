@@ -18,15 +18,14 @@ Real FedRL experiments working end-to-end with publishable results — training,
 - ✓ **API-02**: RL-controlled simulation with policy inference and TraCI — Phase 2
 - ✓ **API-03**: Weight management scans both example_weights and trained_weights — Phase 2
 - ✓ **API-04**: SUMO_HOME auto-detection for portable deployment — Phase 2
+- ✓ **EVAL-01**: Evaluation runner executes trials across trainers and topologies — Phase 3
+- ✓ **EVAL-02**: Metrics computation (wait time, travel time, throughput, comm cost) — Phase 3
+- ✓ **EVAL-03**: Cross-topology transfer testing matrix — Phase 3
+- ✓ **EVAL-04**: Monte Carlo run management with seed control — Phase 3
+- ✓ **EVAL-05**: Persistent results storage (JSON files) — Phase 3
+- ✓ **EVAL-06**: API endpoints for evaluation jobs — Phase 3
 
 ### Active
-
-- [ ] **EVAL-01**: Evaluation runner executes trials across trainers and topologies
-- [ ] **EVAL-02**: Metrics computation (wait time, travel time, throughput, comm cost)
-- [ ] **EVAL-03**: Cross-topology transfer testing matrix
-- [ ] **EVAL-04**: Monte Carlo run management with seed control
-- [ ] **EVAL-05**: Persistent results storage (JSON files)
-- [ ] **EVAL-06**: API endpoints for evaluation jobs
 - [ ] **EXT-01**: FedProx aggregation with proximal term
 - [ ] **EXT-02**: Cooperative reward shaping with alpha parameter
 - [ ] **EXT-03**: Time-of-day demand curriculum
@@ -75,4 +74,4 @@ Real FedRL experiments working end-to-end with publishable results — training,
 | Frame drop on WebSocket queue | Prevents backpressure blocking training loop | ✓ Good |
 
 ---
-*Last updated: 2026-03-22 after Phase 2 completion*
+*Last updated: 2026-03-22 after Phase 3 completion*
