@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in_progress
-stopped_at: Completed 03-04-PLAN.md (Evaluation API and Storage)
-last_updated: "2026-03-22T16:17:00Z"
+stopped_at: Completed 03-05-PLAN.md (Evaluation Tests and Public API) — Phase 03 COMPLETE
+last_updated: "2026-03-22T16:27:00Z"
 progress:
   total_phases: 7
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 5
-  completed_plans: 4
+  completed_plans: 5
 ---
 
 # Project State
@@ -19,24 +19,24 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-22)
 
 **Core value:** Real FedRL experiments working end-to-end with publishable results
-**Current focus:** Phase 03 — Evaluation Framework
+**Current focus:** Phase 03 complete — ready for Phase 04 (Extensions) or UI phases
 
 ## Current Position
 
-Phase: 03 (Evaluation Framework) — EXECUTING
-Plan: 5 of 5
-Status: In progress
-Last activity: 2026-03-22 — Completed 03-04-PLAN.md
+Phase: 03 (Evaluation Framework) — COMPLETE
+Plan: 5 of 5 (all done)
+Status: Phase complete
+Last activity: 2026-03-22 — Completed 03-05-PLAN.md
 
-Progress: ████░ (4/5 plans in phase 03)
+Progress: █████ (5/5 plans in phase 03)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 13 (Phases 0-2 + 03-01, 03-02, 03-03, 03-04)
+- Total plans completed: 14 (Phases 0-2 + 03-01, 03-02, 03-03, 03-04, 03-05)
 - Average duration: N/A (bulk session)
-- Total execution time: ~3 hours (single session) + 12 min (03-01) + ~10 min (03-02) + 2 min (03-03) + 8 min (03-04)
+- Total execution time: ~3 hours (single session) + 12 min (03-01) + ~10 min (03-02) + 2 min (03-03) + 8 min (03-04) + 10 min (03-05)
 
 **By Phase:**
 
@@ -45,7 +45,7 @@ Progress: ████░ (4/5 plans in phase 03)
 | 0. Env Setup | 2 | ~20 min | ~10 min |
 | 1. SEAL Engine | 3 | ~45 min | ~15 min |
 | 2. Wire API | 4 | ~90 min | ~22 min |
-| 3. Evaluation Framework | 4/5 done | ~32 min | ~8 min |
+| 3. Evaluation Framework | 5/5 done | ~42 min | ~8.4 min |
 
 ## Accumulated Context
 
@@ -69,6 +69,9 @@ Recent decisions affecting current work:
 - [Phase 3, 03-04]: json.dump(default=str) for safe serialization of arbitrary result types
 - [Phase 3, 03-04]: Error results also persisted to disk so GET always returns useful response
 - [Phase 3, 03-04]: include_transfer defaults False — transfer matrix is opt-in (expensive)
+- [Phase 3, 03-05]: raise_server_exceptions=False on TestClient for 202 async endpoint tests
+- [Phase 3, 03-05]: monkeypatch RESULTS_DIR for hermetic store tests (no pollution of real storage)
+- [Phase 3, 03-05]: SUMO_AVAILABLE guard pattern for graceful skip of SUMO-dependent tests
 
 ### Pending Todos
 
@@ -76,11 +79,11 @@ None.
 
 ### Blockers/Concerns
 
-- Large grid topologies (5x5, 7x7) may be slow for interactive evaluation — async jobs mitigates this (now implemented in 03-04)
+- Large grid topologies (5x5, 7x7) may be slow for interactive evaluation — async jobs mitigates this (implemented in 03-04)
 - Need to verify pre-trained weight compatibility for transfer testing
 
 ## Session Continuity
 
-Last session: 2026-03-22 16:17
-Stopped at: Completed 03-04-PLAN.md
+Last session: 2026-03-22 16:27
+Stopped at: Completed 03-05-PLAN.md (Phase 03 complete)
 Resume file: None
