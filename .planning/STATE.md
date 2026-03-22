@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in_progress
-stopped_at: Completed 03-01-PLAN.md (evaluation runner)
-last_updated: "2026-03-22T14:48:00Z"
+stopped_at: Completed 03-03-PLAN.md (Monte Carlo orchestration)
+last_updated: "2026-03-22T16:08:02Z"
 progress:
   total_phases: 7
   completed_phases: 0
   total_plans: 5
-  completed_plans: 1
+  completed_plans: 3
 ---
 
 # Project State
@@ -24,19 +24,19 @@ See: .planning/PROJECT.md (updated 2026-03-22)
 ## Current Position
 
 Phase: 03 (Evaluation Framework) — EXECUTING
-Plan: 2 of 5
+Plan: 4 of 5
 Status: In progress
-Last activity: 2026-03-22 — Completed 03-01-PLAN.md
+Last activity: 2026-03-22 — Completed 03-03-PLAN.md
 
-Progress: █░░░░ (1/5 plans in phase 03)
+Progress: ███░░ (3/5 plans in phase 03)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 10 (Phases 0-2 + 03-01)
+- Total plans completed: 12 (Phases 0-2 + 03-01, 03-02, 03-03)
 - Average duration: N/A (bulk session)
-- Total execution time: ~3 hours (single session) + 12 min (03-01)
+- Total execution time: ~3 hours (single session) + 12 min (03-01) + ~10 min (03-02) + 2 min (03-03)
 
 **By Phase:**
 
@@ -45,7 +45,7 @@ Progress: █░░░░ (1/5 plans in phase 03)
 | 0. Env Setup | 2 | ~20 min | ~10 min |
 | 1. SEAL Engine | 3 | ~45 min | ~15 min |
 | 2. Wire API | 4 | ~90 min | ~22 min |
-| 3. Evaluation Framework | 1/5 done | 12 min | 12 min |
+| 3. Evaluation Framework | 3/5 done | ~24 min | ~8 min |
 
 ## Accumulated Context
 
@@ -61,6 +61,10 @@ Recent decisions affecting current work:
 - [Phase 3, 03-01]: TrialResult dataclass (typed) not plain dict for downstream safety
 - [Phase 3, 03-01]: resolve_weights_path() falls back to example_weights for zero-config use
 - [Phase 3, 03-01]: max-pressure falls back to fixed-time if TraCI unavailable
+- [Phase 3, 03-03]: Stdlib-only aggregation (statistics+math) — avoids numpy in orchestration layer
+- [Phase 3, 03-03]: Weights resolved once before N-run loop — fast-fail on missing weights
+- [Phase 3, 03-03]: on_progress callback exceptions swallowed — UI errors never abort campaigns
+- [Phase 3, 03-03]: seed = base_seed + i for deterministic reproducibility across runs
 
 ### Pending Todos
 
@@ -73,6 +77,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-22 14:48
-Stopped at: Completed 03-01-PLAN.md
+Last session: 2026-03-22 16:08
+Stopped at: Completed 03-03-PLAN.md
 Resume file: None

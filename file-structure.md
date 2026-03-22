@@ -31,7 +31,10 @@
 │       ├── evaluation/
 │       │   ├── __init__.py         # Package init for evaluation module
 │       │   ├── runner.py           # run_trial(): single evaluation episode for any trainer/topology; TrialResult dataclass; resolve_weights_path()
-│       │   └── baselines.py        # run_fixed_time_trial(), run_max_pressure_trial(), run_rl_trial() wrappers
+│       │   ├── baselines.py        # run_fixed_time_trial(), run_max_pressure_trial(), run_rl_trial() wrappers
+│       │   ├── metrics.py          # compute_trial_metrics(), TripinfoMetrics, TrialMetrics, metrics_to_dict()
+│       │   ├── transfer.py         # build_transfer_matrix(), compute_transfer_gap(), transfer_matrix_to_dict()
+│       │   └── monte_carlo.py      # MCConfig, MCAggregatedResult, run_monte_carlo(), run_full_campaign(), campaign_to_dict()
 │       ├── routes/
 │       │   ├── __init__.py
 │       │   ├── networks.py         # GET /api/networks, GET /api/network/{topology}
