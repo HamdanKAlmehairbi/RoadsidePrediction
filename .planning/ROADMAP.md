@@ -94,7 +94,7 @@ Plans:
 
 Plans:
 - [ ] 04-01-PLAN.md — FedProx proximal policy and FedPolicyTrainer integration
-- [ ] 04-02-PLAN.md — Cooperative reward shaping with alpha parameter
+- [x] 04-02-PLAN.md — Cooperative reward shaping with alpha parameter
 - [ ] 04-03-PLAN.md — Time-of-day demand curriculum, time encoding, and API wiring for all Phase 4 params
 
 ### Phase 5: Advanced Extensions
@@ -138,7 +138,7 @@ Plans:
 | 1. Modernize SEAL Engine | 3/3 | Complete | 2026-03-22 |
 | 2. Wire Real Training + Simulation | 4/4 | Complete | 2026-03-22 |
 | 3. Evaluation Framework | 5/5 | Complete | 2026-03-22 |
-| 4. Core Extensions | 0/3 | Not started | - |
+| 4. Core Extensions | 1/3 | In Progress|  |
 | 5. Advanced Extensions | 0/3 | Not started | - |
 | 6. Frontend Enhancements | 0/3 | Not started | - |
 
