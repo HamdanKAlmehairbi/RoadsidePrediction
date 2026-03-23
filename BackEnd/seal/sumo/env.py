@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Tuple
 class SumoEnv(AbstractSumoEnv):
 
     def __init__(self, config):
+        self.alpha = config.get("alpha", 1.0)
         super().__init__(config)
 
     @property
@@ -52,8 +53,7 @@ class SumoEnv(AbstractSumoEnv):
         self.kernel.step()
         self.step_counter += 1
         obs = self._observe()
-        reward = {tls.id: self._get_reward(obs[tls.id])
-                  for tls in self.kernel.tls_hub}
+        reward = self._get_all_rewards(obs)
         is_done = self.__get_done()
         # Ray RLLib old API stack uses terminated/truncated dicts with __all__ key
         terminated = {"__all__": is_done and not self.__is_truncated()}
@@ -98,9 +98,8 @@ class SumoEnv(AbstractSumoEnv):
             return True
         return False
 
-    def _get_reward(self, obs: np.ndarray) -> float:
-        """Negative reward function based on the number of halting vehicles, waiting time,
-           and travel time.
+    def _get_local_reward(self, obs: np.ndarray) -> float:
+        """Per-TLS local reward based on occupancy.
 
         Parameters
         ----------
@@ -110,9 +109,53 @@ class SumoEnv(AbstractSumoEnv):
         Returns
         -------
         float
-            The reward for this step
+            The local reward for this step.
         """
         return -1 * (obs[LANE_OCCUPANCY] + obs[HALTED_LANE_OCCUPANCY])**2
+
+    def _get_reward(self, obs: np.ndarray) -> float:
+        """Backward-compatible wrapper that delegates to _get_local_reward.
+
+        Satisfies the abstract method contract from AbstractSumoEnv.
+        """
+        return self._get_local_reward(obs)
+
+    def _get_all_rewards(self, obs: dict) -> dict:
+        """Compute rewards with optional cooperative blending.
+
+        When alpha=1.0, returns pure local rewards (backward compatible).
+        When alpha<1.0, blends local reward with mean neighbor reward.
+
+        Parameters
+        ----------
+        obs : dict
+            Dict mapping TLS id to observation array.
+
+        Returns
+        -------
+        dict
+            Dict mapping TLS id to (possibly blended) reward float.
+        """
+        local_rewards = {
+            tls.id: self._get_local_reward(obs[tls.id])
+            for tls in self.kernel.tls_hub
+        }
+        if self.alpha >= 1.0:
+            return local_rewards
+
+        graph = self.kernel.tls_hub.tls_graph
+        cooperative_rewards = {}
+        for tls in self.kernel.tls_hub:
+            neighbors = graph.get(tls.id, [])
+            if neighbors:
+                neighbor_mean = sum(local_rewards[n] for n in neighbors) / len(neighbors)
+            else:
+                neighbor_mean = local_rewards[tls.id]
+            cooperative_rewards[tls.id] = (
+                self.alpha * local_rewards[tls.id]
+                + (1.0 - self.alpha) * neighbor_mean
+            )
+        return cooperative_rewards
 
     def _observe(self) -> Dict[Any, np.ndarray]:
         """Get the observations across all the trafficlights, indexed by trafficlight id.
