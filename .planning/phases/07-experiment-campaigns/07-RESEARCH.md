@@ -25,7 +25,7 @@ A critical finding: the example_weights directory has paper-original weights for
 |----|-------------|------------------|
 | CAMP-01 | Reproduce baseline paper results: FedRL vs MARL vs SARL vs fixed-time on grid-3x3, grid-5x5 | Example weights exist; resolve naming mismatch; use existing run_full_campaign() |
 | CAMP-02 | Extension ablation: FedProx (mu in {0.0, 0.01, 0.1}) vs FedAvg baseline | Needs fresh training runs per mu value; runner already supports fedprox_mu param |
-| CAMP-03 | Extension ablation: cooperative reward (alpha in {1.0, 0.5, 0.0}) vs selfish baseline | Training + evaluation; runner already supports alpha param |
+| CAMP-03 | Extension ablation: cooperative reward (alpha in {1.0, 0.5, 0.1}) vs selfish baseline | Training + evaluation; runner already supports alpha param |
 | CAMP-04 | Extension ablation: time-of-day curriculum vs fixed demand | Training + evaluation; runner supports time_of_day + use_time_encoding params |
 | CAMP-05 | Statistical rigor: 10 MC seeds per config, 95% CI, Wilcoxon significance test | Already implemented in monte_carlo.py for eval; need seed-controlled training too |
 | CAMP-06 | Publishable output: comparison tables (LaTeX-compatible), bar charts with error bars | Matplotlib + pandas; paper notebooks use seaborn barplot with CI |
