@@ -160,8 +160,8 @@ def test_wilcoxon_compare_significant():
 
     out = wilcoxon_compare(result_a, result_b, metric="avg_waiting_time")
 
-    assert out["valid"] is True, f"Expected valid=True, got: {out}"
-    assert out["significant"] is True, f"Expected significant=True, p={out.get('p_value')}"
+    assert out["valid"] == True, f"Expected valid=True, got: {out}"
+    assert out["significant"] == True, f"Expected significant=True, p={out.get('p_value')}"
     assert out["p_value"] < 0.05, f"Expected p < 0.05, got {out['p_value']}"
 
 
@@ -176,7 +176,7 @@ def test_wilcoxon_compare_insufficient_samples():
 
     out = wilcoxon_compare(result_a, result_b, metric="avg_waiting_time")
 
-    assert out["valid"] is False, f"Expected valid=False for n=3, got: {out}"
+    assert out["valid"] == False, f"Expected valid=False for n=3, got: {out}"
     assert "insufficient" in out["reason"], f"Expected 'insufficient' in reason, got: {out['reason']}"
 
 
