@@ -26,6 +26,7 @@ class AbstractSumoEnv(ABC, MultiAgentEnv):
         # Ex: "foo/bar" => "foo"
         self.path = os.path.split(self.config["net-file"])[0]
         self.horizon = config.get("horizon", None)
+        self.time_of_day = config.get("time_of_day", False)
 
         # Check if the user provided a route-file to be used for simulations and if the
         # user wants random routes to be generated for EACH trial (rand_routes_on_reset).
@@ -42,6 +43,9 @@ class AbstractSumoEnv(ABC, MultiAgentEnv):
         else:
             self.rand_routes_on_reset = False
             self.__first_rand_routes_flag = False
+
+        if self.time_of_day:
+            self.rand_routes_on_reset = True
 
         self.kernel = SumoKernel(self.config)
         self.action_timer = ActionTimer(len(self.kernel.tls_hub))
@@ -80,6 +84,19 @@ class AbstractSumoEnv(ABC, MultiAgentEnv):
         if self.use_dynamic_seed:
             self.rand_route_args["seed"] = self.env_seed
             self.env_seed += 1
+
+        if self.time_of_day:
+            # Sample demand from time-of-day range per episode
+            period = random.choice(["am_rush", "midday", "pm_rush"])
+            vplph_ranges = {
+                "am_rush": (500, 700),
+                "midday": (200, 300),
+                "pm_rush": (400, 600),
+            }
+            lo, hi = vplph_ranges[period]
+            vplph = random.randint(lo, hi)
+            self.rand_route_args["vehicles_per_lane_per_hour"] = vplph
+
         generate_random_routes(
             netfile=netfile,
             path=self.path,

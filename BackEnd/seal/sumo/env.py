@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 
 from gymnasium import spaces
@@ -10,6 +12,7 @@ class SumoEnv(AbstractSumoEnv):
 
     def __init__(self, config):
         self.alpha = config.get("alpha", 1.0)
+        self.use_time_encoding = config.get("use_time_encoding", False)
         super().__init__(config)
 
     @property
@@ -39,7 +42,13 @@ class SumoEnv(AbstractSumoEnv):
             Space: Observation space for a single traffic light.
         """
         first = self.kernel.tls_hub.index2id[0]
-        return self.kernel.tls_hub[first].observation_space
+        base = self.kernel.tls_hub[first].observation_space
+        if self.use_time_encoding:
+            n = base.shape[0] + 2
+            low = np.concatenate([base.low, np.array([-1.0, -1.0], dtype=np.float32)])
+            high = np.concatenate([base.high, np.array([1.0, 1.0], dtype=np.float32)])
+            return spaces.Box(low=low, high=high, dtype=np.float32)
+        return base
 
     def action_spaces(self, tls_id) -> spaces.Space:
         return self.kernel.tls_hub[tls_id].action_space
@@ -169,6 +178,14 @@ class SumoEnv(AbstractSumoEnv):
         if self.ranked:
             self._get_ranks(obs, halted=False)
             self._get_ranks(obs, halted=True)
+        # Append time encoding AFTER ranking (so rank indices 10-13 are correct)
+        if self.use_time_encoding:
+            horizon = self.horizon or 3600
+            t = self.step_counter
+            sin_t = math.sin(2 * math.pi * t / horizon)
+            cos_t = math.cos(2 * math.pi * t / horizon)
+            for tls_id in obs:
+                obs[tls_id] = np.append(obs[tls_id], [sin_t, cos_t]).astype(np.float32)
         # Clean the observation of NaN and (+/-) Inf values.
         for tls in obs:
             for i in range(len(obs[tls])):
