@@ -283,7 +283,7 @@ def save_campaign_results(
     results_data = [result_to_dict(r) for r in results]
     results_path = os.path.join(output_dir, "results.json")
     with open(results_path, "w", encoding="utf-8") as fp:
-        json.dump(results_data, fp, default=str, indent=2)
+        json.dump({"results": results_data}, fp, default=str, indent=2)
     logger.info("Saved %d campaign results to %s", len(results), results_path)
 
     # Save config.json
