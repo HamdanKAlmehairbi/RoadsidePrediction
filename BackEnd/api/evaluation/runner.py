@@ -131,6 +131,8 @@ def run_trial(
     ranked: bool = True,
     weights_path: Optional[str] = None,
     horizon: int = 450,
+    alpha: float = 1.0,
+    use_time_encoding: bool = False,
 ) -> TrialResult:
     """Execute a single evaluation episode.
 
@@ -165,6 +167,8 @@ def run_trial(
         "use_dynamic_seed": False,
         "rand_route_args": {"seed": seed},
         "horizon": horizon,
+        "alpha": alpha,
+        "use_time_encoding": use_time_encoding,
     }
 
     # --- Policy setup for RL trainers ---

@@ -86,6 +86,9 @@ class BaseTrainer(ABC):
                                                defaults.RAND_ROUTES_ON_RESET)
         self.rand_routes_config = kwargs.get("rand_routes_config",
                                              defaults.RAND_ROUTES_CONFIG)
+        self.alpha = kwargs.get("alpha", 1.0)
+        self.time_of_day = kwargs.get("time_of_day", False)
+        self.use_time_encoding = kwargs.get("use_time_encoding", False)
 
         self.out_prefix = out_prefix
         self.net_dir = self.net_file.split(os.sep)[-1].split(".")[0]
@@ -206,11 +209,9 @@ class BaseTrainer(ABC):
             "rand_routes_on_reset": self.rand_routes_on_reset,
             "ranked": self.ranked,
             "use_dynamic_seed": True,
-            # "horizon": 450,
-            # "rand_route_args": {
-            #     "seed": 0,
-            #     "vehicles_per_lane_per_hour": 360
-            # }
+            "alpha": self.alpha,
+            "time_of_day": self.time_of_day,
+            "use_time_encoding": self.use_time_encoding,
         }
 
     def save_test_policy(self) -> Weights:

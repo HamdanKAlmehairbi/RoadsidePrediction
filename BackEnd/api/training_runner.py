@@ -61,7 +61,9 @@ def get_net_file(topology: str) -> str:
 
 
 def create_trainer(trainer_type: str, topology: str, ranked: bool,
-                   fed_step: int = 1, aggr: str = None, n_episodes: int = 50):
+                   fed_step: int = 1, aggr: str = None, n_episodes: int = 50,
+                   fedprox_mu: float = 0.0, alpha: float = 1.0,
+                   time_of_day: bool = False, use_time_encoding: bool = False):
     """Create a SEAL trainer instance.
 
     Returns the trainer object (not yet setup — call .train() or use
@@ -78,6 +80,9 @@ def create_trainer(trainer_type: str, topology: str, ranked: bool,
         "num_workers": 0,
         "num_gpus": 0,
         "root_dir": [TRAINED_WEIGHTS_DIR],
+        "alpha": alpha,
+        "time_of_day": time_of_day,
+        "use_time_encoding": use_time_encoding,
     }
 
     trainer_upper = trainer_type.upper()
@@ -96,6 +101,7 @@ def create_trainer(trainer_type: str, topology: str, ranked: bool,
         trainer = FedPolicyTrainer(
             fed_step=fed_step,
             weight_fn=weight_fn,
+            fedprox_mu=fedprox_mu,
             **common_kwargs,
         )
     elif trainer_upper == "MARL":
@@ -188,7 +194,8 @@ def run_training_loop(trainer, n_episodes: int, on_episode_done=None):
     }
 
 
-def build_inference_algorithm(topology: str, ranked: bool):
+def build_inference_algorithm(topology: str, ranked: bool,
+                              use_time_encoding: bool = False):
     """Build a Ray PPO algorithm configured for inference (no training).
 
     Returns (algorithm, agent_ids) where agent_ids are the TLS IDs.
@@ -206,6 +213,7 @@ def build_inference_algorithm(topology: str, ranked: bool):
         "rand_routes_on_reset": True,
         "ranked": ranked,
         "use_dynamic_seed": True,
+        "use_time_encoding": use_time_encoding,
     }
 
     # Create a dummy env to get observation/action spaces and agent IDs

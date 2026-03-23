@@ -22,6 +22,11 @@ class TrainRequest(BaseModel):
     ranked: bool = True
     n_episodes: int = 50
     fed_step: int = 1
+    # Phase 4 extensions
+    fedprox_mu: float = 0.0           # EXT-01: 0.0 = pure FedAvg
+    alpha: float = 1.0                # EXT-02: 1.0 = fully selfish
+    time_of_day: bool = False         # EXT-03: False = fixed demand
+    use_time_encoding: bool = False   # EXT-04: False = 14-feature obs
 
 
 @router.post("/api/train", status_code=202)
@@ -31,32 +36,39 @@ async def start_training(req: TrainRequest):
 
     asyncio.create_task(
         run_training_job(job_id, req.trainer, req.aggr, req.topology,
-                         req.ranked, req.n_episodes, req.fed_step)
+                         req.ranked, req.n_episodes, req.fed_step,
+                         req.fedprox_mu, req.alpha, req.time_of_day,
+                         req.use_time_encoding)
     )
 
     return {"job_id": job_id, "status": "running"}
 
 
 async def run_training_job(job_id: str, trainer: str, aggr: Optional[str],
-                           topology: str, ranked: bool, n_episodes: int, fed_step: int):
+                           topology: str, ranked: bool, n_episodes: int, fed_step: int,
+                           fedprox_mu: float = 0.0, alpha: float = 1.0,
+                           time_of_day: bool = False, use_time_encoding: bool = False):
     """Run training in a thread pool."""
     loop = asyncio.get_event_loop()
     with concurrent.futures.ThreadPoolExecutor() as pool:
         await loop.run_in_executor(
             pool, _run_training_sync, job_id, trainer, aggr, topology,
-            ranked, n_episodes, fed_step, loop
+            ranked, n_episodes, fed_step, fedprox_mu, alpha, time_of_day,
+            use_time_encoding, loop
         )
 
 
 def _run_training_sync(job_id: str, trainer: str, aggr: Optional[str],
                        topology: str, ranked: bool, n_episodes: int,
-                       fed_step: int, loop):
+                       fed_step: int, fedprox_mu: float, alpha: float,
+                       time_of_day: bool, use_time_encoding: bool, loop):
     """Synchronous training runner. Falls back to mock if Ray/SEAL unavailable."""
     queue = jobs[job_id]["frames_queue"]
 
     # Try real training first
     try:
-        _run_real_training(job_id, trainer, aggr, topology, ranked, n_episodes, fed_step, queue, loop)
+        _run_real_training(job_id, trainer, aggr, topology, ranked, n_episodes, fed_step,
+                           fedprox_mu, alpha, time_of_day, use_time_encoding, queue, loop)
         return
     except Exception as e:
         logger.warning("Real training failed, falling back to mock: %s", e)
@@ -77,7 +89,8 @@ def _put_frame(queue, frame, loop):
     future.result(timeout=10)
 
 
-def _run_real_training(job_id, trainer, aggr, topology, ranked, n_episodes, fed_step, queue, loop):
+def _run_real_training(job_id, trainer, aggr, topology, ranked, n_episodes, fed_step,
+                       fedprox_mu, alpha, time_of_day, use_time_encoding, queue, loop):
     """Run real training with SEAL framework (Ray RLLib + SUMO)."""
     from ..training_runner import create_trainer, run_training_loop
 
@@ -88,6 +101,10 @@ def _run_real_training(job_id, trainer, aggr, topology, ranked, n_episodes, fed_
         fed_step=fed_step,
         aggr=aggr,
         n_episodes=n_episodes,
+        fedprox_mu=fedprox_mu,
+        alpha=alpha,
+        time_of_day=time_of_day,
+        use_time_encoding=use_time_encoding,
     )
 
     def on_episode(ep_num, episode_data):
