@@ -169,10 +169,10 @@ Plans:
 **Goal:** Run all experiment campaigns (baseline reproduction, FedProx ablation, cooperative reward ablation, time-of-day ablation) against live SUMO, then generate publishable analysis artifacts (LaTeX tables, bar charts, convergence curves, Wilcoxon significance tests, and summary report)
 **Requirements**: EXP-01 (baseline reproduction run), EXP-02 (FedProx ablation run), EXP-03 (cooperative ablation run), EXP-04 (time-of-day ablation run), EXP-05 (statistical analysis & figures)
 **Depends on:** Phase 7
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
-- [ ] 08-01-PLAN.md — Analysis tooling: multi-topology ablation support, convergence curves, combined tables, report generator
+- [x] 08-01-PLAN.md — Analysis tooling: multi-topology ablation support, convergence curves, combined tables, report generator
 - [ ] 08-02-PLAN.md — Baseline reproduction campaign (dry-run + full run + user checkpoint)
 - [ ] 08-03-PLAN.md — Extension ablation campaigns + full analysis artifact generation + final report
 
