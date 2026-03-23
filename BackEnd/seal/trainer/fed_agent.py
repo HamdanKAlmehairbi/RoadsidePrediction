@@ -6,6 +6,7 @@ from collections import defaultdict
 from seal.sumo.env import SumoEnv
 from typing import Any, Dict, List, NewType
 from seal.trainer.base import BaseTrainer
+from seal.trainer.fedprox_policy import FedProxPPOTorchPolicy
 from seal.trainer.communication.fed_callback import FedRLCommCallback
 from seal.trainer.data.parser import DataParser
 from seal.trainer.util import *
@@ -29,12 +30,17 @@ WEIGHT_FUNCTIONS = {
 
 class FedPolicyTrainer(BaseTrainer):
 
-    def __init__(self, fed_step: int, **kwargs) -> None:
+    def __init__(self, fed_step: int, fedprox_mu: float = 0.0, **kwargs) -> None:
+        self.fedprox_mu = fedprox_mu
         super().__init__(
             env=SumoEnv,
             sub_dir="FedRL",
             **kwargs
         )
+        # Override policy_type AFTER super().__init__() which sets PPOTorchPolicy
+        # via __load_policy_type(). on_policy_setup() reads self.policy_type later.
+        if self.fedprox_mu > 0.0:
+            self.policy_type = FedProxPPOTorchPolicy
         self.trainer_name = "FedRL"
         self.fed_step = fed_step
         self.idx = self.get_key_count()
@@ -94,7 +100,13 @@ class FedPolicyTrainer(BaseTrainer):
                            if policy_id != GLOBAL_POLICY_VAR}
             new_params = self.fedavg(policy_dict)
             for policy_id in self.policies:
-                self.ray_trainer.get_policy(policy_id).set_weights(new_params)
+                policy = self.ray_trainer.get_policy(policy_id)
+                policy.set_weights(new_params)
+                # FedProx: store global weights AFTER setting new aggregated params
+                # so the proximal term pulls toward the fresh global, not stale weights
+                if self.fedprox_mu > 0.0 and hasattr(policy, 'store_global_weights'):
+                    policy.set_fedprox_mu(self.fedprox_mu)
+                    policy.store_global_weights()
 
     '''
     def on_data_recording_step_v1(self) -> None:
