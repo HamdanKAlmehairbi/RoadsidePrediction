@@ -7,6 +7,7 @@ campaign results.json structure defined in 07-03-PLAN.md.
 Run:
     cd BackEnd && python -m pytest tests/test_analysis.py -x -v
 """
+import json
 import math
 import os
 import sys
@@ -24,6 +25,12 @@ from scripts.generate_tables import (
     plot_comparison_bar,
     results_to_dataframe,
     wilcoxon_compare,
+    plot_convergence_curves,
+    select_best_config_name,
+    plot_combined_comparison,
+    plot_per_topology,
+    generate_ablation_table_with_pvalues,
+    generate_combined_extensions_table,
 )
 
 
@@ -63,6 +70,7 @@ def make_mock_result(name, trainer, topology, wait_times, travel_times, rewards)
             "alpha": 1.0,
             "time_of_day": False,
         },
+        "training_rewards": [{"mean_reward": float(i)} for i in range(20)],
         "evaluation": {
             "config": {"trainer": trainer, "topology": topology, "n_runs": n},
             "individual_results": individual,
@@ -218,3 +226,150 @@ def test_plot_comparison_bar_creates_file(tmp_path):
 
     assert os.path.exists(chart_path), "chart.png was not created"
     assert os.path.getsize(chart_path) > 0, "chart.png is empty"
+
+
+# ---------------------------------------------------------------------------
+# New analysis function tests (Task 1)
+# ---------------------------------------------------------------------------
+
+def test_plot_convergence_curves_creates_file(tmp_path):
+    """Convergence curve PNG is created and non-empty from synthetic training_rewards."""
+    result_a = make_mock_result("fedavg_baseline", "FedRL", "grid-3x3", _WAIT_A, _TRAVEL, _REWARDS)
+    result_b = make_mock_result("fedprox_mu0.01", "FedRL", "grid-3x3", _WAIT_B, _TRAVEL, _REWARDS)
+    chart_path = str(tmp_path / "convergence.png")
+    plot_convergence_curves([result_a, result_b], chart_path)
+    assert os.path.exists(chart_path), "convergence.png was not created"
+    assert os.path.getsize(chart_path) > 0, "convergence.png is empty"
+
+
+def test_plot_convergence_curves_skips_none_rewards(tmp_path):
+    """plot_convergence_curves gracefully skips results with training_rewards=None."""
+    result_a = make_mock_result("fedavg_baseline", "FedRL", "grid-3x3", _WAIT_A, _TRAVEL, _REWARDS)
+    result_a["training_rewards"] = None  # No training data
+    chart_path = str(tmp_path / "convergence_none.png")
+    # Should not raise; file may or may not be created (0 valid curves means no file)
+    plot_convergence_curves([result_a], chart_path)
+    # No crash = pass (file may not exist if 0 valid curves)
+
+
+def test_select_best_config_name_returns_minimum():
+    """select_best_config_name returns config with lowest avg_waiting_time_mean."""
+    result_a = make_mock_result("high_wait", "FedRL", "grid-3x3", _WAIT_A, _TRAVEL, _REWARDS)
+    result_b = make_mock_result("low_wait", "FedRL", "grid-3x3", _WAIT_B, _TRAVEL, _REWARDS)
+    best = select_best_config_name([result_a, result_b])
+    assert best == "low_wait", f"Expected 'low_wait' (lower mean), got '{best}'"
+
+
+def test_select_best_config_name_empty():
+    """select_best_config_name returns empty string for empty results list."""
+    result = select_best_config_name([])
+    assert result == "", f"Expected '' for empty input, got '{result}'"
+
+
+def test_plot_combined_comparison_creates_file(tmp_path):
+    """plot_combined_comparison creates non-empty PNG from multiple campaigns."""
+    baseline = make_mock_result("FedRL_3x3", "FedRL", "grid-3x3", _WAIT_A, _TRAVEL, _REWARDS)
+    best_fedprox = make_mock_result("fedprox_mu0.01", "FedRL", "grid-3x3", _WAIT_B, _TRAVEL, _REWARDS)
+    ablation_map = {"FedProx": [best_fedprox]}
+    chart_path = str(tmp_path / "combined.png")
+    plot_combined_comparison([baseline], ablation_map, chart_path)
+    assert os.path.exists(chart_path), "combined.png was not created"
+    assert os.path.getsize(chart_path) > 0, "combined.png is empty"
+
+
+def test_plot_per_topology_creates_file(tmp_path):
+    """plot_per_topology creates non-empty PNG filtering by topology column."""
+    result_3x3 = make_mock_result("cfg_3x3", "FedRL", "grid-3x3", _WAIT_A, _TRAVEL, _REWARDS)
+    result_5x5 = make_mock_result("cfg_5x5", "FedRL", "grid-5x5", _WAIT_B, _TRAVEL, _REWARDS)
+    chart_path = str(tmp_path / "per_topology.png")
+    plot_per_topology([result_3x3, result_5x5], "grid-3x3", "avg_waiting_time", chart_path)
+    assert os.path.exists(chart_path), "per_topology.png was not created"
+    assert os.path.getsize(chart_path) > 0, "per_topology.png is empty"
+
+
+def test_generate_ablation_table_with_pvalues_booktabs(tmp_path):
+    """Ablation table with p-values contains booktabs markers and p= or n/a."""
+    result_base = make_mock_result("fedavg_baseline", "FedRL", "grid-3x3", _WAIT_A, _TRAVEL, _REWARDS)
+    result_other = make_mock_result("fedprox_mu0.01", "FedRL", "grid-3x3", _WAIT_B, _TRAVEL, _REWARDS)
+    table_path = str(tmp_path / "ablation_table.tex")
+    generate_ablation_table_with_pvalues(
+        [result_base, result_other], "fedavg_baseline", "avg_waiting_time", table_path
+    )
+    assert os.path.exists(table_path), "ablation_table.tex was not created"
+    content = open(table_path, encoding="utf-8").read()
+    assert "\\toprule" in content, "Missing \\toprule"
+    assert ("p=" in content or "n/a" in content), "Missing p-value column content"
+
+
+def test_generate_ablation_table_pvalue_na_when_invalid(tmp_path):
+    """Ablation table shows 'n/a' when Wilcoxon is invalid (small samples)."""
+    tiny_waits = [85.0, 90.0, 88.0]
+    tiny_travels = [120.0, 125.0, 122.0]
+    tiny_rewards = [-45.0, -42.0, -44.0]
+    result_base = make_mock_result("fedavg_baseline", "FedRL", "grid-3x3", tiny_waits, tiny_travels, tiny_rewards)
+    result_other = make_mock_result("fedprox_mu0.01", "FedRL", "grid-3x3", tiny_waits, tiny_travels, tiny_rewards)
+    table_path = str(tmp_path / "ablation_na.tex")
+    generate_ablation_table_with_pvalues(
+        [result_base, result_other], "fedavg_baseline", "avg_waiting_time", table_path
+    )
+    content = open(table_path, encoding="utf-8").read()
+    assert "n/a" in content, "Expected 'n/a' for invalid Wilcoxon, not found"
+
+
+def test_generate_combined_extensions_table_bold(tmp_path):
+    """Combined extensions table contains \\textbf{ for bold best value."""
+    baseline = make_mock_result("FedRL_3x3", "FedRL", "grid-3x3", _WAIT_A, _TRAVEL, _REWARDS)
+    best_fedprox = make_mock_result("fedprox_mu0.01", "FedRL", "grid-3x3", _WAIT_B, _TRAVEL, _REWARDS)
+    ablation_map = {"FedProx": [best_fedprox]}
+    table_path = str(tmp_path / "combined_ext.tex")
+    generate_combined_extensions_table([baseline], ablation_map, "avg_waiting_time", table_path)
+    assert os.path.exists(table_path), "combined_ext.tex was not created"
+    content = open(table_path, encoding="utf-8").read()
+    assert "\\textbf{" in content, "Missing \\textbf{ for bold best value"
+
+
+# ---------------------------------------------------------------------------
+# generate_report tests (Task 2)
+# ---------------------------------------------------------------------------
+
+def test_generate_report_creates_md(tmp_path):
+    """Report generator creates EXPERIMENT_REPORT.md with Key Findings."""
+    from scripts.generate_report import generate_experiment_report
+
+    baseline_dir = tmp_path / "baseline"
+    baseline_dir.mkdir()
+    results = {"results": [make_mock_result("FedRL_3x3", "FedRL", "grid-3x3", _WAIT_A, _TRAVEL, _REWARDS)]}
+    (baseline_dir / "results.json").write_text(json.dumps(results))
+
+    figures_dir = str(tmp_path / "figures")
+    output = str(tmp_path / "figures" / "EXPERIMENT_REPORT.md")
+    generate_experiment_report(
+        campaign_dirs={"baseline": str(baseline_dir)},
+        figures_dir=figures_dir,
+        output_path=output,
+    )
+    assert os.path.exists(output), "EXPERIMENT_REPORT.md was not created"
+    content = open(output).read()
+    assert "Key Findings" in content, "Missing 'Key Findings' section"
+    assert "SEAL Experiment Report" in content, "Missing report title"
+
+
+def test_generate_report_handles_missing_ablation(tmp_path):
+    """Report notes missing ablations gracefully (no crash)."""
+    from scripts.generate_report import generate_experiment_report
+
+    baseline_dir = tmp_path / "baseline"
+    baseline_dir.mkdir()
+    results = {"results": [make_mock_result("FedRL_3x3", "FedRL", "grid-3x3", _WAIT_A, _TRAVEL, _REWARDS)]}
+    (baseline_dir / "results.json").write_text(json.dumps(results))
+
+    figures_dir = str(tmp_path / "figures")
+    output = str(tmp_path / "figures" / "EXPERIMENT_REPORT.md")
+    generate_experiment_report(
+        campaign_dirs={"baseline": str(baseline_dir), "fedprox": str(tmp_path / "nonexistent")},
+        figures_dir=figures_dir,
+        output_path=output,
+    )
+    content = open(output).read()
+    assert ("not available" in content.lower() or "missing" in content.lower()), \
+        "Expected 'not available' or 'missing' for absent ablation"

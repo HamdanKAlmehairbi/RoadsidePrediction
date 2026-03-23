@@ -322,6 +322,12 @@ def main() -> None:
         help="SUMO network topology (e.g. grid-3x3, grid-5x5).",
     )
     parser.add_argument(
+        "--topologies",
+        nargs="+",
+        default=None,
+        help="SUMO network topologies (e.g. grid-3x3 grid-5x5). Overrides --topology.",
+    )
+    parser.add_argument(
         "--n-episodes",
         type=int,
         default=50,
@@ -357,42 +363,47 @@ def main() -> None:
         else [args.ablation]
     )
 
+    # --topologies takes precedence over --topology
+    topologies = args.topologies if args.topologies else [args.topology]
+
     campaign_name_map = {
         "fedprox": "fedprox-ablation",
         "cooperative": "cooperative-ablation",
         "time-of-day": "tod-ablation",
     }
 
-    for ablation in ablations_to_run:
-        logger.info("=== Starting ablation: %s ===", ablation)
+    for topology in topologies:
+        logger.info("=== Topology: %s ===", topology)
+        for ablation in ablations_to_run:
+            logger.info("=== Starting ablation: %s (topology=%s) ===", ablation, topology)
 
-        if ablation == "fedprox":
-            configs = build_fedprox_configs(
-                topology=args.topology,
-                n_episodes=args.n_episodes,
-                n_eval_runs=args.n_eval_runs,
-            )
-        elif ablation == "cooperative":
-            configs = build_cooperative_configs(
-                topology=args.topology,
-                n_episodes=args.n_episodes,
-                n_eval_runs=args.n_eval_runs,
-            )
-        else:  # time-of-day
-            configs = build_time_of_day_configs(
-                topology=args.topology,
-                n_episodes=args.n_episodes,
-                n_eval_runs=args.n_eval_runs,
-            )
+            if ablation == "fedprox":
+                configs = build_fedprox_configs(
+                    topology=topology,
+                    n_episodes=args.n_episodes,
+                    n_eval_runs=args.n_eval_runs,
+                )
+            elif ablation == "cooperative":
+                configs = build_cooperative_configs(
+                    topology=topology,
+                    n_episodes=args.n_episodes,
+                    n_eval_runs=args.n_eval_runs,
+                )
+            else:  # time-of-day
+                configs = build_time_of_day_configs(
+                    topology=topology,
+                    n_episodes=args.n_episodes,
+                    n_eval_runs=args.n_eval_runs,
+                )
 
-        campaign_name = campaign_name_map[ablation]
-        results = run_ablation(
-            configs=configs,
-            ablation_name=campaign_name,
-            dry_run_seeds=args.dry_run,
-        )
-        all_results.extend(results)
-        logger.info("=== Ablation %s complete: %d configs ===", ablation, len(results))
+            campaign_name = campaign_name_map[ablation]
+            results = run_ablation(
+                configs=configs,
+                ablation_name=campaign_name,
+                dry_run_seeds=args.dry_run,
+            )
+            all_results.extend(results)
+            logger.info("=== Ablation %s complete: %d configs ===", ablation, len(results))
 
     _print_summary_table(all_results)
 

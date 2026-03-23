@@ -401,6 +401,356 @@ def generate_all_outputs(
 
 
 # ---------------------------------------------------------------------------
+# New Phase-8 analysis functions
+# ---------------------------------------------------------------------------
+
+def plot_convergence_curves(
+    campaign_results: list,
+    output_path: str,
+    window: int = 5,
+) -> None:
+    """Plot training convergence curves (smoothed episode reward over time).
+
+    Iterates results, skipping those with training_rewards=None or empty.
+    Plots raw values as faint background (alpha=0.2) and smoothed values as
+    solid lines.  Saves to output_path and closes the figure.
+
+    Args:
+        campaign_results: List of result dicts from load_campaign_results().
+        output_path: File path for the output PNG.
+        window: Moving-average window size for smoothing.  Default 5.
+    """
+    fig, ax = plt.subplots(figsize=(10, 5))
+    plotted = 0
+
+    for result in campaign_results:
+        rewards_data = result.get("training_rewards")
+        if not rewards_data:
+            continue
+
+        # Extract scalar reward per episode
+        values = [
+            r.get("mean_reward", r) if isinstance(r, dict) else float(r)
+            for r in rewards_data
+        ]
+        if not values:
+            continue
+
+        label = result.get("config", {}).get("name", "unknown")
+        x_raw = list(range(len(values)))
+
+        # Raw faint line
+        ax.plot(x_raw, values, alpha=0.2, linewidth=0.8)
+
+        # Smoothed solid line
+        if len(values) >= window:
+            smoothed = np.convolve(values, np.ones(window) / window, mode="valid")
+            x_smooth = list(range(len(smoothed)))
+            ax.plot(x_smooth, smoothed, linewidth=1.8, label=label)
+        else:
+            ax.plot(x_raw, values, linewidth=1.8, label=label)
+
+        plotted += 1
+
+    if plotted == 0:
+        plt.close()
+        return
+
+    ax.set_xlabel("Episode")
+    ax.set_ylabel("Mean Episode Reward")
+    ax.set_title("Training Convergence")
+    ax.legend()
+    plt.tight_layout()
+    os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
+    plt.savefig(output_path, dpi=150)
+    plt.close()
+
+    logger.info("Convergence curves written to %s", output_path)
+
+
+def select_best_config_name(
+    campaign_results: list,
+    metric: str = "avg_waiting_time",
+) -> str:
+    """Return the config name with the lowest mean value for the given metric.
+
+    Args:
+        campaign_results: List of result dicts from load_campaign_results().
+        metric: Metric base name (default "avg_waiting_time").
+
+    Returns:
+        Config name string, or "" if campaign_results is empty or metric missing.
+    """
+    df = results_to_dataframe(campaign_results)
+    col = f"{metric}_mean"
+    if df.empty or col not in df.columns:
+        return ""
+    idx = df[col].idxmin()
+    return df.loc[idx, "name"]
+
+
+def plot_combined_comparison(
+    baseline_results: list,
+    ablation_map: dict,
+    output_path: str,
+    metric: str = "avg_waiting_time",
+) -> None:
+    """Plot a combined bar chart comparing baseline vs best config from each ablation.
+
+    Args:
+        baseline_results: List of result dicts for the baseline campaign.
+        ablation_map: Dict mapping ablation name to its result list.
+            e.g. {"FedProx": [...results...], "Cooperative": [...], "ToD": [...]}
+        output_path: File path for the output PNG.
+        metric: Metric base name.  Default "avg_waiting_time".
+    """
+    rows = []
+    mean_col = f"{metric}_mean"
+    std_col = f"{metric}_std"
+
+    # Baseline: pick the FedRL row (or first row if not found)
+    baseline_df = results_to_dataframe(baseline_results)
+    if not baseline_df.empty:
+        fedrl_rows = baseline_df[baseline_df["trainer"] == "FedRL"]
+        baseline_row = fedrl_rows.iloc[0] if not fedrl_rows.empty else baseline_df.iloc[0]
+        rows.append({
+            "name": baseline_row["name"],
+            "trainer": baseline_row["trainer"],
+            "topology": baseline_row.get("topology", ""),
+            mean_col: baseline_row[mean_col],
+            std_col: baseline_row[std_col],
+            "n_completed": baseline_row.get("n_completed", 10),
+        })
+
+    # Each ablation: select best config
+    for abl_name, abl_results in ablation_map.items():
+        best_name = select_best_config_name(abl_results, metric)
+        if not best_name:
+            continue
+        abl_df = results_to_dataframe(abl_results)
+        subset = abl_df[abl_df["name"] == best_name]
+        if subset.empty:
+            continue
+        row = subset.iloc[0]
+        rows.append({
+            "name": f"{abl_name}: {best_name}",
+            "trainer": row["trainer"],
+            "topology": row.get("topology", ""),
+            mean_col: row[mean_col],
+            std_col: row[std_col],
+            "n_completed": row.get("n_completed", 10),
+        })
+
+    if not rows:
+        return
+
+    combined_df = pd.DataFrame(rows)
+    plot_comparison_bar(combined_df, metric, output_path)
+    plt.close()
+
+    logger.info("Combined comparison chart written to %s", output_path)
+
+
+def plot_per_topology(
+    campaign_results: list,
+    topology: str,
+    metric: str,
+    output_path: str,
+) -> None:
+    """Plot a bar chart for a single topology subset of campaign results.
+
+    Args:
+        campaign_results: List of result dicts from load_campaign_results().
+        topology: Topology string to filter by (e.g. "grid-3x3").
+        metric: Metric base name.
+        output_path: File path for the output PNG.
+    """
+    df = results_to_dataframe(campaign_results)
+    df = df[df["topology"] == topology]
+    if df.empty:
+        logger.warning("No results for topology %r — skipping per-topology chart", topology)
+        return
+    plot_comparison_bar(df, metric, output_path)
+
+    logger.info("Per-topology chart written to %s", output_path)
+
+
+def generate_ablation_table_with_pvalues(
+    campaign_results: list,
+    baseline_name: str,
+    metric: str,
+    output_path: str,
+) -> None:
+    """Write a booktabs LaTeX table with p-values from Wilcoxon signed-rank tests.
+
+    Columns: Config | Mean +/- Std | p-value
+    The baseline row is included. Non-baseline rows show Wilcoxon p-value vs baseline.
+    The row with the lowest mean has its mean value bolded with \\textbf{}.
+
+    Args:
+        campaign_results: List of result dicts from load_campaign_results().
+        baseline_name: Config name to treat as the baseline (first Wilcoxon argument).
+        metric: Metric base name (e.g. "avg_waiting_time").
+        output_path: File path for the output .tex file.
+    """
+    df = results_to_dataframe(campaign_results)
+    mean_col = f"{metric}_mean"
+    std_col = f"{metric}_std"
+
+    # Find baseline result dict
+    baseline_result = None
+    for r in campaign_results:
+        if r.get("config", {}).get("name") == baseline_name:
+            baseline_result = r
+            break
+
+    # Determine best row (lowest mean)
+    best_idx = df[mean_col].idxmin() if not df.empty and mean_col in df.columns else None
+
+    lines = [
+        "\\begin{tabular}{lcc}",
+        "\\toprule",
+        f"Config & {metric.replace('_', ' ').title()} (mean $\\pm$ std) & $p$-value \\\\",
+        "\\midrule",
+    ]
+
+    for i, row in df.iterrows():
+        name = row["name"]
+        mean_val = row[mean_col]
+        std_val = row[std_col]
+
+        # Format mean with optional bold
+        mean_str = f"{mean_val:.1f} $\\pm$ {std_val:.1f}"
+        if i == best_idx:
+            mean_str = f"\\textbf{{{mean_val:.1f}}} $\\pm$ {std_val:.1f}"
+
+        # Compute p-value
+        if name == baseline_name or baseline_result is None:
+            p_str = "---"
+        else:
+            # Find this result dict
+            other_result = None
+            for r in campaign_results:
+                if r.get("config", {}).get("name") == name:
+                    other_result = r
+                    break
+            if other_result is None:
+                p_str = "n/a"
+            else:
+                wc = wilcoxon_compare(baseline_result, other_result, metric)
+                if wc["valid"]:
+                    p_str = f"$p={wc['p_value']:.3f}$"
+                else:
+                    p_str = "n/a"
+
+        lines.append(f"{name} & {mean_str} & {p_str} \\\\")
+
+    lines += [
+        "\\bottomrule",
+        "\\end{tabular}",
+    ]
+
+    os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
+    with open(output_path, "w", encoding="utf-8") as fh:
+        fh.write("\n".join(lines) + "\n")
+
+    logger.info("Ablation table with p-values written to %s", output_path)
+
+
+def generate_combined_extensions_table(
+    baseline_results: list,
+    ablation_map: dict,
+    metric: str,
+    output_path: str,
+) -> None:
+    """Write a booktabs LaTeX table comparing baseline vs best config per ablation.
+
+    Columns: Config | mean +/- std | Improvement vs Baseline (%)
+    The row with the best (lowest) value for the metric is bolded.
+
+    Args:
+        baseline_results: List of result dicts for the baseline campaign.
+        ablation_map: Dict mapping ablation name to its result list.
+        metric: Metric base name.
+        output_path: File path for the output .tex file.
+    """
+    mean_col = f"{metric}_mean"
+    std_col = f"{metric}_std"
+
+    rows_data = []
+
+    # Baseline row
+    baseline_df = results_to_dataframe(baseline_results)
+    if not baseline_df.empty:
+        fedrl_rows = baseline_df[baseline_df["trainer"] == "FedRL"]
+        b_row = fedrl_rows.iloc[0] if not fedrl_rows.empty else baseline_df.iloc[0]
+        rows_data.append({
+            "label": b_row["name"],
+            "mean": b_row[mean_col],
+            "std": b_row[std_col],
+        })
+
+    baseline_mean = rows_data[0]["mean"] if rows_data else None
+
+    # Ablation best rows
+    for abl_name, abl_results in ablation_map.items():
+        best_name = select_best_config_name(abl_results, metric)
+        if not best_name:
+            continue
+        abl_df = results_to_dataframe(abl_results)
+        subset = abl_df[abl_df["name"] == best_name]
+        if subset.empty:
+            continue
+        row = subset.iloc[0]
+        rows_data.append({
+            "label": f"{abl_name} (best: {best_name})",
+            "mean": row[mean_col],
+            "std": row[std_col],
+        })
+
+    # Find best (lowest mean)
+    if not rows_data:
+        return
+
+    best_mean_val = min(r["mean"] for r in rows_data)
+
+    lines = [
+        "\\begin{tabular}{lcc}",
+        "\\toprule",
+        f"Config & {metric.replace('_', ' ').title()} (mean $\\pm$ std) & Improvement vs Baseline (\\%) \\\\",
+        "\\midrule",
+    ]
+
+    for row in rows_data:
+        mean_val = row["mean"]
+        std_val = row["std"]
+        label = row["label"]
+
+        mean_str = f"{mean_val:.1f} $\\pm$ {std_val:.1f}"
+        if mean_val == best_mean_val:
+            mean_str = f"\\textbf{{{mean_val:.1f}}} $\\pm$ {std_val:.1f}"
+
+        if baseline_mean is not None and baseline_mean != 0:
+            improvement = (baseline_mean - mean_val) / abs(baseline_mean) * 100.0
+            improvement_str = f"{improvement:+.1f}\\%"
+        else:
+            improvement_str = "---"
+
+        lines.append(f"{label} & {mean_str} & {improvement_str} \\\\")
+
+    lines += [
+        "\\bottomrule",
+        "\\end{tabular}",
+    ]
+
+    os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
+    with open(output_path, "w", encoding="utf-8") as fh:
+        fh.write("\n".join(lines) + "\n")
+
+    logger.info("Combined extensions table written to %s", output_path)
+
+
+# ---------------------------------------------------------------------------
 # CLI entry point
 # ---------------------------------------------------------------------------
 
