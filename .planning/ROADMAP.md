@@ -160,8 +160,8 @@ Plans:
 
 Plans:
 - [x] 07-01-PLAN.md — Campaign config, example weights mapping, and baseline runner script
-- [ ] 07-02-PLAN.md — Extension ablation scripts (FedProx, cooperative reward, time-of-day)
-- [ ] 07-03-PLAN.md — Statistical analysis, LaTeX tables, and chart generation
+- [x] 07-02-PLAN.md — Extension ablation scripts (FedProx, cooperative reward, time-of-day)
+- [x] 07-03-PLAN.md — Statistical analysis, LaTeX tables, and chart generation
 
 ---
 *Roadmap created: 2026-03-22*
