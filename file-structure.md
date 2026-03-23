@@ -207,6 +207,7 @@
 │       └── trainer/                # Training framework (Ray RLLib / PPO)
 │           ├── base.py             # BaseTrainer — abstract; checkpoints, PPO setup, training loop
 │           ├── fed_agent.py        # FedPolicyTrainer — FedRL with federated averaging
+│           ├── fedprox_policy.py   # FedProx PPO policy subclass with proximal loss term
 │           ├── multi_agent.py      # MultiPolicyTrainer — MARL with independent per-agent policies
 │           ├── single_agent.py     # SinglePolicyTrainer — SARL with one shared policy
 │           ├── weight_aggr.py      # Aggregation functions: naive, pos_reward, neg_reward, traffic
