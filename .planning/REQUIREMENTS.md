@@ -65,13 +65,13 @@
 
 ### Experiment Campaigns (CAMP)
 
-- [ ] **CAMP-01**: Reproduce baseline paper results: FedRL vs MARL vs SARL vs fixed-time on grid-3x3, grid-5x5
+- [x] **CAMP-01**: Reproduce baseline paper results: FedRL vs MARL vs SARL vs fixed-time on grid-3x3, grid-5x5
 - [ ] **CAMP-02**: FedProx ablation: mu in {0.0, 0.01, 0.1} with fresh training and MC evaluation
 - [ ] **CAMP-03**: Cooperative reward ablation: alpha in {1.0, 0.5, 0.1} with fresh training and MC evaluation
 - [ ] **CAMP-04**: Time-of-day ablation: fixed demand vs curriculum with time encoding
-- [ ] **CAMP-05**: Statistical rigor: 10 MC seeds per config, 95% CI, Wilcoxon significance test
+- [x] **CAMP-05**: Statistical rigor: 10 MC seeds per config, 95% CI, Wilcoxon significance test
 - [ ] **CAMP-06**: Publishable output: comparison tables (LaTeX), bar charts with error bars
-- [ ] **CAMP-07**: Results persistence: all configs and seeds logged alongside results as JSON
+- [x] **CAMP-07**: Results persistence: all configs and seeds logged alongside results as JSON
 
 ## v2 Requirements
 
@@ -132,13 +132,13 @@
 | UI-06 | Phase 6 | Pending |
 | UI-07 | Phase 6 | Pending |
 | UI-08 | Phase 6 | Pending |
-| CAMP-01 | Phase 7 | Pending |
+| CAMP-01 | Phase 7 | Complete |
 | CAMP-02 | Phase 7 | Pending |
 | CAMP-03 | Phase 7 | Pending |
 | CAMP-04 | Phase 7 | Pending |
-| CAMP-05 | Phase 7 | Pending |
+| CAMP-05 | Phase 7 | Complete |
 | CAMP-06 | Phase 7 | Pending |
-| CAMP-07 | Phase 7 | Pending |
+| CAMP-07 | Phase 7 | Complete |
 
 **Coverage:**
 - v1 requirements: 43 total

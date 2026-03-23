@@ -142,7 +142,7 @@ Plans:
 | 4. Core Extensions | 3/3 | Complete | 2026-03-23 |
 | 5. Advanced Extensions | 0/3 | Not started | - |
 | 6. Frontend Enhancements | 0/3 | Not started | - |
-| 7. Experiment Campaigns | 0/3 | Not started | - |
+| 7. Experiment Campaigns | 1/3 | In Progress|  |
 
 ### Phase 7: Experiment Campaigns
 
@@ -156,10 +156,10 @@ Plans:
   4. LaTeX comparison tables with mean +/- std and booktabs formatting generated
   5. Bar charts with 95% CI error bars generated as PNG
   6. All campaign configs and seeds persisted alongside results
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
-- [ ] 07-01-PLAN.md — Campaign config, example weights mapping, and baseline runner script
+- [x] 07-01-PLAN.md — Campaign config, example weights mapping, and baseline runner script
 - [ ] 07-02-PLAN.md — Extension ablation scripts (FedProx, cooperative reward, time-of-day)
 - [ ] 07-03-PLAN.md — Statistical analysis, LaTeX tables, and chart generation
 

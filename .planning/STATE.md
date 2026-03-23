@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 04-03-PLAN.md
-last_updated: "2026-03-23T03:39:46.053Z"
+stopped_at: Completed 07-01-PLAN.md
+last_updated: "2026-03-23T04:42:18.642Z"
 progress:
-  total_phases: 7
+  total_phases: 8
   completed_phases: 2
-  total_plans: 8
-  completed_plans: 8
+  total_plans: 11
+  completed_plans: 9
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-22)
 
 **Core value:** Real FedRL experiments working end-to-end with publishable results
-**Current focus:** Phase 04 — core-extensions
+**Current focus:** Phase 07 — experiment-campaigns
 
 ## Current Position
 
-Phase: 5
-Plan: Not started
+Phase: 07 (experiment-campaigns) — EXECUTING
+Plan: 2 of 3
 
 ## Performance Metrics
 
@@ -45,6 +45,7 @@ Plan: Not started
 | Phase 04 P02 | 1min | 1 tasks | 1 files |
 | Phase 04 P01 | 2min | 2 tasks | 3 files |
 | Phase 04 P03 | 3min | 2 tasks | 6 files |
+| Phase 07 P01 | 139 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -76,6 +77,8 @@ Recent decisions affecting current work:
 - [Phase 04]: Time encoding appended AFTER ranking to preserve rank indices 10-13
 - [Phase 04]: Per-episode demand sampling for curriculum diversity, time_of_day is training-only
 - [Phase 04]: Full Phase 4 param passthrough: TrainRequest -> create_trainer -> env_config_fn -> SumoEnv
+- [Phase 07]: EXAMPLE_WEIGHTS_MAP uses actual .pkl filenames (v3_naive-aggr_ranked.pkl for FedRL) not resolve_weights_path() naming — bypasses naming convention mismatch
+- [Phase 07]: Non-RL baselines (fixed-time, max-pressure) use MCConfig directly in run_baseline_campaign — they skip train_and_evaluate
 
 ### Roadmap Evolution
 
@@ -92,6 +95,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-23T03:35:07.521Z
-Stopped at: Completed 04-03-PLAN.md
+Last session: 2026-03-23T04:42:18.640Z
+Stopped at: Completed 07-01-PLAN.md
 Resume file: None
