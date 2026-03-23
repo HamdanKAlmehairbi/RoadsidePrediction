@@ -93,7 +93,20 @@ def results_to_dataframe(campaign_results: list) -> pd.DataFrame:
             continue
 
         config = result.get("config", {})
-        agg = evaluation.get("aggregated", {})
+
+        # Unwrap campaign_to_dict serialization: evaluation may be
+        # {"campaign": [{..., "aggregated": {...}, ...}]} or a flat dict
+        # with "aggregated" directly (older format).
+        if "campaign" in evaluation and isinstance(evaluation["campaign"], list):
+            campaign_entries = evaluation["campaign"]
+            eval_entry = campaign_entries[0] if campaign_entries else {}
+            agg = eval_entry.get("aggregated", {})
+            n_completed = eval_entry.get("n_completed", 0)
+            n_failed = eval_entry.get("n_failed", 0)
+        else:
+            agg = evaluation.get("aggregated", {})
+            n_completed = evaluation.get("n_completed", 0)
+            n_failed = evaluation.get("n_failed", 0)
 
         def _mean(metric: str) -> float:
             return agg.get(metric, {}).get("mean", float("nan"))
@@ -116,8 +129,8 @@ def results_to_dataframe(campaign_results: list) -> pd.DataFrame:
             "mean_reward_std": _std("mean_reward"),
             "total_comm_cost_mean": _mean("total_comm_cost"),
             "total_comm_cost_std": _std("total_comm_cost"),
-            "n_completed": evaluation.get("n_completed", 0),
-            "n_failed": evaluation.get("n_failed", 0),
+            "n_completed": n_completed,
+            "n_failed": n_failed,
         })
 
     return pd.DataFrame(rows)
@@ -159,16 +172,32 @@ def wilcoxon_compare(
     _TRIPINFO_METRICS = {"avg_waiting_time", "avg_travel_time", "throughput"}
 
     def _extract_values(result: dict) -> list:
-        individual = result.get("evaluation", {}).get("individual_results", [])
+        eval_ = result.get("evaluation", {})
+        # Handle campaign_to_dict wrapped format: {"campaign": [{..., "individual": [...]}]}
+        if "campaign" in eval_ and isinstance(eval_["campaign"], list):
+            campaign_entries = eval_["campaign"]
+            entry = campaign_entries[0] if campaign_entries else {}
+            individual = entry.get("individual", entry.get("individual_results", []))
+        else:
+            individual = eval_.get("individual_results", eval_.get("individual", []))
         if metric in _TRIPINFO_METRICS:
             return [r["tripinfo"][metric] for r in individual if "tripinfo" in r]
         else:
             return [r[metric] for r in individual if metric in r]
 
+    def _n_completed(result: dict) -> int:
+        eval_ = result.get("evaluation", {})
+        if not eval_:
+            return 0
+        if "campaign" in eval_ and isinstance(eval_["campaign"], list):
+            entry = eval_["campaign"][0] if eval_["campaign"] else {}
+            return entry.get("n_completed", 0)
+        return eval_.get("n_completed", 0)
+
     eval_a = results_a.get("evaluation", {})
     eval_b = results_b.get("evaluation", {})
-    n_completed_a = eval_a.get("n_completed", 0) if eval_a else 0
-    n_completed_b = eval_b.get("n_completed", 0) if eval_b else 0
+    n_completed_a = _n_completed(results_a)
+    n_completed_b = _n_completed(results_b)
 
     if n_completed_a < 8 or n_completed_b < 8:
         values_a = _extract_values(results_a)
