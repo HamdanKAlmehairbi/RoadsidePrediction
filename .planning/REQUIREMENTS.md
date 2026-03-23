@@ -27,7 +27,7 @@
 
 ### Evaluation Framework (EVAL)
 
-- [ ] **EVAL-01**: Evaluation runner orchestrates campaigns across trainers × topologies
+- [ ] **EVAL-01**: Evaluation runner orchestrates campaigns across trainers x topologies
 - [ ] **EVAL-02**: Metrics: avg waiting time, avg travel time, throughput from SUMO tripinfo
 - [ ] **EVAL-03**: Metrics: mean episode reward, communication cost by type
 - [ ] **EVAL-04**: Cross-topology transfer matrix (train on X, test on Y)
@@ -41,7 +41,7 @@
 
 ### Core Extensions (EXT)
 
-- [x] **EXT-01**: FedProx aggregation with proximal term `mu/2 * ||w - w_global||²`
+- [x] **EXT-01**: FedProx aggregation with proximal term `mu/2 * ||w - w_global||^2`
 - [x] **EXT-02**: Cooperative reward shaping with configurable alpha
 - [x] **EXT-03**: Time-of-day demand curriculum (AM rush, midday, PM rush)
 - [x] **EXT-04**: Sine/cosine time encoding added to observations
@@ -49,7 +49,7 @@
 ### Advanced Extensions (ADV)
 
 - [ ] **ADV-01**: GNN policy replacing MLP for spatial-aware decisions
-- [ ] **ADV-02**: Differential privacy with Gaussian noise and (ε, δ) tracking
+- [ ] **ADV-02**: Differential privacy with Gaussian noise and (epsilon, delta) tracking
 - [ ] **ADV-03**: Emergency vehicle preemption with green phase override
 
 ### Frontend Enhancements (UI)
@@ -62,6 +62,16 @@
 - [ ] **UI-06**: Enhanced Compare page with trainer dropdown cycling
 - [ ] **UI-07**: Index page fetches real stats from evaluation API
 - [ ] **UI-08**: Emergency vehicles rendered in distinct color (blue)
+
+### Experiment Campaigns (CAMP)
+
+- [ ] **CAMP-01**: Reproduce baseline paper results: FedRL vs MARL vs SARL vs fixed-time on grid-3x3, grid-5x5
+- [ ] **CAMP-02**: FedProx ablation: mu in {0.0, 0.01, 0.1} with fresh training and MC evaluation
+- [ ] **CAMP-03**: Cooperative reward ablation: alpha in {1.0, 0.5, 0.1} with fresh training and MC evaluation
+- [ ] **CAMP-04**: Time-of-day ablation: fixed demand vs curriculum with time encoding
+- [ ] **CAMP-05**: Statistical rigor: 10 MC seeds per config, 95% CI, Wilcoxon significance test
+- [ ] **CAMP-06**: Publishable output: comparison tables (LaTeX), bar charts with error bars
+- [ ] **CAMP-07**: Results persistence: all configs and seeds logged alongside results as JSON
 
 ## v2 Requirements
 
@@ -122,12 +132,19 @@
 | UI-06 | Phase 6 | Pending |
 | UI-07 | Phase 6 | Pending |
 | UI-08 | Phase 6 | Pending |
+| CAMP-01 | Phase 7 | Pending |
+| CAMP-02 | Phase 7 | Pending |
+| CAMP-03 | Phase 7 | Pending |
+| CAMP-04 | Phase 7 | Pending |
+| CAMP-05 | Phase 7 | Pending |
+| CAMP-06 | Phase 7 | Pending |
+| CAMP-07 | Phase 7 | Pending |
 
 **Coverage:**
-- v1 requirements: 36 total
-- Mapped to phases: 36
-- Unmapped: 0 ✓
+- v1 requirements: 43 total
+- Mapped to phases: 43
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-22*
-*Last updated: 2026-03-22 after Phase 2 completion*
+*Last updated: 2026-03-23 after Phase 7 planning*

@@ -42,7 +42,7 @@ Plans:
 **Plans**: Complete
 
 Plans:
-- [x] 01-01: Migrate environment layer (gym → gymnasium, 5-tuple)
+- [x] 01-01: Migrate environment layer (gym -> gymnasium, 5-tuple)
 - [x] 01-02: Migrate trainer base (PPOConfig builder, Ray 2.x APIs)
 - [x] 01-03: Migrate FedRL/MARL/SARL trainers and callbacks
 
@@ -68,7 +68,7 @@ Plans:
 **Depends on**: Phase 2
 **Requirements**: EVAL-01, EVAL-02, EVAL-03, EVAL-04, EVAL-05, EVAL-06, EVAL-07, EVAL-08, EVAL-09, EVAL-10, EVAL-11
 **Success Criteria** (what must be TRUE):
-  1. Full eval: 5 trainers × 3 topologies × 10 MC runs completes
+  1. Full eval: 5 trainers x 3 topologies x 10 MC runs completes
   2. FedRL shows measurable comm reduction vs SARL
   3. Transfer gap measurable across topologies
   4. Results persist as JSON and are queryable via REST
@@ -139,21 +139,30 @@ Plans:
 | 1. Modernize SEAL Engine | 3/3 | Complete | 2026-03-22 |
 | 2. Wire Real Training + Simulation | 4/4 | Complete | 2026-03-22 |
 | 3. Evaluation Framework | 5/5 | Complete | 2026-03-22 |
-| 4. Core Extensions | 1/3 | In Progress|  |
+| 4. Core Extensions | 3/3 | Complete | 2026-03-23 |
 | 5. Advanced Extensions | 0/3 | Not started | - |
 | 6. Frontend Enhancements | 0/3 | Not started | - |
-| 7. Experiment Campaigns | 0/0 | Not started | - |
+| 7. Experiment Campaigns | 0/3 | Not started | - |
 
 ### Phase 7: Experiment Campaigns
 
 **Goal:** Reproduce SEAL paper results, evaluate Phase 4 extensions (FedProx, cooperative reward, time-of-day), and produce publishable comparison tables with statistical rigor
-**Requirements**: TBD
+**Requirements**: CAMP-01, CAMP-02, CAMP-03, CAMP-04, CAMP-05, CAMP-06, CAMP-07
 **Depends on:** Phase 4 (needs core extensions)
-**Plans:** 0 plans
+**Success Criteria** (what must be TRUE):
+  1. Baseline campaign (FedRL/MARL/SARL/fixed-time/max-pressure on grid-3x3, grid-5x5) produces results JSON
+  2. Extension ablation scripts define correct parameter grids (FedProx mu, cooperative alpha, time-of-day)
+  3. Wilcoxon signed-rank test compares paired MC results between conditions
+  4. LaTeX comparison tables with mean +/- std and booktabs formatting generated
+  5. Bar charts with 95% CI error bars generated as PNG
+  6. All campaign configs and seeds persisted alongside results
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 7 to break down)
+- [ ] 07-01-PLAN.md — Campaign config, example weights mapping, and baseline runner script
+- [ ] 07-02-PLAN.md — Extension ablation scripts (FedProx, cooperative reward, time-of-day)
+- [ ] 07-03-PLAN.md — Statistical analysis, LaTeX tables, and chart generation
 
 ---
 *Roadmap created: 2026-03-22*
-*Last updated: 2026-03-22 after Phase 4 planning*
+*Last updated: 2026-03-23 after Phase 7 planning*
