@@ -41,7 +41,7 @@
 
 ### Core Extensions (EXT)
 
-- [ ] **EXT-01**: FedProx aggregation with proximal term `mu/2 * ||w - w_global||²`
+- [x] **EXT-01**: FedProx aggregation with proximal term `mu/2 * ||w - w_global||²`
 - [x] **EXT-02**: Cooperative reward shaping with configurable alpha
 - [ ] **EXT-03**: Time-of-day demand curriculum (AM rush, midday, PM rush)
 - [ ] **EXT-04**: Sine/cosine time encoding added to observations
@@ -107,7 +107,7 @@
 | EVAL-09 | Phase 3 | Pending |
 | EVAL-10 | Phase 3 | Pending |
 | EVAL-11 | Phase 3 | Pending |
-| EXT-01 | Phase 4 | Pending |
+| EXT-01 | Phase 4 | Complete |
 | EXT-02 | Phase 4 | Complete |
 | EXT-03 | Phase 4 | Pending |
 | EXT-04 | Phase 4 | Pending |

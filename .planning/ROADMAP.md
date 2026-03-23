@@ -93,7 +93,7 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 04-01-PLAN.md — FedProx proximal policy and FedPolicyTrainer integration
+- [x] 04-01-PLAN.md — FedProx proximal policy and FedPolicyTrainer integration
 - [x] 04-02-PLAN.md — Cooperative reward shaping with alpha parameter
 - [ ] 04-03-PLAN.md — Time-of-day demand curriculum, time encoding, and API wiring for all Phase 4 params
 
