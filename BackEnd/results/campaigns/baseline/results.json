@@ -1,0 +1,2574 @@
+{
+  "results": [
+    {
+      "config": {
+        "name": "fedrl_grid-3x3_baseline",
+        "trainer_type": "FedRL",
+        "topology": "grid-3x3",
+        "n_episodes": 50,
+        "n_eval_runs": 10,
+        "base_seed": 42,
+        "ranked": true,
+        "horizon": 450,
+        "fedprox_mu": 0.0,
+        "alpha": 1.0,
+        "time_of_day": false,
+        "use_time_encoding": false,
+        "weights_path": "C:\\Users\\user\\Documents\\GitHub\\RoadsidePrediction\\BackEnd\\example_weights\\ICCPS\\Final\\FedRL\\grid-3x3\\v3_naive-aggr_ranked.pkl"
+      },
+      "training_rewards": null,
+      "evaluation": {
+        "campaign": [
+          {
+            "trainer": "FedRL",
+            "topology": "grid-3x3",
+            "n_runs": 10,
+            "n_completed": 10,
+            "n_failed": 0,
+            "aggregated": {
+              "avg_waiting_time": {
+                "mean": 15.4289,
+                "std": 1.2618,
+                "ci_95_lower": 14.6468,
+                "ci_95_upper": 16.211,
+                "min": 13.7396,
+                "max": 17.9785
+              },
+              "avg_travel_time": {
+                "mean": 61.3044,
+                "std": 1.6337,
+                "ci_95_lower": 60.2918,
+                "ci_95_upper": 62.317,
+                "min": 58.8438,
+                "max": 64.3605
+              },
+              "throughput": {
+                "mean": 1.0,
+                "std": 0.0,
+                "ci_95_lower": 1.0,
+                "ci_95_upper": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "mean_reward": {
+                "mean": -0.0031,
+                "std": 0.0006,
+                "ci_95_lower": -0.0035,
+                "ci_95_upper": -0.0027,
+                "min": -0.0044,
+                "max": -0.0021
+              },
+              "total_comm_cost": {
+                "mean": 0.0,
+                "std": 0.0,
+                "ci_95_lower": 0.0,
+                "ci_95_upper": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              }
+            },
+            "individual": [
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 42,
+                "mean_reward": -0.0031,
+                "total_reward": -12.5486,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 16.4389,
+                  "avg_travel_time": 62.2805,
+                  "avg_depart_delay": 0.6816,
+                  "throughput": 1.0,
+                  "completed_trips": 221,
+                  "total_waiting_time": 3633.0,
+                  "total_travel_time": 13764.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 43,
+                "mean_reward": -0.0036,
+                "total_reward": -14.5834,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 15.5463,
+                  "avg_travel_time": 61.7561,
+                  "avg_depart_delay": 0.6866,
+                  "throughput": 1.0,
+                  "completed_trips": 205,
+                  "total_waiting_time": 3187.0,
+                  "total_travel_time": 12660.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 44,
+                "mean_reward": -0.0031,
+                "total_reward": -12.6475,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 15.5494,
+                  "avg_travel_time": 61.6824,
+                  "avg_depart_delay": 0.6663,
+                  "throughput": 1.0,
+                  "completed_trips": 233,
+                  "total_waiting_time": 3623.0,
+                  "total_travel_time": 14372.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 45,
+                "mean_reward": -0.0031,
+                "total_reward": -12.4849,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 15.9352,
+                  "avg_travel_time": 61.6528,
+                  "avg_depart_delay": 0.6826,
+                  "throughput": 1.0,
+                  "completed_trips": 216,
+                  "total_waiting_time": 3442.0,
+                  "total_travel_time": 13317.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 46,
+                "mean_reward": -0.0022,
+                "total_reward": -8.9709,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 14.0212,
+                  "avg_travel_time": 59.2646,
+                  "avg_depart_delay": 0.7243,
+                  "throughput": 1.0,
+                  "completed_trips": 189,
+                  "total_waiting_time": 2650.0,
+                  "total_travel_time": 11201.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 47,
+                "mean_reward": -0.0032,
+                "total_reward": -12.9605,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 14.4396,
+                  "avg_travel_time": 60.4396,
+                  "avg_depart_delay": 0.643,
+                  "throughput": 1.0,
+                  "completed_trips": 207,
+                  "total_waiting_time": 2989.0,
+                  "total_travel_time": 12511.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 48,
+                "mean_reward": -0.0029,
+                "total_reward": -11.9123,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 15.9059,
+                  "avg_travel_time": 62.4505,
+                  "avg_depart_delay": 0.6216,
+                  "throughput": 1.0,
+                  "completed_trips": 202,
+                  "total_waiting_time": 3213.0,
+                  "total_travel_time": 12615.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 49,
+                "mean_reward": -0.0035,
+                "total_reward": -14.052,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 14.7339,
+                  "avg_travel_time": 60.3133,
+                  "avg_depart_delay": 0.6452,
+                  "throughput": 1.0,
+                  "completed_trips": 233,
+                  "total_waiting_time": 3433.0,
+                  "total_travel_time": 14053.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 50,
+                "mean_reward": -0.0021,
+                "total_reward": -8.6568,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 13.7396,
+                  "avg_travel_time": 58.8438,
+                  "avg_depart_delay": 0.5697,
+                  "throughput": 1.0,
+                  "completed_trips": 192,
+                  "total_waiting_time": 2638.0,
+                  "total_travel_time": 11298.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 51,
+                "mean_reward": -0.0044,
+                "total_reward": -17.7197,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 17.9785,
+                  "avg_travel_time": 64.3605,
+                  "avg_depart_delay": 0.6555,
+                  "throughput": 1.0,
+                  "completed_trips": 233,
+                  "total_waiting_time": 4189.0,
+                  "total_travel_time": 14996.0
+                }
+              }
+            ],
+            "errors": []
+          }
+        ]
+      },
+      "weights_path": "C:\\Users\\user\\Documents\\GitHub\\RoadsidePrediction\\BackEnd\\example_weights\\ICCPS\\Final\\FedRL\\grid-3x3\\v3_naive-aggr_ranked.pkl",
+      "error": null,
+      "duration_seconds": 85.72
+    },
+    {
+      "config": {
+        "name": "fedrl_grid-5x5_baseline",
+        "trainer_type": "FedRL",
+        "topology": "grid-5x5",
+        "n_episodes": 50,
+        "n_eval_runs": 10,
+        "base_seed": 42,
+        "ranked": true,
+        "horizon": 450,
+        "fedprox_mu": 0.0,
+        "alpha": 1.0,
+        "time_of_day": false,
+        "use_time_encoding": false,
+        "weights_path": "C:\\Users\\user\\Documents\\GitHub\\RoadsidePrediction\\BackEnd\\example_weights\\ICCPS\\Final\\FedRL\\grid-5x5\\v3_naive-aggr_ranked.pkl"
+      },
+      "training_rewards": null,
+      "evaluation": {
+        "campaign": [
+          {
+            "trainer": "FedRL",
+            "topology": "grid-5x5",
+            "n_runs": 10,
+            "n_completed": 10,
+            "n_failed": 0,
+            "aggregated": {
+              "avg_waiting_time": {
+                "mean": 19.1987,
+                "std": 0.761,
+                "ci_95_lower": 18.727,
+                "ci_95_upper": 19.6703,
+                "min": 18.2634,
+                "max": 20.466
+              },
+              "avg_travel_time": {
+                "mean": 84.7566,
+                "std": 1.5202,
+                "ci_95_lower": 83.8144,
+                "ci_95_upper": 85.6989,
+                "min": 82.5627,
+                "max": 87.7816
+              },
+              "throughput": {
+                "mean": 1.0,
+                "std": 0.0,
+                "ci_95_lower": 1.0,
+                "ci_95_upper": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "mean_reward": {
+                "mean": -0.0019,
+                "std": 0.0002,
+                "ci_95_lower": -0.002,
+                "ci_95_upper": -0.0018,
+                "min": -0.0023,
+                "max": -0.0016
+              },
+              "total_comm_cost": {
+                "mean": 0.0,
+                "std": 0.0,
+                "ci_95_lower": 0.0,
+                "ci_95_upper": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              }
+            },
+            "individual": [
+              {
+                "trainer": "FedRL",
+                "topology": "grid-5x5",
+                "seed": 42,
+                "mean_reward": -0.0018,
+                "total_reward": -20.6926,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 19.0907,
+                  "avg_travel_time": 84.2166,
+                  "avg_depart_delay": 0.555,
+                  "throughput": 1.0,
+                  "completed_trips": 397,
+                  "total_waiting_time": 7579.0,
+                  "total_travel_time": 33434.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-5x5",
+                "seed": 43,
+                "mean_reward": -0.0019,
+                "total_reward": -21.7439,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 19.495,
+                  "avg_travel_time": 85.6436,
+                  "avg_depart_delay": 0.6638,
+                  "throughput": 1.0,
+                  "completed_trips": 404,
+                  "total_waiting_time": 7876.0,
+                  "total_travel_time": 34600.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-5x5",
+                "seed": 44,
+                "mean_reward": -0.0022,
+                "total_reward": -24.9408,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 20.3747,
+                  "avg_travel_time": 87.7816,
+                  "avg_depart_delay": 0.6383,
+                  "throughput": 1.0,
+                  "completed_trips": 403,
+                  "total_waiting_time": 8211.0,
+                  "total_travel_time": 35376.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-5x5",
+                "seed": 45,
+                "mean_reward": -0.0019,
+                "total_reward": -21.7378,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 19.5198,
+                  "avg_travel_time": 85.9431,
+                  "avg_depart_delay": 0.7857,
+                  "throughput": 1.0,
+                  "completed_trips": 404,
+                  "total_waiting_time": 7886.0,
+                  "total_travel_time": 34721.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-5x5",
+                "seed": 46,
+                "mean_reward": -0.0017,
+                "total_reward": -19.0908,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 18.9865,
+                  "avg_travel_time": 84.6631,
+                  "avg_depart_delay": 0.6362,
+                  "throughput": 1.0,
+                  "completed_trips": 371,
+                  "total_waiting_time": 7044.0,
+                  "total_travel_time": 31410.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-5x5",
+                "seed": 47,
+                "mean_reward": -0.0023,
+                "total_reward": -25.7056,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 20.466,
+                  "avg_travel_time": 85.5995,
+                  "avg_depart_delay": 0.654,
+                  "throughput": 1.0,
+                  "completed_trips": 427,
+                  "total_waiting_time": 8739.0,
+                  "total_travel_time": 36551.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-5x5",
+                "seed": 48,
+                "mean_reward": -0.0016,
+                "total_reward": -18.5232,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 18.5039,
+                  "avg_travel_time": 83.2234,
+                  "avg_depart_delay": 0.6267,
+                  "throughput": 1.0,
+                  "completed_trips": 385,
+                  "total_waiting_time": 7124.0,
+                  "total_travel_time": 32041.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-5x5",
+                "seed": 49,
+                "mean_reward": -0.0018,
+                "total_reward": -20.2551,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 18.2634,
+                  "avg_travel_time": 82.5627,
+                  "avg_depart_delay": 0.5908,
+                  "throughput": 1.0,
+                  "completed_trips": 391,
+                  "total_waiting_time": 7141.0,
+                  "total_travel_time": 32282.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-5x5",
+                "seed": 50,
+                "mean_reward": -0.0018,
+                "total_reward": -20.8029,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 18.6528,
+                  "avg_travel_time": 84.088,
+                  "avg_depart_delay": 0.5432,
+                  "throughput": 1.0,
+                  "completed_trips": 409,
+                  "total_waiting_time": 7629.0,
+                  "total_travel_time": 34392.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-5x5",
+                "seed": 51,
+                "mean_reward": -0.0019,
+                "total_reward": -20.9308,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 18.6336,
+                  "avg_travel_time": 83.8448,
+                  "avg_depart_delay": 0.5766,
+                  "throughput": 1.0,
+                  "completed_trips": 393,
+                  "total_waiting_time": 7323.0,
+                  "total_travel_time": 32951.0
+                }
+              }
+            ],
+            "errors": []
+          }
+        ]
+      },
+      "weights_path": "C:\\Users\\user\\Documents\\GitHub\\RoadsidePrediction\\BackEnd\\example_weights\\ICCPS\\Final\\FedRL\\grid-5x5\\v3_naive-aggr_ranked.pkl",
+      "error": null,
+      "duration_seconds": 223.14
+    },
+    {
+      "config": {
+        "name": "marl_grid-3x3_baseline",
+        "trainer_type": "MARL",
+        "topology": "grid-3x3",
+        "n_episodes": 50,
+        "n_eval_runs": 10,
+        "base_seed": 42,
+        "ranked": true,
+        "horizon": 450,
+        "fedprox_mu": 0.0,
+        "alpha": 1.0,
+        "time_of_day": false,
+        "use_time_encoding": false,
+        "weights_path": "C:\\Users\\user\\Documents\\GitHub\\RoadsidePrediction\\BackEnd\\example_weights\\ICCPS\\Final\\MARL\\grid-3x3\\v3_ranked.pkl"
+      },
+      "training_rewards": null,
+      "evaluation": {
+        "campaign": [
+          {
+            "trainer": "MARL",
+            "topology": "grid-3x3",
+            "n_runs": 10,
+            "n_completed": 10,
+            "n_failed": 0,
+            "aggregated": {
+              "avg_waiting_time": {
+                "mean": 14.7767,
+                "std": 1.4877,
+                "ci_95_lower": 13.8546,
+                "ci_95_upper": 15.6988,
+                "min": 12.5665,
+                "max": 17.6726
+              },
+              "avg_travel_time": {
+                "mean": 60.5668,
+                "std": 1.927,
+                "ci_95_lower": 59.3724,
+                "ci_95_upper": 61.7612,
+                "min": 57.734,
+                "max": 64.4867
+              },
+              "throughput": {
+                "mean": 1.0,
+                "std": 0.0,
+                "ci_95_lower": 1.0,
+                "ci_95_upper": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "mean_reward": {
+                "mean": -0.0029,
+                "std": 0.0005,
+                "ci_95_lower": -0.0032,
+                "ci_95_upper": -0.0026,
+                "min": -0.0038,
+                "max": -0.0021
+              },
+              "total_comm_cost": {
+                "mean": 0.0,
+                "std": 0.0,
+                "ci_95_lower": 0.0,
+                "ci_95_upper": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              }
+            },
+            "individual": [
+              {
+                "trainer": "MARL",
+                "topology": "grid-3x3",
+                "seed": 42,
+                "mean_reward": -0.0028,
+                "total_reward": -11.2111,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 14.683,
+                  "avg_travel_time": 60.6339,
+                  "avg_depart_delay": 0.6688,
+                  "throughput": 1.0,
+                  "completed_trips": 224,
+                  "total_waiting_time": 3289.0,
+                  "total_travel_time": 13582.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-3x3",
+                "seed": 43,
+                "mean_reward": -0.0031,
+                "total_reward": -12.6775,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 12.5665,
+                  "avg_travel_time": 57.734,
+                  "avg_depart_delay": 0.6897,
+                  "throughput": 1.0,
+                  "completed_trips": 203,
+                  "total_waiting_time": 2551.0,
+                  "total_travel_time": 11720.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-3x3",
+                "seed": 44,
+                "mean_reward": -0.0029,
+                "total_reward": -11.6232,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 13.4222,
+                  "avg_travel_time": 58.8978,
+                  "avg_depart_delay": 0.6709,
+                  "throughput": 1.0,
+                  "completed_trips": 225,
+                  "total_waiting_time": 3020.0,
+                  "total_travel_time": 13252.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-3x3",
+                "seed": 45,
+                "mean_reward": -0.0032,
+                "total_reward": -13.028,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 16.0467,
+                  "avg_travel_time": 62.1636,
+                  "avg_depart_delay": 0.6831,
+                  "throughput": 1.0,
+                  "completed_trips": 214,
+                  "total_waiting_time": 3434.0,
+                  "total_travel_time": 13303.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-3x3",
+                "seed": 46,
+                "mean_reward": -0.0024,
+                "total_reward": -9.6883,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 16.0781,
+                  "avg_travel_time": 62.0885,
+                  "avg_depart_delay": 0.7221,
+                  "throughput": 1.0,
+                  "completed_trips": 192,
+                  "total_waiting_time": 3087.0,
+                  "total_travel_time": 11921.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-3x3",
+                "seed": 47,
+                "mean_reward": -0.0027,
+                "total_reward": -10.7547,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 14.2598,
+                  "avg_travel_time": 59.9118,
+                  "avg_depart_delay": 0.6093,
+                  "throughput": 1.0,
+                  "completed_trips": 204,
+                  "total_waiting_time": 2909.0,
+                  "total_travel_time": 12222.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-3x3",
+                "seed": 48,
+                "mean_reward": -0.0026,
+                "total_reward": -10.5544,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 14.4951,
+                  "avg_travel_time": 60.0637,
+                  "avg_depart_delay": 0.6202,
+                  "throughput": 1.0,
+                  "completed_trips": 204,
+                  "total_waiting_time": 2957.0,
+                  "total_travel_time": 12253.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-3x3",
+                "seed": 49,
+                "mean_reward": -0.0038,
+                "total_reward": -15.5649,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 17.6726,
+                  "avg_travel_time": 64.4867,
+                  "avg_depart_delay": 0.6499,
+                  "throughput": 1.0,
+                  "completed_trips": 226,
+                  "total_waiting_time": 3994.0,
+                  "total_travel_time": 14574.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-3x3",
+                "seed": 50,
+                "mean_reward": -0.0021,
+                "total_reward": -8.3333,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 13.705,
+                  "avg_travel_time": 59.275,
+                  "avg_depart_delay": 0.5651,
+                  "throughput": 1.0,
+                  "completed_trips": 200,
+                  "total_waiting_time": 2741.0,
+                  "total_travel_time": 11855.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-3x3",
+                "seed": 51,
+                "mean_reward": -0.0036,
+                "total_reward": -14.3885,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 14.8383,
+                  "avg_travel_time": 60.4128,
+                  "avg_depart_delay": 0.6563,
+                  "throughput": 1.0,
+                  "completed_trips": 235,
+                  "total_waiting_time": 3487.0,
+                  "total_travel_time": 14197.0
+                }
+              }
+            ],
+            "errors": []
+          }
+        ]
+      },
+      "weights_path": "C:\\Users\\user\\Documents\\GitHub\\RoadsidePrediction\\BackEnd\\example_weights\\ICCPS\\Final\\MARL\\grid-3x3\\v3_ranked.pkl",
+      "error": null,
+      "duration_seconds": 78.23
+    },
+    {
+      "config": {
+        "name": "marl_grid-5x5_baseline",
+        "trainer_type": "MARL",
+        "topology": "grid-5x5",
+        "n_episodes": 50,
+        "n_eval_runs": 10,
+        "base_seed": 42,
+        "ranked": true,
+        "horizon": 450,
+        "fedprox_mu": 0.0,
+        "alpha": 1.0,
+        "time_of_day": false,
+        "use_time_encoding": false,
+        "weights_path": "C:\\Users\\user\\Documents\\GitHub\\RoadsidePrediction\\BackEnd\\example_weights\\ICCPS\\Final\\MARL\\grid-5x5\\v3_ranked.pkl"
+      },
+      "training_rewards": null,
+      "evaluation": {
+        "campaign": [
+          {
+            "trainer": "MARL",
+            "topology": "grid-5x5",
+            "n_runs": 10,
+            "n_completed": 10,
+            "n_failed": 0,
+            "aggregated": {
+              "avg_waiting_time": {
+                "mean": 24.6652,
+                "std": 1.2632,
+                "ci_95_lower": 23.8823,
+                "ci_95_upper": 25.4481,
+                "min": 22.4792,
+                "max": 27.1335
+              },
+              "avg_travel_time": {
+                "mean": 92.0699,
+                "std": 2.4099,
+                "ci_95_lower": 90.5763,
+                "ci_95_upper": 93.5636,
+                "min": 87.849,
+                "max": 96.1914
+              },
+              "throughput": {
+                "mean": 1.0,
+                "std": 0.0,
+                "ci_95_lower": 1.0,
+                "ci_95_upper": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "mean_reward": {
+                "mean": -0.0024,
+                "std": 0.0003,
+                "ci_95_lower": -0.0026,
+                "ci_95_upper": -0.0022,
+                "min": -0.0029,
+                "max": -0.0021
+              },
+              "total_comm_cost": {
+                "mean": 0.0,
+                "std": 0.0,
+                "ci_95_lower": 0.0,
+                "ci_95_upper": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              }
+            },
+            "individual": [
+              {
+                "trainer": "MARL",
+                "topology": "grid-5x5",
+                "seed": 42,
+                "mean_reward": -0.0022,
+                "total_reward": -24.7878,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 23.7751,
+                  "avg_travel_time": 90.7434,
+                  "avg_depart_delay": 0.561,
+                  "throughput": 1.0,
+                  "completed_trips": 378,
+                  "total_waiting_time": 8987.0,
+                  "total_travel_time": 34301.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-5x5",
+                "seed": 43,
+                "mean_reward": -0.0023,
+                "total_reward": -25.9744,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 25.1037,
+                  "avg_travel_time": 92.8099,
+                  "avg_depart_delay": 0.656,
+                  "throughput": 1.0,
+                  "completed_trips": 405,
+                  "total_waiting_time": 10167.0,
+                  "total_travel_time": 37588.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-5x5",
+                "seed": 44,
+                "mean_reward": -0.0028,
+                "total_reward": -31.7453,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 25.4485,
+                  "avg_travel_time": 94.2835,
+                  "avg_depart_delay": 0.6438,
+                  "throughput": 1.0,
+                  "completed_trips": 388,
+                  "total_waiting_time": 9874.0,
+                  "total_travel_time": 36582.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-5x5",
+                "seed": 45,
+                "mean_reward": -0.0029,
+                "total_reward": -32.8922,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 27.1335,
+                  "avg_travel_time": 96.1914,
+                  "avg_depart_delay": 0.7886,
+                  "throughput": 1.0,
+                  "completed_trips": 397,
+                  "total_waiting_time": 10772.0,
+                  "total_travel_time": 38188.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-5x5",
+                "seed": 46,
+                "mean_reward": -0.0023,
+                "total_reward": -26.2679,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 25.2889,
+                  "avg_travel_time": 93.2639,
+                  "avg_depart_delay": 0.6288,
+                  "throughput": 1.0,
+                  "completed_trips": 360,
+                  "total_waiting_time": 9104.0,
+                  "total_travel_time": 33575.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-5x5",
+                "seed": 47,
+                "mean_reward": -0.0027,
+                "total_reward": -30.1323,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 23.7804,
+                  "avg_travel_time": 89.5776,
+                  "avg_depart_delay": 0.6294,
+                  "throughput": 1.0,
+                  "completed_trips": 419,
+                  "total_waiting_time": 9964.0,
+                  "total_travel_time": 37533.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-5x5",
+                "seed": 48,
+                "mean_reward": -0.0022,
+                "total_reward": -24.7537,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 24.0445,
+                  "avg_travel_time": 90.9712,
+                  "avg_depart_delay": 0.6116,
+                  "throughput": 1.0,
+                  "completed_trips": 382,
+                  "total_waiting_time": 9185.0,
+                  "total_travel_time": 34751.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-5x5",
+                "seed": 49,
+                "mean_reward": -0.0021,
+                "total_reward": -23.7136,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 22.4792,
+                  "avg_travel_time": 87.849,
+                  "avg_depart_delay": 0.6054,
+                  "throughput": 1.0,
+                  "completed_trips": 384,
+                  "total_waiting_time": 8632.0,
+                  "total_travel_time": 33734.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-5x5",
+                "seed": 50,
+                "mean_reward": -0.0021,
+                "total_reward": -23.655,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 24.4133,
+                  "avg_travel_time": 91.7857,
+                  "avg_depart_delay": 0.5426,
+                  "throughput": 1.0,
+                  "completed_trips": 392,
+                  "total_waiting_time": 9570.0,
+                  "total_travel_time": 35980.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-5x5",
+                "seed": 51,
+                "mean_reward": -0.0025,
+                "total_reward": -28.0605,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 25.1851,
+                  "avg_travel_time": 93.2237,
+                  "avg_depart_delay": 0.5959,
+                  "throughput": 1.0,
+                  "completed_trips": 389,
+                  "total_waiting_time": 9797.0,
+                  "total_travel_time": 36264.0
+                }
+              }
+            ],
+            "errors": []
+          }
+        ]
+      },
+      "weights_path": "C:\\Users\\user\\Documents\\GitHub\\RoadsidePrediction\\BackEnd\\example_weights\\ICCPS\\Final\\MARL\\grid-5x5\\v3_ranked.pkl",
+      "error": null,
+      "duration_seconds": 226.92
+    },
+    {
+      "config": {
+        "name": "sarl_grid-3x3_baseline",
+        "trainer_type": "SARL",
+        "topology": "grid-3x3",
+        "n_episodes": 50,
+        "n_eval_runs": 10,
+        "base_seed": 42,
+        "ranked": true,
+        "horizon": 450,
+        "fedprox_mu": 0.0,
+        "alpha": 1.0,
+        "time_of_day": false,
+        "use_time_encoding": false,
+        "weights_path": "C:\\Users\\user\\Documents\\GitHub\\RoadsidePrediction\\BackEnd\\example_weights\\ICCPS\\Final\\SARL\\grid-3x3\\v3_ranked.pkl"
+      },
+      "training_rewards": null,
+      "evaluation": {
+        "campaign": [
+          {
+            "trainer": "SARL",
+            "topology": "grid-3x3",
+            "n_runs": 10,
+            "n_completed": 10,
+            "n_failed": 0,
+            "aggregated": {
+              "avg_waiting_time": {
+                "mean": 14.219,
+                "std": 0.7644,
+                "ci_95_lower": 13.7452,
+                "ci_95_upper": 14.6928,
+                "min": 13.0254,
+                "max": 15.4298
+              },
+              "avg_travel_time": {
+                "mean": 58.8323,
+                "std": 0.936,
+                "ci_95_lower": 58.2521,
+                "ci_95_upper": 59.4124,
+                "min": 56.7614,
+                "max": 59.9912
+              },
+              "throughput": {
+                "mean": 1.0,
+                "std": 0.0,
+                "ci_95_lower": 1.0,
+                "ci_95_upper": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "mean_reward": {
+                "mean": -0.0028,
+                "std": 0.0004,
+                "ci_95_lower": -0.0031,
+                "ci_95_upper": -0.0025,
+                "min": -0.0034,
+                "max": -0.0019
+              },
+              "total_comm_cost": {
+                "mean": 0.0,
+                "std": 0.0,
+                "ci_95_lower": 0.0,
+                "ci_95_upper": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              }
+            },
+            "individual": [
+              {
+                "trainer": "SARL",
+                "topology": "grid-3x3",
+                "seed": 42,
+                "mean_reward": -0.0028,
+                "total_reward": -11.5002,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 13.4779,
+                  "avg_travel_time": 58.4823,
+                  "avg_depart_delay": 0.6819,
+                  "throughput": 1.0,
+                  "completed_trips": 226,
+                  "total_waiting_time": 3046.0,
+                  "total_travel_time": 13217.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-3x3",
+                "seed": 43,
+                "mean_reward": -0.0025,
+                "total_reward": -10.0689,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 13.7452,
+                  "avg_travel_time": 59.0337,
+                  "avg_depart_delay": 0.69,
+                  "throughput": 1.0,
+                  "completed_trips": 208,
+                  "total_waiting_time": 2859.0,
+                  "total_travel_time": 12279.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-3x3",
+                "seed": 44,
+                "mean_reward": -0.0034,
+                "total_reward": -13.7108,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 15.4298,
+                  "avg_travel_time": 59.9912,
+                  "avg_depart_delay": 0.6765,
+                  "throughput": 1.0,
+                  "completed_trips": 228,
+                  "total_waiting_time": 3518.0,
+                  "total_travel_time": 13678.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-3x3",
+                "seed": 45,
+                "mean_reward": -0.0029,
+                "total_reward": -11.7551,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 14.9296,
+                  "avg_travel_time": 59.0892,
+                  "avg_depart_delay": 0.6764,
+                  "throughput": 1.0,
+                  "completed_trips": 213,
+                  "total_waiting_time": 3180.0,
+                  "total_travel_time": 12586.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-3x3",
+                "seed": 46,
+                "mean_reward": -0.0019,
+                "total_reward": -7.7941,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 13.0254,
+                  "avg_travel_time": 56.7614,
+                  "avg_depart_delay": 0.7125,
+                  "throughput": 1.0,
+                  "completed_trips": 197,
+                  "total_waiting_time": 2566.0,
+                  "total_travel_time": 11182.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-3x3",
+                "seed": 47,
+                "mean_reward": -0.003,
+                "total_reward": -12.0636,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 14.8039,
+                  "avg_travel_time": 59.7353,
+                  "avg_depart_delay": 0.6079,
+                  "throughput": 1.0,
+                  "completed_trips": 204,
+                  "total_waiting_time": 3020.0,
+                  "total_travel_time": 12186.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-3x3",
+                "seed": 48,
+                "mean_reward": -0.0028,
+                "total_reward": -11.4364,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 14.1148,
+                  "avg_travel_time": 58.8373,
+                  "avg_depart_delay": 0.6367,
+                  "throughput": 1.0,
+                  "completed_trips": 209,
+                  "total_waiting_time": 2950.0,
+                  "total_travel_time": 12297.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-3x3",
+                "seed": 49,
+                "mean_reward": -0.0032,
+                "total_reward": -13.041,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 13.5263,
+                  "avg_travel_time": 57.9342,
+                  "avg_depart_delay": 0.6605,
+                  "throughput": 1.0,
+                  "completed_trips": 228,
+                  "total_waiting_time": 3084.0,
+                  "total_travel_time": 13209.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-3x3",
+                "seed": 50,
+                "mean_reward": -0.0023,
+                "total_reward": -9.1174,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 14.49,
+                  "avg_travel_time": 59.02,
+                  "avg_depart_delay": 0.5645,
+                  "throughput": 1.0,
+                  "completed_trips": 200,
+                  "total_waiting_time": 2898.0,
+                  "total_travel_time": 11804.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-3x3",
+                "seed": 51,
+                "mean_reward": -0.0031,
+                "total_reward": -12.4741,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 14.6468,
+                  "avg_travel_time": 59.4383,
+                  "avg_depart_delay": 0.657,
+                  "throughput": 1.0,
+                  "completed_trips": 235,
+                  "total_waiting_time": 3442.0,
+                  "total_travel_time": 13968.0
+                }
+              }
+            ],
+            "errors": []
+          }
+        ]
+      },
+      "weights_path": "C:\\Users\\user\\Documents\\GitHub\\RoadsidePrediction\\BackEnd\\example_weights\\ICCPS\\Final\\SARL\\grid-3x3\\v3_ranked.pkl",
+      "error": null,
+      "duration_seconds": 78.16
+    },
+    {
+      "config": {
+        "name": "sarl_grid-5x5_baseline",
+        "trainer_type": "SARL",
+        "topology": "grid-5x5",
+        "n_episodes": 50,
+        "n_eval_runs": 10,
+        "base_seed": 42,
+        "ranked": true,
+        "horizon": 450,
+        "fedprox_mu": 0.0,
+        "alpha": 1.0,
+        "time_of_day": false,
+        "use_time_encoding": false,
+        "weights_path": "C:\\Users\\user\\Documents\\GitHub\\RoadsidePrediction\\BackEnd\\example_weights\\ICCPS\\Final\\SARL\\grid-5x5\\v3_ranked.pkl"
+      },
+      "training_rewards": null,
+      "evaluation": {
+        "campaign": [
+          {
+            "trainer": "SARL",
+            "topology": "grid-5x5",
+            "n_runs": 10,
+            "n_completed": 10,
+            "n_failed": 0,
+            "aggregated": {
+              "avg_waiting_time": {
+                "mean": 19.7831,
+                "std": 1.065,
+                "ci_95_lower": 19.123,
+                "ci_95_upper": 20.4432,
+                "min": 18.0635,
+                "max": 21.8532
+              },
+              "avg_travel_time": {
+                "mean": 84.5084,
+                "std": 1.9171,
+                "ci_95_lower": 83.3201,
+                "ci_95_upper": 85.6966,
+                "min": 82.1193,
+                "max": 88.403
+              },
+              "throughput": {
+                "mean": 1.0,
+                "std": 0.0,
+                "ci_95_lower": 1.0,
+                "ci_95_upper": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "mean_reward": {
+                "mean": -0.0019,
+                "std": 0.0003,
+                "ci_95_lower": -0.0021,
+                "ci_95_upper": -0.0018,
+                "min": -0.0023,
+                "max": -0.0017
+              },
+              "total_comm_cost": {
+                "mean": 0.0,
+                "std": 0.0,
+                "ci_95_lower": 0.0,
+                "ci_95_upper": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              }
+            },
+            "individual": [
+              {
+                "trainer": "SARL",
+                "topology": "grid-5x5",
+                "seed": 42,
+                "mean_reward": -0.0017,
+                "total_reward": -19.0218,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 18.0635,
+                  "avg_travel_time": 82.1193,
+                  "avg_depart_delay": 0.5685,
+                  "throughput": 1.0,
+                  "completed_trips": 394,
+                  "total_waiting_time": 7117.0,
+                  "total_travel_time": 32355.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-5x5",
+                "seed": 43,
+                "mean_reward": -0.0019,
+                "total_reward": -21.6718,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 20.1592,
+                  "avg_travel_time": 84.8557,
+                  "avg_depart_delay": 0.6489,
+                  "throughput": 1.0,
+                  "completed_trips": 402,
+                  "total_waiting_time": 8104.0,
+                  "total_travel_time": 34112.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-5x5",
+                "seed": 44,
+                "mean_reward": -0.0023,
+                "total_reward": -25.6962,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 21.8532,
+                  "avg_travel_time": 88.403,
+                  "avg_depart_delay": 0.6454,
+                  "throughput": 1.0,
+                  "completed_trips": 402,
+                  "total_waiting_time": 8785.0,
+                  "total_travel_time": 35538.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-5x5",
+                "seed": 45,
+                "mean_reward": -0.0022,
+                "total_reward": -24.6024,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 20.7451,
+                  "avg_travel_time": 86.9272,
+                  "avg_depart_delay": 0.7671,
+                  "throughput": 1.0,
+                  "completed_trips": 412,
+                  "total_waiting_time": 8547.0,
+                  "total_travel_time": 35814.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-5x5",
+                "seed": 46,
+                "mean_reward": -0.0017,
+                "total_reward": -18.9393,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 19.3536,
+                  "avg_travel_time": 84.5251,
+                  "avg_depart_delay": 0.6247,
+                  "throughput": 1.0,
+                  "completed_trips": 379,
+                  "total_waiting_time": 7335.0,
+                  "total_travel_time": 32035.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-5x5",
+                "seed": 47,
+                "mean_reward": -0.0023,
+                "total_reward": -25.5326,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 20.5421,
+                  "avg_travel_time": 84.6308,
+                  "avg_depart_delay": 0.6454,
+                  "throughput": 1.0,
+                  "completed_trips": 428,
+                  "total_waiting_time": 8792.0,
+                  "total_travel_time": 36222.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-5x5",
+                "seed": 48,
+                "mean_reward": -0.0017,
+                "total_reward": -18.6462,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 19.3219,
+                  "avg_travel_time": 83.9314,
+                  "avg_depart_delay": 0.607,
+                  "throughput": 1.0,
+                  "completed_trips": 379,
+                  "total_waiting_time": 7323.0,
+                  "total_travel_time": 31810.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-5x5",
+                "seed": 49,
+                "mean_reward": -0.0017,
+                "total_reward": -19.526,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 19.199,
+                  "avg_travel_time": 82.7347,
+                  "avg_depart_delay": 0.6173,
+                  "throughput": 1.0,
+                  "completed_trips": 392,
+                  "total_waiting_time": 7526.0,
+                  "total_travel_time": 32432.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-5x5",
+                "seed": 50,
+                "mean_reward": -0.0017,
+                "total_reward": -19.3052,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 19.0616,
+                  "avg_travel_time": 82.9236,
+                  "avg_depart_delay": 0.558,
+                  "throughput": 1.0,
+                  "completed_trips": 406,
+                  "total_waiting_time": 7739.0,
+                  "total_travel_time": 33667.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-5x5",
+                "seed": 51,
+                "mean_reward": -0.002,
+                "total_reward": -22.617,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 19.5318,
+                  "avg_travel_time": 84.0331,
+                  "avg_depart_delay": 0.5832,
+                  "throughput": 1.0,
+                  "completed_trips": 393,
+                  "total_waiting_time": 7676.0,
+                  "total_travel_time": 33025.0
+                }
+              }
+            ],
+            "errors": []
+          }
+        ]
+      },
+      "weights_path": "C:\\Users\\user\\Documents\\GitHub\\RoadsidePrediction\\BackEnd\\example_weights\\ICCPS\\Final\\SARL\\grid-5x5\\v3_ranked.pkl",
+      "error": null,
+      "duration_seconds": 223.52
+    },
+    {
+      "config": {
+        "name": "fixed_time_grid-3x3_baseline",
+        "trainer_type": "fixed-time",
+        "topology": "grid-3x3",
+        "n_episodes": 50,
+        "n_eval_runs": 10,
+        "base_seed": 42,
+        "ranked": true,
+        "horizon": 450,
+        "fedprox_mu": 0.0,
+        "alpha": 1.0,
+        "time_of_day": false,
+        "use_time_encoding": false,
+        "weights_path": "__baseline__"
+      },
+      "training_rewards": null,
+      "evaluation": {
+        "campaign": [
+          {
+            "trainer": "fixed-time",
+            "topology": "grid-3x3",
+            "n_runs": 10,
+            "n_completed": 10,
+            "n_failed": 0,
+            "aggregated": {
+              "avg_waiting_time": {
+                "mean": 76.9451,
+                "std": 25.6978,
+                "ci_95_lower": 61.0175,
+                "ci_95_upper": 92.8728,
+                "min": 25.8667,
+                "max": 112.3721
+              },
+              "avg_travel_time": {
+                "mean": 117.3139,
+                "std": 27.0896,
+                "ci_95_lower": 100.5236,
+                "ci_95_upper": 134.1042,
+                "min": 62.5111,
+                "max": 155.4186
+              },
+              "throughput": {
+                "mean": 1.0,
+                "std": 0.0,
+                "ci_95_lower": 1.0,
+                "ci_95_upper": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "mean_reward": {
+                "mean": -0.0815,
+                "std": 0.0163,
+                "ci_95_lower": -0.0916,
+                "ci_95_upper": -0.0714,
+                "min": -0.1033,
+                "max": -0.0554
+              },
+              "total_comm_cost": {
+                "mean": 0.0,
+                "std": 0.0,
+                "ci_95_lower": 0.0,
+                "ci_95_upper": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              }
+            },
+            "individual": [
+              {
+                "trainer": "fixed-time",
+                "topology": "grid-3x3",
+                "seed": 42,
+                "mean_reward": -0.0845,
+                "total_reward": -342.1324,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 100.95,
+                  "avg_travel_time": 140.9333,
+                  "avg_depart_delay": 0.732,
+                  "throughput": 1.0,
+                  "completed_trips": 60,
+                  "total_waiting_time": 6057.0,
+                  "total_travel_time": 8456.0
+                }
+              },
+              {
+                "trainer": "fixed-time",
+                "topology": "grid-3x3",
+                "seed": 43,
+                "mean_reward": -0.0554,
+                "total_reward": -224.2457,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 69.1014,
+                  "avg_travel_time": 110.4493,
+                  "avg_depart_delay": 0.5017,
+                  "throughput": 1.0,
+                  "completed_trips": 69,
+                  "total_waiting_time": 4768.0,
+                  "total_travel_time": 7621.0
+                }
+              },
+              {
+                "trainer": "fixed-time",
+                "topology": "grid-3x3",
+                "seed": 44,
+                "mean_reward": -0.0997,
+                "total_reward": -403.9414,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 25.8667,
+                  "avg_travel_time": 62.5111,
+                  "avg_depart_delay": 0.6787,
+                  "throughput": 1.0,
+                  "completed_trips": 45,
+                  "total_waiting_time": 1164.0,
+                  "total_travel_time": 2813.0
+                }
+              },
+              {
+                "trainer": "fixed-time",
+                "topology": "grid-3x3",
+                "seed": 45,
+                "mean_reward": -0.1033,
+                "total_reward": -418.2195,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 112.3721,
+                  "avg_travel_time": 155.4186,
+                  "avg_depart_delay": 0.7893,
+                  "throughput": 1.0,
+                  "completed_trips": 43,
+                  "total_waiting_time": 4832.0,
+                  "total_travel_time": 6683.0
+                }
+              },
+              {
+                "trainer": "fixed-time",
+                "topology": "grid-3x3",
+                "seed": 46,
+                "mean_reward": -0.0831,
+                "total_reward": -336.6248,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 97.6341,
+                  "avg_travel_time": 138.5854,
+                  "avg_depart_delay": 0.7278,
+                  "throughput": 1.0,
+                  "completed_trips": 41,
+                  "total_waiting_time": 4003.0,
+                  "total_travel_time": 5682.0
+                }
+              },
+              {
+                "trainer": "fixed-time",
+                "topology": "grid-3x3",
+                "seed": 47,
+                "mean_reward": -0.0669,
+                "total_reward": -271.0241,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 93.6491,
+                  "avg_travel_time": 133.5614,
+                  "avg_depart_delay": 0.6479,
+                  "throughput": 1.0,
+                  "completed_trips": 57,
+                  "total_waiting_time": 5338.0,
+                  "total_travel_time": 7613.0
+                }
+              },
+              {
+                "trainer": "fixed-time",
+                "topology": "grid-3x3",
+                "seed": 48,
+                "mean_reward": -0.0685,
+                "total_reward": -277.6058,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 55.5741,
+                  "avg_travel_time": 94.8519,
+                  "avg_depart_delay": 0.5152,
+                  "throughput": 1.0,
+                  "completed_trips": 54,
+                  "total_waiting_time": 3001.0,
+                  "total_travel_time": 5122.0
+                }
+              },
+              {
+                "trainer": "fixed-time",
+                "topology": "grid-3x3",
+                "seed": 49,
+                "mean_reward": -0.1019,
+                "total_reward": -412.826,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 75.6571,
+                  "avg_travel_time": 115.0857,
+                  "avg_depart_delay": 0.624,
+                  "throughput": 1.0,
+                  "completed_trips": 35,
+                  "total_waiting_time": 2648.0,
+                  "total_travel_time": 4028.0
+                }
+              },
+              {
+                "trainer": "fixed-time",
+                "topology": "grid-3x3",
+                "seed": 50,
+                "mean_reward": -0.0798,
+                "total_reward": -323.365,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 60.381,
+                  "avg_travel_time": 100.0238,
+                  "avg_depart_delay": 0.5424,
+                  "throughput": 1.0,
+                  "completed_trips": 42,
+                  "total_waiting_time": 2536.0,
+                  "total_travel_time": 4201.0
+                }
+              },
+              {
+                "trainer": "fixed-time",
+                "topology": "grid-3x3",
+                "seed": 51,
+                "mean_reward": -0.0719,
+                "total_reward": -291.2667,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 78.2656,
+                  "avg_travel_time": 121.7188,
+                  "avg_depart_delay": 0.6831,
+                  "throughput": 1.0,
+                  "completed_trips": 64,
+                  "total_waiting_time": 5009.0,
+                  "total_travel_time": 7790.0
+                }
+              }
+            ],
+            "errors": []
+          }
+        ]
+      },
+      "weights_path": null,
+      "error": null,
+      "duration_seconds": 91.4
+    },
+    {
+      "config": {
+        "name": "fixed_time_grid-5x5_baseline",
+        "trainer_type": "fixed-time",
+        "topology": "grid-5x5",
+        "n_episodes": 50,
+        "n_eval_runs": 10,
+        "base_seed": 42,
+        "ranked": true,
+        "horizon": 450,
+        "fedprox_mu": 0.0,
+        "alpha": 1.0,
+        "time_of_day": false,
+        "use_time_encoding": false,
+        "weights_path": "__baseline__"
+      },
+      "training_rewards": null,
+      "evaluation": {
+        "campaign": [
+          {
+            "trainer": "fixed-time",
+            "topology": "grid-5x5",
+            "n_runs": 10,
+            "n_completed": 10,
+            "n_failed": 0,
+            "aggregated": {
+              "avg_waiting_time": {
+                "mean": 70.6215,
+                "std": 22.733,
+                "ci_95_lower": 56.5314,
+                "ci_95_upper": 84.7116,
+                "min": 40.6,
+                "max": 104.6061
+              },
+              "avg_travel_time": {
+                "mean": 124.6403,
+                "std": 23.9526,
+                "ci_95_lower": 109.7944,
+                "ci_95_upper": 139.4863,
+                "min": 89.9231,
+                "max": 162.0455
+              },
+              "throughput": {
+                "mean": 1.0,
+                "std": 0.0,
+                "ci_95_lower": 1.0,
+                "ci_95_upper": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "mean_reward": {
+                "mean": -0.041,
+                "std": 0.0053,
+                "ci_95_lower": -0.0443,
+                "ci_95_upper": -0.0377,
+                "min": -0.051,
+                "max": -0.0331
+              },
+              "total_comm_cost": {
+                "mean": 0.0,
+                "std": 0.0,
+                "ci_95_lower": 0.0,
+                "ci_95_upper": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              }
+            },
+            "individual": [
+              {
+                "trainer": "fixed-time",
+                "topology": "grid-5x5",
+                "seed": 42,
+                "mean_reward": -0.0388,
+                "total_reward": -436.3569,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 97.6377,
+                  "avg_travel_time": 151.913,
+                  "avg_depart_delay": 0.5107,
+                  "throughput": 1.0,
+                  "completed_trips": 69,
+                  "total_waiting_time": 6737.0,
+                  "total_travel_time": 10482.0
+                }
+              },
+              {
+                "trainer": "fixed-time",
+                "topology": "grid-5x5",
+                "seed": 43,
+                "mean_reward": -0.0448,
+                "total_reward": -503.5334,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 41.4222,
+                  "avg_travel_time": 96.9778,
+                  "avg_depart_delay": 0.7444,
+                  "throughput": 1.0,
+                  "completed_trips": 45,
+                  "total_waiting_time": 1864.0,
+                  "total_travel_time": 4364.0
+                }
+              },
+              {
+                "trainer": "fixed-time",
+                "topology": "grid-5x5",
+                "seed": 44,
+                "mean_reward": -0.051,
+                "total_reward": -574.1135,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 90.3585,
+                  "avg_travel_time": 147.1321,
+                  "avg_depart_delay": 0.5538,
+                  "throughput": 1.0,
+                  "completed_trips": 53,
+                  "total_waiting_time": 4789.0,
+                  "total_travel_time": 7798.0
+                }
+              },
+              {
+                "trainer": "fixed-time",
+                "topology": "grid-5x5",
+                "seed": 45,
+                "mean_reward": -0.0433,
+                "total_reward": -486.819,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 51.2885,
+                  "avg_travel_time": 109.0962,
+                  "avg_depart_delay": 0.8363,
+                  "throughput": 1.0,
+                  "completed_trips": 52,
+                  "total_waiting_time": 2667.0,
+                  "total_travel_time": 5673.0
+                }
+              },
+              {
+                "trainer": "fixed-time",
+                "topology": "grid-5x5",
+                "seed": 46,
+                "mean_reward": -0.0331,
+                "total_reward": -371.9055,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 104.6061,
+                  "avg_travel_time": 162.0455,
+                  "avg_depart_delay": 0.6818,
+                  "throughput": 1.0,
+                  "completed_trips": 66,
+                  "total_waiting_time": 6904.0,
+                  "total_travel_time": 10695.0
+                }
+              },
+              {
+                "trainer": "fixed-time",
+                "topology": "grid-5x5",
+                "seed": 47,
+                "mean_reward": -0.0463,
+                "total_reward": -520.3181,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 71.6346,
+                  "avg_travel_time": 120.5385,
+                  "avg_depart_delay": 0.595,
+                  "throughput": 1.0,
+                  "completed_trips": 52,
+                  "total_waiting_time": 3725.0,
+                  "total_travel_time": 6268.0
+                }
+              },
+              {
+                "trainer": "fixed-time",
+                "topology": "grid-5x5",
+                "seed": 48,
+                "mean_reward": -0.0366,
+                "total_reward": -412.0677,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 62.6346,
+                  "avg_travel_time": 115.2692,
+                  "avg_depart_delay": 0.5779,
+                  "throughput": 1.0,
+                  "completed_trips": 52,
+                  "total_waiting_time": 3257.0,
+                  "total_travel_time": 5994.0
+                }
+              },
+              {
+                "trainer": "fixed-time",
+                "topology": "grid-5x5",
+                "seed": 49,
+                "mean_reward": -0.0382,
+                "total_reward": -430.0319,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 40.6,
+                  "avg_travel_time": 89.9231,
+                  "avg_depart_delay": 0.4778,
+                  "throughput": 1.0,
+                  "completed_trips": 65,
+                  "total_waiting_time": 2639.0,
+                  "total_travel_time": 5845.0
+                }
+              },
+              {
+                "trainer": "fixed-time",
+                "topology": "grid-5x5",
+                "seed": 50,
+                "mean_reward": -0.0374,
+                "total_reward": -421.0446,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 63.7213,
+                  "avg_travel_time": 117.0328,
+                  "avg_depart_delay": 0.4875,
+                  "throughput": 1.0,
+                  "completed_trips": 61,
+                  "total_waiting_time": 3887.0,
+                  "total_travel_time": 7139.0
+                }
+              },
+              {
+                "trainer": "fixed-time",
+                "topology": "grid-5x5",
+                "seed": 51,
+                "mean_reward": -0.0401,
+                "total_reward": -451.5073,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 82.3115,
+                  "avg_travel_time": 136.4754,
+                  "avg_depart_delay": 0.5059,
+                  "throughput": 1.0,
+                  "completed_trips": 61,
+                  "total_waiting_time": 5021.0,
+                  "total_travel_time": 8325.0
+                }
+              }
+            ],
+            "errors": []
+          }
+        ]
+      },
+      "weights_path": null,
+      "error": null,
+      "duration_seconds": 244.21
+    },
+    {
+      "config": {
+        "name": "max_pressure_grid-3x3_baseline",
+        "trainer_type": "max-pressure",
+        "topology": "grid-3x3",
+        "n_episodes": 50,
+        "n_eval_runs": 10,
+        "base_seed": 42,
+        "ranked": true,
+        "horizon": 450,
+        "fedprox_mu": 0.0,
+        "alpha": 1.0,
+        "time_of_day": false,
+        "use_time_encoding": false,
+        "weights_path": "__baseline__"
+      },
+      "training_rewards": null,
+      "evaluation": {
+        "campaign": [
+          {
+            "trainer": "max-pressure",
+            "topology": "grid-3x3",
+            "n_runs": 10,
+            "n_completed": 10,
+            "n_failed": 0,
+            "aggregated": {
+              "avg_waiting_time": {
+                "mean": 167.7734,
+                "std": 20.6197,
+                "ci_95_lower": 154.9932,
+                "ci_95_upper": 180.5537,
+                "min": 147.322,
+                "max": 208.1481
+              },
+              "avg_travel_time": {
+                "mean": 211.0667,
+                "std": 21.2319,
+                "ci_95_lower": 197.907,
+                "ci_95_upper": 224.2263,
+                "min": 189.3559,
+                "max": 253.0741
+              },
+              "throughput": {
+                "mean": 1.0,
+                "std": 0.0,
+                "ci_95_lower": 1.0,
+                "ci_95_upper": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "mean_reward": {
+                "mean": -0.0872,
+                "std": 0.0109,
+                "ci_95_lower": -0.0939,
+                "ci_95_upper": -0.0804,
+                "min": -0.103,
+                "max": -0.0721
+              },
+              "total_comm_cost": {
+                "mean": 0.0,
+                "std": 0.0,
+                "ci_95_lower": 0.0,
+                "ci_95_upper": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              }
+            },
+            "individual": [
+              {
+                "trainer": "max-pressure",
+                "topology": "grid-3x3",
+                "seed": 42,
+                "mean_reward": -0.0872,
+                "total_reward": -353.244,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 154.7966,
+                  "avg_travel_time": 199.5593,
+                  "avg_depart_delay": 0.5551,
+                  "throughput": 1.0,
+                  "completed_trips": 59,
+                  "total_waiting_time": 9133.0,
+                  "total_travel_time": 11774.0
+                }
+              },
+              {
+                "trainer": "max-pressure",
+                "topology": "grid-3x3",
+                "seed": 43,
+                "mean_reward": -0.0943,
+                "total_reward": -382.0115,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 186.8421,
+                  "avg_travel_time": 230.5263,
+                  "avg_depart_delay": 0.4798,
+                  "throughput": 1.0,
+                  "completed_trips": 57,
+                  "total_waiting_time": 10650.0,
+                  "total_travel_time": 13140.0
+                }
+              },
+              {
+                "trainer": "max-pressure",
+                "topology": "grid-3x3",
+                "seed": 44,
+                "mean_reward": -0.103,
+                "total_reward": -417.0001,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 147.322,
+                  "avg_travel_time": 189.3559,
+                  "avg_depart_delay": 0.5661,
+                  "throughput": 1.0,
+                  "completed_trips": 59,
+                  "total_waiting_time": 8692.0,
+                  "total_travel_time": 11172.0
+                }
+              },
+              {
+                "trainer": "max-pressure",
+                "topology": "grid-3x3",
+                "seed": 45,
+                "mean_reward": -0.0958,
+                "total_reward": -388.1506,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 169.9825,
+                  "avg_travel_time": 213.0351,
+                  "avg_depart_delay": 0.6405,
+                  "throughput": 1.0,
+                  "completed_trips": 57,
+                  "total_waiting_time": 9689.0,
+                  "total_travel_time": 12143.0
+                }
+              },
+              {
+                "trainer": "max-pressure",
+                "topology": "grid-3x3",
+                "seed": 46,
+                "mean_reward": -0.0721,
+                "total_reward": -291.8031,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 154.9231,
+                  "avg_travel_time": 197.9385,
+                  "avg_depart_delay": 0.814,
+                  "throughput": 1.0,
+                  "completed_trips": 65,
+                  "total_waiting_time": 10070.0,
+                  "total_travel_time": 12866.0
+                }
+              },
+              {
+                "trainer": "max-pressure",
+                "topology": "grid-3x3",
+                "seed": 47,
+                "mean_reward": -0.0751,
+                "total_reward": -304.1657,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 149.4545,
+                  "avg_travel_time": 191.3333,
+                  "avg_depart_delay": 0.5673,
+                  "throughput": 1.0,
+                  "completed_trips": 66,
+                  "total_waiting_time": 9864.0,
+                  "total_travel_time": 12628.0
+                }
+              },
+              {
+                "trainer": "max-pressure",
+                "topology": "grid-3x3",
+                "seed": 48,
+                "mean_reward": -0.0833,
+                "total_reward": -337.5125,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 208.1481,
+                  "avg_travel_time": 253.0741,
+                  "avg_depart_delay": 0.4731,
+                  "throughput": 1.0,
+                  "completed_trips": 54,
+                  "total_waiting_time": 11240.0,
+                  "total_travel_time": 13666.0
+                }
+              },
+              {
+                "trainer": "max-pressure",
+                "topology": "grid-3x3",
+                "seed": 49,
+                "mean_reward": -0.0952,
+                "total_reward": -385.4057,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 148.6203,
+                  "avg_travel_time": 191.2152,
+                  "avg_depart_delay": 0.6389,
+                  "throughput": 1.0,
+                  "completed_trips": 79,
+                  "total_waiting_time": 11741.0,
+                  "total_travel_time": 15106.0
+                }
+              },
+              {
+                "trainer": "max-pressure",
+                "topology": "grid-3x3",
+                "seed": 50,
+                "mean_reward": -0.0728,
+                "total_reward": -294.9554,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 170.7742,
+                  "avg_travel_time": 215.3387,
+                  "avg_depart_delay": 0.5073,
+                  "throughput": 1.0,
+                  "completed_trips": 62,
+                  "total_waiting_time": 10588.0,
+                  "total_travel_time": 13351.0
+                }
+              },
+              {
+                "trainer": "max-pressure",
+                "topology": "grid-3x3",
+                "seed": 51,
+                "mean_reward": -0.0927,
+                "total_reward": -375.5599,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 186.871,
+                  "avg_travel_time": 229.2903,
+                  "avg_depart_delay": 0.5652,
+                  "throughput": 1.0,
+                  "completed_trips": 62,
+                  "total_waiting_time": 11586.0,
+                  "total_travel_time": 14216.0
+                }
+              }
+            ],
+            "errors": []
+          }
+        ]
+      },
+      "weights_path": null,
+      "error": null,
+      "duration_seconds": 110.59
+    },
+    {
+      "config": {
+        "name": "max_pressure_grid-5x5_baseline",
+        "trainer_type": "max-pressure",
+        "topology": "grid-5x5",
+        "n_episodes": 50,
+        "n_eval_runs": 10,
+        "base_seed": 42,
+        "ranked": true,
+        "horizon": 450,
+        "fedprox_mu": 0.0,
+        "alpha": 1.0,
+        "time_of_day": false,
+        "use_time_encoding": false,
+        "weights_path": "__baseline__"
+      },
+      "training_rewards": null,
+      "evaluation": {
+        "campaign": [
+          {
+            "trainer": "max-pressure",
+            "topology": "grid-5x5",
+            "n_runs": 10,
+            "n_completed": 10,
+            "n_failed": 0,
+            "aggregated": {
+              "avg_waiting_time": {
+                "mean": 152.3429,
+                "std": 31.298,
+                "ci_95_lower": 132.9442,
+                "ci_95_upper": 171.7416,
+                "min": 105.2209,
+                "max": 189.8132
+              },
+              "avg_travel_time": {
+                "mean": 210.7247,
+                "std": 32.4859,
+                "ci_95_lower": 190.5898,
+                "ci_95_upper": 230.8597,
+                "min": 157.0349,
+                "max": 249.7143
+              },
+              "throughput": {
+                "mean": 1.0,
+                "std": 0.0,
+                "ci_95_lower": 1.0,
+                "ci_95_upper": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "mean_reward": {
+                "mean": -0.0448,
+                "std": 0.0025,
+                "ci_95_lower": -0.0464,
+                "ci_95_upper": -0.0432,
+                "min": -0.0487,
+                "max": -0.0414
+              },
+              "total_comm_cost": {
+                "mean": 0.0,
+                "std": 0.0,
+                "ci_95_lower": 0.0,
+                "ci_95_upper": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              }
+            },
+            "individual": [
+              {
+                "trainer": "max-pressure",
+                "topology": "grid-5x5",
+                "seed": 42,
+                "mean_reward": -0.0435,
+                "total_reward": -489.3981,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 152.4667,
+                  "avg_travel_time": 212.6,
+                  "avg_depart_delay": 0.5156,
+                  "throughput": 1.0,
+                  "completed_trips": 75,
+                  "total_waiting_time": 11435.0,
+                  "total_travel_time": 15945.0
+                }
+              },
+              {
+                "trainer": "max-pressure",
+                "topology": "grid-5x5",
+                "seed": 43,
+                "mean_reward": -0.0478,
+                "total_reward": -537.6181,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 127.9155,
+                  "avg_travel_time": 187.7465,
+                  "avg_depart_delay": 0.5306,
+                  "throughput": 1.0,
+                  "completed_trips": 71,
+                  "total_waiting_time": 9082.0,
+                  "total_travel_time": 13330.0
+                }
+              },
+              {
+                "trainer": "max-pressure",
+                "topology": "grid-5x5",
+                "seed": 44,
+                "mean_reward": -0.0487,
+                "total_reward": -547.5188,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 185.8293,
+                  "avg_travel_time": 243.9024,
+                  "avg_depart_delay": 0.5566,
+                  "throughput": 1.0,
+                  "completed_trips": 41,
+                  "total_waiting_time": 7619.0,
+                  "total_travel_time": 10000.0
+                }
+              },
+              {
+                "trainer": "max-pressure",
+                "topology": "grid-5x5",
+                "seed": 45,
+                "mean_reward": -0.0452,
+                "total_reward": -508.2124,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 107.5158,
+                  "avg_travel_time": 167.0526,
+                  "avg_depart_delay": 0.6731,
+                  "throughput": 1.0,
+                  "completed_trips": 95,
+                  "total_waiting_time": 10214.0,
+                  "total_travel_time": 15870.0
+                }
+              },
+              {
+                "trainer": "max-pressure",
+                "topology": "grid-5x5",
+                "seed": 46,
+                "mean_reward": -0.0418,
+                "total_reward": -470.6827,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 184.8676,
+                  "avg_travel_time": 246.2059,
+                  "avg_depart_delay": 0.6684,
+                  "throughput": 1.0,
+                  "completed_trips": 68,
+                  "total_waiting_time": 12571.0,
+                  "total_travel_time": 16742.0
+                }
+              },
+              {
+                "trainer": "max-pressure",
+                "topology": "grid-5x5",
+                "seed": 47,
+                "mean_reward": -0.0475,
+                "total_reward": -534.8988,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 105.2209,
+                  "avg_travel_time": 157.0349,
+                  "avg_depart_delay": 0.665,
+                  "throughput": 1.0,
+                  "completed_trips": 86,
+                  "total_waiting_time": 9049.0,
+                  "total_travel_time": 13505.0
+                }
+              },
+              {
+                "trainer": "max-pressure",
+                "topology": "grid-5x5",
+                "seed": 48,
+                "mean_reward": -0.0432,
+                "total_reward": -486.427,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 141.7875,
+                  "avg_travel_time": 201.9375,
+                  "avg_depart_delay": 0.5911,
+                  "throughput": 1.0,
+                  "completed_trips": 80,
+                  "total_waiting_time": 11343.0,
+                  "total_travel_time": 16155.0
+                }
+              },
+              {
+                "trainer": "max-pressure",
+                "topology": "grid-5x5",
+                "seed": 49,
+                "mean_reward": -0.0455,
+                "total_reward": -511.4832,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 167.375,
+                  "avg_travel_time": 224.2273,
+                  "avg_depart_delay": 0.4755,
+                  "throughput": 1.0,
+                  "completed_trips": 88,
+                  "total_waiting_time": 14729.0,
+                  "total_travel_time": 19732.0
+                }
+              },
+              {
+                "trainer": "max-pressure",
+                "topology": "grid-5x5",
+                "seed": 50,
+                "mean_reward": -0.0434,
+                "total_reward": -488.1227,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 160.6377,
+                  "avg_travel_time": 216.8261,
+                  "avg_depart_delay": 0.5196,
+                  "throughput": 1.0,
+                  "completed_trips": 69,
+                  "total_waiting_time": 11084.0,
+                  "total_travel_time": 14961.0
+                }
+              },
+              {
+                "trainer": "max-pressure",
+                "topology": "grid-5x5",
+                "seed": 51,
+                "mean_reward": -0.0414,
+                "total_reward": -466.3104,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 189.8132,
+                  "avg_travel_time": 249.7143,
+                  "avg_depart_delay": 0.4891,
+                  "throughput": 1.0,
+                  "completed_trips": 91,
+                  "total_waiting_time": 17273.0,
+                  "total_travel_time": 22724.0
+                }
+              }
+            ],
+            "errors": []
+          }
+        ]
+      },
+      "weights_path": null,
+      "error": null,
+      "duration_seconds": 299.16
+    }
+  ]
+}
