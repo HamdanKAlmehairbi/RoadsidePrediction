@@ -77,6 +77,10 @@ Recent decisions affecting current work:
 - [Phase 04]: Per-episode demand sampling for curriculum diversity, time_of_day is training-only
 - [Phase 04]: Full Phase 4 param passthrough: TrainRequest -> create_trainer -> env_config_fn -> SumoEnv
 
+### Roadmap Evolution
+
+- Phase 7 added: Experiment Campaigns — reproduce paper results and evaluate all extensions
+
 ### Pending Todos
 
 None.

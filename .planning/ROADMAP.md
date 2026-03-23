@@ -13,6 +13,7 @@ Transform a mock-data dashboard into a real FedRL research platform. Phases 0-2 
 - [ ] **Phase 4: Core Extensions** - FedProx, cooperative reward, time-of-day
 - [ ] **Phase 5: Advanced Extensions** - GNN policy, differential privacy, emergency preemption
 - [ ] **Phase 6: Frontend Enhancements** - Wire all pages to real data, new Evaluation page
+- [ ] **Phase 7: Experiment Campaigns** - Reproduce paper, evaluate extensions, publishable results
 
 ## Phase Details
 
@@ -141,6 +142,17 @@ Plans:
 | 4. Core Extensions | 1/3 | In Progress|  |
 | 5. Advanced Extensions | 0/3 | Not started | - |
 | 6. Frontend Enhancements | 0/3 | Not started | - |
+| 7. Experiment Campaigns | 0/0 | Not started | - |
+
+### Phase 7: Experiment Campaigns
+
+**Goal:** Reproduce SEAL paper results, evaluate Phase 4 extensions (FedProx, cooperative reward, time-of-day), and produce publishable comparison tables with statistical rigor
+**Requirements**: TBD
+**Depends on:** Phase 4 (needs core extensions)
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 7 to break down)
 
 ---
 *Roadmap created: 2026-03-22*
