@@ -24,11 +24,12 @@ Real FedRL experiments working end-to-end with publishable results — training,
 - ✓ **EVAL-04**: Monte Carlo run management with seed control — Phase 3
 - ✓ **EVAL-05**: Persistent results storage (JSON files) — Phase 3
 - ✓ **EVAL-06**: API endpoints for evaluation jobs — Phase 3
+- ✓ **EXT-01**: FedProx aggregation with proximal term — Phase 4
+- ✓ **EXT-02**: Cooperative reward shaping with alpha parameter — Phase 4
+- ✓ **EXT-03**: Time-of-day demand curriculum — Phase 4
+- ✓ **EXT-04**: Time encoding (sin/cos) in observations — Phase 4
 
 ### Active
-- [ ] **EXT-01**: FedProx aggregation with proximal term
-- [ ] **EXT-02**: Cooperative reward shaping with alpha parameter
-- [ ] **EXT-03**: Time-of-day demand curriculum
 - [ ] **ADV-01**: GNN policy as alternative to MLP
 - [ ] **ADV-02**: Differential privacy on FedAvg
 - [ ] **ADV-03**: Emergency vehicle preemption
@@ -49,7 +50,7 @@ Real FedRL experiments working end-to-end with publishable results — training,
 
 - Project replicates SEAL (SMARTCOMP 2022) federated RL paper for multi-intersection traffic signal control
 - Core stack: SUMO simulator, Ray RLLib 2.x PPO (old API stack), PyTorch 2.x, Python 3.11
-- 6-layer architecture: simulation → environment → observation (10-14 features) → binary actions → reward → PPO policies
+- 6-layer architecture: simulation → environment → observation (14-16 features with time encoding) → binary actions → reward → PPO policies
 - FedAvg aggregation with isolated client simulations sharing only model weights
 - Evaluation targets: FedLight benchmark datasets (Syn_1/2/3, Real_1) across grid topologies
 - Key innovation: intersection-agnostic representation enabling cross-topology transfer
@@ -74,4 +75,4 @@ Real FedRL experiments working end-to-end with publishable results — training,
 | Frame drop on WebSocket queue | Prevents backpressure blocking training loop | ✓ Good |
 
 ---
-*Last updated: 2026-03-22 after Phase 3 completion*
+*Last updated: 2026-03-23 after Phase 4 completion*
