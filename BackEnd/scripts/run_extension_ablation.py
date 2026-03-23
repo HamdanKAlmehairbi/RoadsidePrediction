@@ -1,0 +1,401 @@
+"""CLI script for running SEAL extension ablation studies.
+
+Runs three parameterized ablation studies for the Phase 4 extensions:
+  - FedProx: compare mu in {0.0, 0.01, 0.1}
+  - Cooperative reward: compare alpha in {1.0, 0.5, 0.1}
+  - Time-of-day: compare fixed demand vs. time-of-day curriculum + encoding
+
+Each ablation trains fresh weights then evaluates with 10 MC seeds to produce
+statistically comparable results. Results are saved per-ablation as named
+campaign directories under BackEnd/results/campaigns/.
+
+Usage:
+    # Smoke test — 1 seed per config
+    cd BackEnd && python scripts/run_extension_ablation.py --ablation fedprox --dry-run 1
+
+    # Full FedProx ablation (10 seeds per config)
+    cd BackEnd && python scripts/run_extension_ablation.py --ablation fedprox
+
+    # Run all three ablations sequentially
+    cd BackEnd && python scripts/run_extension_ablation.py --ablation all
+
+    # Override topology and episodes
+    cd BackEnd && python scripts/run_extension_ablation.py --ablation cooperative \\
+        --topology grid-5x5 --n-episodes 100
+
+IMPORTANT: This script imports Python modules directly (NOT via REST API).
+It does NOT start the FastAPI server. All imports are direct:
+    from scripts.run_campaign import train_and_evaluate, save_campaign_results
+    from api.evaluation.campaign_config import ExtensionConfig
+"""
+import argparse
+import logging
+import os
+import sys
+from typing import List, Optional
+
+# ---------------------------------------------------------------------------
+# Ensure BackEnd/ is on sys.path so `api.*` and `scripts.*` imports work
+# ---------------------------------------------------------------------------
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
+from api.evaluation.campaign_config import CampaignResult, ExtensionConfig
+from scripts.run_campaign import save_campaign_results, train_and_evaluate
+
+# ---------------------------------------------------------------------------
+# Logging setup
+# ---------------------------------------------------------------------------
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+)
+logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# Ablation config builders
+# ---------------------------------------------------------------------------
+
+
+def build_fedprox_configs(
+    topology: str = "grid-3x3",
+    n_episodes: int = 50,
+    n_eval_runs: int = 10,
+) -> List[ExtensionConfig]:
+    """Build FedProx ablation configs: mu in {0.0, 0.01, 0.1}.
+
+    mu=0.0 is FedAvg baseline (no proximal term).
+    mu=0.01 and mu=0.1 activate the FedProx proximal loss.
+
+    Args:
+        topology: SUMO network topology, e.g. "grid-3x3".
+        n_episodes: Training episodes for each config.
+        n_eval_runs: Monte Carlo evaluation runs for each config.
+
+    Returns:
+        List of 3 ExtensionConfigs covering the FedProx mu sweep.
+    """
+    return [
+        ExtensionConfig(
+            name="fedavg_baseline",
+            trainer_type="FedRL",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+            fedprox_mu=0.0,
+        ),
+        ExtensionConfig(
+            name="fedprox_mu0.01",
+            trainer_type="FedRL",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+            fedprox_mu=0.01,
+        ),
+        ExtensionConfig(
+            name="fedprox_mu0.1",
+            trainer_type="FedRL",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+            fedprox_mu=0.1,
+        ),
+    ]
+
+
+def build_cooperative_configs(
+    topology: str = "grid-3x3",
+    n_episodes: int = 50,
+    n_eval_runs: int = 10,
+) -> List[ExtensionConfig]:
+    """Build cooperative reward ablation configs: alpha in {1.0, 0.5, 0.1}.
+
+    alpha=1.0 is the selfish baseline (each agent maximises only its own reward).
+    alpha=0.5 blends local and neighbor rewards equally.
+    alpha=0.1 weights neighbor rewards heavily (near-fully cooperative).
+
+    # alpha=0.0 excluded — creates degenerate zero reward signal (see research pitfall 6)
+
+    Args:
+        topology: SUMO network topology, e.g. "grid-3x3".
+        n_episodes: Training episodes for each config.
+        n_eval_runs: Monte Carlo evaluation runs for each config.
+
+    Returns:
+        List of 3 ExtensionConfigs covering the cooperative alpha sweep.
+    """
+    return [
+        ExtensionConfig(
+            name="selfish_baseline",
+            trainer_type="FedRL",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+            alpha=1.0,
+        ),
+        ExtensionConfig(
+            name="cooperative_alpha0.5",
+            trainer_type="FedRL",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+            alpha=0.5,
+        ),
+        ExtensionConfig(
+            name="cooperative_alpha0.1",
+            trainer_type="FedRL",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+            alpha=0.1,
+        ),
+    ]
+
+
+def build_time_of_day_configs(
+    topology: str = "grid-3x3",
+    n_episodes: int = 50,
+    n_eval_runs: int = 10,
+) -> List[ExtensionConfig]:
+    """Build time-of-day ablation configs: fixed demand vs. ToD curriculum + encoding.
+
+    config[0]: Fixed demand — no time-of-day variation, no time encoding.
+    config[1]: ToD with encoding — demand varies by time-of-day AND the observation
+               includes sin/cos time features (indices 14-15 in ranked observation).
+
+    Note: time_of_day=True without use_time_encoding=True is a valid intermediate
+    but not studied here — we pair them as the natural "full ToD" treatment.
+
+    Args:
+        topology: SUMO network topology, e.g. "grid-3x3".
+        n_episodes: Training episodes for each config.
+        n_eval_runs: Monte Carlo evaluation runs for each config.
+
+    Returns:
+        List of 2 ExtensionConfigs: fixed demand baseline and full ToD treatment.
+    """
+    return [
+        ExtensionConfig(
+            name="fixed_demand",
+            trainer_type="FedRL",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+            time_of_day=False,
+            use_time_encoding=False,
+        ),
+        ExtensionConfig(
+            name="tod_with_encoding",
+            trainer_type="FedRL",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+            time_of_day=True,
+            use_time_encoding=True,
+        ),
+    ]
+
+
+# ---------------------------------------------------------------------------
+# Ablation runner
+# ---------------------------------------------------------------------------
+
+
+def run_ablation(
+    configs: List[ExtensionConfig],
+    ablation_name: str,
+    dry_run_seeds: Optional[int] = None,
+) -> List[CampaignResult]:
+    """Run a single ablation study: train + evaluate each config, then save results.
+
+    Iterates through all configs, calls train_and_evaluate() for each, then
+    saves the combined results under results/campaigns/{ablation_name}/.
+
+    Args:
+        configs: List of ExtensionConfig — each represents one condition.
+        ablation_name: Directory name for output (e.g. "fedprox-ablation").
+        dry_run_seeds: If set, override n_eval_runs on each config to this value.
+            Useful for smoke testing before committing to full runs.
+
+    Returns:
+        List of CampaignResult — one per config, in order.
+    """
+    if dry_run_seeds is not None:
+        for cfg in configs:
+            cfg.n_eval_runs = dry_run_seeds
+        logger.info(
+            "Ablation %s: dry-run mode — overriding n_eval_runs to %d",
+            ablation_name, dry_run_seeds,
+        )
+
+    results: List[CampaignResult] = []
+    total = len(configs)
+
+    for i, config in enumerate(configs):
+        logger.info(
+            "Ablation %s: running config '%s' (%d/%d)",
+            ablation_name, config.name, i + 1, total,
+        )
+        result = train_and_evaluate(config)
+        results.append(result)
+        logger.info(
+            "Ablation %s: config '%s' done — %.1fs, error=%s",
+            ablation_name, config.name, result.duration_seconds, result.error,
+        )
+
+    save_campaign_results(results, ablation_name)
+    return results
+
+
+# ---------------------------------------------------------------------------
+# Summary printer
+# ---------------------------------------------------------------------------
+
+
+def _print_summary_table(all_results: List[CampaignResult]) -> None:
+    """Print a summary table of ablation results to stdout.
+
+    Columns: config name, n_completed, n_failed, avg_waiting_time mean,
+    duration_seconds.
+    """
+    header = (
+        f"{'Config':<30} {'Completed':>9} {'Failed':>6} "
+        f"{'AvgWait (mean)':>14} {'Duration(s)':>11}"
+    )
+    print("\n" + "=" * 76)
+    print("Ablation Summary")
+    print("=" * 76)
+    print(header)
+    print("-" * 76)
+
+    for r in all_results:
+        n_completed = r.evaluation.n_completed if r.evaluation else 0
+        n_failed = (r.evaluation.n_failed if r.evaluation else 0) + (
+            1 if r.error else 0
+        )
+        # avg_waiting_time mean — available on MCAggregatedResult if present
+        avg_wait = "N/A"
+        if r.evaluation is not None:
+            agg = r.evaluation
+            if hasattr(agg, "avg_waiting_time") and agg.avg_waiting_time is not None:
+                wt = agg.avg_waiting_time
+                if hasattr(wt, "mean"):
+                    avg_wait = f"{wt.mean:.2f}"
+                elif isinstance(wt, (int, float)):
+                    avg_wait = f"{wt:.2f}"
+
+        print(
+            f"{r.config.name:<30} {n_completed:>9} {n_failed:>6} "
+            f"{avg_wait:>14} {r.duration_seconds:>11.1f}"
+        )
+
+    print("=" * 76)
+
+
+# ---------------------------------------------------------------------------
+# CLI entry point
+# ---------------------------------------------------------------------------
+
+
+def main() -> None:
+    """Parse CLI arguments and dispatch to the requested ablation study."""
+    parser = argparse.ArgumentParser(
+        description=(
+            "SEAL extension ablation runner — parameterised experiments for "
+            "FedProx, cooperative reward, and time-of-day."
+        ),
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    parser.add_argument(
+        "--ablation",
+        choices=["fedprox", "cooperative", "time-of-day", "all"],
+        required=True,
+        help=(
+            "Which ablation to run: 'fedprox' (mu sweep), 'cooperative' (alpha sweep), "
+            "'time-of-day' (fixed vs. ToD+encoding), or 'all' (all three sequentially)."
+        ),
+    )
+    parser.add_argument(
+        "--topology",
+        default="grid-3x3",
+        help="SUMO network topology (e.g. grid-3x3, grid-5x5).",
+    )
+    parser.add_argument(
+        "--n-episodes",
+        type=int,
+        default=50,
+        dest="n_episodes",
+        help="Number of training episodes per config.",
+    )
+    parser.add_argument(
+        "--n-eval-runs",
+        type=int,
+        default=10,
+        dest="n_eval_runs",
+        help="Number of Monte Carlo evaluation seeds per config.",
+    )
+    parser.add_argument(
+        "--dry-run",
+        type=int,
+        default=None,
+        metavar="N_SEEDS",
+        dest="dry_run",
+        help=(
+            "If set, override n_eval_runs to N_SEEDS for smoke testing "
+            "(e.g. --dry-run 1 for a minimal end-to-end check)."
+        ),
+    )
+
+    args = parser.parse_args()
+
+    all_results: List[CampaignResult] = []
+
+    ablations_to_run = (
+        ["fedprox", "cooperative", "time-of-day"]
+        if args.ablation == "all"
+        else [args.ablation]
+    )
+
+    campaign_name_map = {
+        "fedprox": "fedprox-ablation",
+        "cooperative": "cooperative-ablation",
+        "time-of-day": "tod-ablation",
+    }
+
+    for ablation in ablations_to_run:
+        logger.info("=== Starting ablation: %s ===", ablation)
+
+        if ablation == "fedprox":
+            configs = build_fedprox_configs(
+                topology=args.topology,
+                n_episodes=args.n_episodes,
+                n_eval_runs=args.n_eval_runs,
+            )
+        elif ablation == "cooperative":
+            configs = build_cooperative_configs(
+                topology=args.topology,
+                n_episodes=args.n_episodes,
+                n_eval_runs=args.n_eval_runs,
+            )
+        else:  # time-of-day
+            configs = build_time_of_day_configs(
+                topology=args.topology,
+                n_episodes=args.n_episodes,
+                n_eval_runs=args.n_eval_runs,
+            )
+
+        campaign_name = campaign_name_map[ablation]
+        results = run_ablation(
+            configs=configs,
+            ablation_name=campaign_name,
+            dry_run_seeds=args.dry_run,
+        )
+        all_results.extend(results)
+        logger.info("=== Ablation %s complete: %d configs ===", ablation, len(results))
+
+    _print_summary_table(all_results)
+
+
+if __name__ == "__main__":
+    main()
