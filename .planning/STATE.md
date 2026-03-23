@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 04-01-PLAN.md
-last_updated: "2026-03-23T03:29:23.157Z"
+stopped_at: Completed 04-03-PLAN.md
+last_updated: "2026-03-23T03:35:07.523Z"
 progress:
   total_phases: 7
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 8
-  completed_plans: 7
+  completed_plans: 8
 ---
 
 # Project State
@@ -44,6 +44,7 @@ Plan: 3 of 3
 | 3. Evaluation Framework | 5/5 done | ~42 min | ~8.4 min |
 | Phase 04 P02 | 1min | 1 tasks | 1 files |
 | Phase 04 P01 | 2min | 2 tasks | 3 files |
+| Phase 04 P03 | 3min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -72,6 +73,9 @@ Recent decisions affecting current work:
 - [Phase 3, 03-05]: SUMO_AVAILABLE guard pattern for graceful skip of SUMO-dependent tests
 - [Phase 04]: Cooperative reward: alpha before super().__init__(), isolated nodes use own reward as neighbor_mean, _get_reward wrapper preserved for abstract contract
 - [Phase 04]: FedProx as PPOTorchPolicy subclass with proximal loss, global weights stored after FedAvg set_weights
+- [Phase 04]: Time encoding appended AFTER ranking to preserve rank indices 10-13
+- [Phase 04]: Per-episode demand sampling for curriculum diversity, time_of_day is training-only
+- [Phase 04]: Full Phase 4 param passthrough: TrainRequest -> create_trainer -> env_config_fn -> SumoEnv
 
 ### Pending Todos
 
@@ -84,6 +88,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-23T03:29:23.155Z
-Stopped at: Completed 04-01-PLAN.md
+Last session: 2026-03-23T03:35:07.521Z
+Stopped at: Completed 04-03-PLAN.md
 Resume file: None
