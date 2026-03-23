@@ -143,7 +143,7 @@ Plans:
 | 4. Core Extensions | 3/3 | Complete | 2026-03-23 |
 | 5. Advanced Extensions | 0/3 | Not started | - |
 | 6. Frontend Enhancements | 0/3 | Not started | - |
-| 7. Experiment Campaigns | 1/3 | In Progress|  |
+| 7. Experiment Campaigns | 3/3 | Complete | 2026-03-23 |
 
 ### Phase 7: Experiment Campaigns
 
@@ -157,7 +157,7 @@ Plans:
   4. LaTeX comparison tables with mean +/- std and booktabs formatting generated
   5. Bar charts with 95% CI error bars generated as PNG
   6. All campaign configs and seeds persisted alongside results
-**Plans:** 1/3 plans executed
+**Plans:** 3 plans
 
 Plans:
 - [x] 07-01-PLAN.md — Campaign config, example weights mapping, and baseline runner script
@@ -166,14 +166,16 @@ Plans:
 
 ### Phase 8: Experiment Execution & Analysis
 
-**Goal:** Run all experiment campaigns (baseline reproduction, FedProx ablation, cooperative reward ablation, time-of-day ablation) against live SUMO, then generate publishable analysis artifacts (LaTeX tables, bar charts, Wilcoxon significance tests)
+**Goal:** Run all experiment campaigns (baseline reproduction, FedProx ablation, cooperative reward ablation, time-of-day ablation) against live SUMO, then generate publishable analysis artifacts (LaTeX tables, bar charts, convergence curves, Wilcoxon significance tests, and summary report)
 **Requirements**: EXP-01 (baseline reproduction run), EXP-02 (FedProx ablation run), EXP-03 (cooperative ablation run), EXP-04 (time-of-day ablation run), EXP-05 (statistical analysis & figures)
 **Depends on:** Phase 7
-**Plans:** 0 plans
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 8 to break down)
+- [ ] 08-01-PLAN.md — Analysis tooling: multi-topology ablation support, convergence curves, combined tables, report generator
+- [ ] 08-02-PLAN.md — Baseline reproduction campaign (dry-run + full run + user checkpoint)
+- [ ] 08-03-PLAN.md — Extension ablation campaigns + full analysis artifact generation + final report
 
 ---
 *Roadmap created: 2026-03-22*
-*Last updated: 2026-03-23 after Phase 7 planning*
+*Last updated: 2026-03-23 after Phase 8 planning*
