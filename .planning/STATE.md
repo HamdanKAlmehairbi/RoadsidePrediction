@@ -83,6 +83,7 @@ Recent decisions affecting current work:
 ### Roadmap Evolution
 
 - Phase 7 added: Experiment Campaigns — reproduce paper results and evaluate all extensions
+- Phase 8 added: Experiment Execution & Analysis — run all campaigns against live SUMO and generate publishable artifacts
 
 ### Pending Todos
 

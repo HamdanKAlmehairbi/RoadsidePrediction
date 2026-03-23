@@ -14,6 +14,7 @@ Transform a mock-data dashboard into a real FedRL research platform. Phases 0-2 
 - [ ] **Phase 5: Advanced Extensions** - GNN policy, differential privacy, emergency preemption
 - [ ] **Phase 6: Frontend Enhancements** - Wire all pages to real data, new Evaluation page
 - [ ] **Phase 7: Experiment Campaigns** - Reproduce paper, evaluate extensions, publishable results
+- [ ] **Phase 8: Experiment Execution & Analysis** - Run all campaigns against live SUMO, generate publishable artifacts
 
 ## Phase Details
 
@@ -162,6 +163,16 @@ Plans:
 - [x] 07-01-PLAN.md — Campaign config, example weights mapping, and baseline runner script
 - [x] 07-02-PLAN.md — Extension ablation scripts (FedProx, cooperative reward, time-of-day)
 - [x] 07-03-PLAN.md — Statistical analysis, LaTeX tables, and chart generation
+
+### Phase 8: Experiment Execution & Analysis
+
+**Goal:** Run all experiment campaigns (baseline reproduction, FedProx ablation, cooperative reward ablation, time-of-day ablation) against live SUMO, then generate publishable analysis artifacts (LaTeX tables, bar charts, Wilcoxon significance tests)
+**Requirements**: EXP-01 (baseline reproduction run), EXP-02 (FedProx ablation run), EXP-03 (cooperative ablation run), EXP-04 (time-of-day ablation run), EXP-05 (statistical analysis & figures)
+**Depends on:** Phase 7
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 8 to break down)
 
 ---
 *Roadmap created: 2026-03-22*
