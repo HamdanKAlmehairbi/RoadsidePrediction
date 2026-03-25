@@ -91,6 +91,30 @@ class TrafficLight:
         with open(road_netfile, "r") as f:
             tree = ET.parse(f)
             logic = tree.find(f"tlLogic[@id='{self.id}']")
+            if logic is None:
+                # Fallback for OSM-imported networks where some TLS junctions
+                # lack a tlLogic entry. Query SUMO via TraCI at runtime instead.
+                try:
+                    import traci
+                    phases = traci.trafficlight.getAllProgramLogics(self.id)
+                    if phases:
+                        states = [p.state for p in phases[0].phases]
+                        if states:
+                            return states
+                except Exception:
+                    pass
+                # Last resort: generate a minimal 2-phase program from the
+                # junction's connection count
+                junction = tree.find(f"junction[@id='{self.id}']")
+                if junction is not None:
+                    inc_lanes = junction.get("incLanes", "")
+                    n_lanes = len(inc_lanes.split()) if inc_lanes else 4
+                else:
+                    n_lanes = 4
+                half = n_lanes // 2
+                phase_g = "G" * half + "r" * (n_lanes - half)
+                phase_r = "r" * half + "G" * (n_lanes - half)
+                return [phase_g, phase_r]
             states = [phase.attrib["state"] for phase in logic]
             if force_all_red:
                 all_reds = len(states[0]) * STATE_r_STR

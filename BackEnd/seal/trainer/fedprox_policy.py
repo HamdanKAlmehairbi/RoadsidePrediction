@@ -29,9 +29,13 @@ class FedProxPPOTorchPolicy(PPOTorchPolicy):
     """
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        # Initialize FedProx state BEFORE super().__init__() because
+        # TorchPolicyV2.__init__() calls loss() during setup, and loss()
+        # references self._fedprox_mu. Setting after super() would cause
+        # AttributeError: 'FedProxPPOTorchPolicy' object has no attribute '_fedprox_mu'
         self._global_weights = None
         self._fedprox_mu = 0.0
+        super().__init__(*args, **kwargs)
 
     def set_fedprox_mu(self, mu: float) -> None:
         """Set the proximal term coefficient (mu)."""

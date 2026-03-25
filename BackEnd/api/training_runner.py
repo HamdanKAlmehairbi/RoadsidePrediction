@@ -37,6 +37,8 @@ TOPOLOGY_MAP = {
     "grid-3x3": os.path.join(CONFIGS_DIR, "grid-3x3.net.xml"),
     "grid-5x5": os.path.join(CONFIGS_DIR, "grid-5x5.net.xml"),
     "grid-7x7": os.path.join(CONFIGS_DIR, "grid-7x7.net.xml"),
+    "manhattan": os.path.join(CONFIGS_DIR, "manhattan-small.net.xml"),
+    "cologne-8": os.path.join(CONFIGS_DIR, "cologne8.net.xml"),
 }
 
 TRAINED_WEIGHTS_DIR = os.path.join(os.path.dirname(__file__), "..", "trained_weights")

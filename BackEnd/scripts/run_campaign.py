@@ -123,6 +123,7 @@ def train_and_evaluate(
             ranked=config.ranked,
             horizon=config.horizon,
             weights_path=weights_path,
+            use_time_encoding=config.use_time_encoding,
         )
         mc_result = run_monte_carlo(mc_config, on_progress=on_progress)
         result.evaluation = mc_result

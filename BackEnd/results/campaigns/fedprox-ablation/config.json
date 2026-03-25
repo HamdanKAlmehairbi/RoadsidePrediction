@@ -1,0 +1,47 @@
+[
+  {
+    "name": "fedavg_baseline",
+    "trainer_type": "FedRL",
+    "topology": "grid-5x5",
+    "n_episodes": 50,
+    "n_eval_runs": 10,
+    "base_seed": 42,
+    "ranked": true,
+    "horizon": 450,
+    "fedprox_mu": 0.0,
+    "alpha": 1.0,
+    "time_of_day": false,
+    "use_time_encoding": false,
+    "weights_path": null
+  },
+  {
+    "name": "fedprox_mu0.01",
+    "trainer_type": "FedRL",
+    "topology": "grid-5x5",
+    "n_episodes": 50,
+    "n_eval_runs": 10,
+    "base_seed": 42,
+    "ranked": true,
+    "horizon": 450,
+    "fedprox_mu": 0.01,
+    "alpha": 1.0,
+    "time_of_day": false,
+    "use_time_encoding": false,
+    "weights_path": null
+  },
+  {
+    "name": "fedprox_mu0.1",
+    "trainer_type": "FedRL",
+    "topology": "grid-5x5",
+    "n_episodes": 50,
+    "n_eval_runs": 10,
+    "base_seed": 42,
+    "ranked": true,
+    "horizon": 450,
+    "fedprox_mu": 0.1,
+    "alpha": 1.0,
+    "time_of_day": false,
+    "use_time_encoding": false,
+    "weights_path": null
+  }
+]
