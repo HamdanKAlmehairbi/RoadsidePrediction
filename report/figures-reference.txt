@@ -1,0 +1,37 @@
+FIGURES REFERENCE — Copy these into your LaTeX figures/ folder
+=====================================================================
+
+All source figures are in: BackEnd/results/figures/
+
+FIGURE 1 — System Architecture (CREATE THIS)
+  You need to create a diagram showing:
+  SUMO <--TraCI--> Environment (14-feature obs, reward) <--> PPO Agent <--> Training Strategy (SARL/MARL/FedRL)
+  Use the observation pipeline diagram from your slides as a base.
+  Save as: figures/fig_architecture.png
+
+FIGURE 2 — Learning Curves
+  Source: BackEnd/results/figures/fig5_learning_curves.png
+  Copy to: figures/fig_learning_curves.png
+  Shows: Mean episode reward over 25 episodes for SARL, MARL, FedRL on Grid 3x3 and Grid 5x5
+
+FIGURE 3 — Average Waiting Time
+  Source: BackEnd/results/figures/chart_avg_waiting_time.png
+  Copy to: figures/fig_waiting_time.png
+  Shows: Bar chart comparing waiting time across strategies for both topologies
+
+FIGURE 4 — Communication Cost
+  Source: BackEnd/results/figures/fig6_communication_cost.png
+  OR: BackEnd/results/figures/chart_communication_cost.png
+  Copy to: figures/fig_communication_cost.png
+  Shows: Bar chart comparing MB transmitted during training for SARL, MARL, FedRL on both grids
+
+FIGURE 5 — FedProx Ablation (optional)
+  Source: BackEnd/results/figures/chart_fedprox_ablation.png
+  Copy to: figures/fig_fedprox_ablation.png
+  Shows: Waiting time for FedProx mu=0.0, 0.01, 0.1
+
+TABLE 1 — Waiting Time Results
+  Already in LaTeX: BackEnd/results/figures/table_avg_waiting_time.tex
+
+TABLE 2 — Travel Time Results
+  Already in LaTeX: BackEnd/results/figures/table_avg_travel_time.tex

@@ -1,0 +1,3091 @@
+{
+  "results": [
+    {
+      "config": {
+        "name": "fedrl_grid-3x3_training",
+        "trainer_type": "FedRL",
+        "topology": "grid-3x3",
+        "n_episodes": 25,
+        "n_eval_runs": 5,
+        "base_seed": 42,
+        "ranked": true,
+        "horizon": 450,
+        "fedprox_mu": 0.0,
+        "alpha": 1.0,
+        "time_of_day": false,
+        "use_time_encoding": false,
+        "weights_path": null
+      },
+      "training_rewards": [
+        {
+          "episode": 1,
+          "mean_reward": -10.9971,
+          "episode_len_mean": 438.89,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 2,
+          "mean_reward": -9.9082,
+          "episode_len_mean": 439.83,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 3,
+          "mean_reward": -9.3937,
+          "episode_len_mean": 439.33,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 4,
+          "mean_reward": -9.1874,
+          "episode_len_mean": 438.06,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 5,
+          "mean_reward": -9.0775,
+          "episode_len_mean": 438.09,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 6,
+          "mean_reward": -8.9235,
+          "episode_len_mean": 437.93,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 7,
+          "mean_reward": -8.7015,
+          "episode_len_mean": 437.31,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 8,
+          "mean_reward": -8.4959,
+          "episode_len_mean": 436.12,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 9,
+          "mean_reward": -8.3771,
+          "episode_len_mean": 434.77,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 10,
+          "mean_reward": -8.3124,
+          "episode_len_mean": 434.08,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 11,
+          "mean_reward": -8.1506,
+          "episode_len_mean": 433.86,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 12,
+          "mean_reward": -7.9329,
+          "episode_len_mean": 433.49,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 13,
+          "mean_reward": -7.8157,
+          "episode_len_mean": 432.19,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 14,
+          "mean_reward": -7.7183,
+          "episode_len_mean": 431.66,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 15,
+          "mean_reward": -7.6381,
+          "episode_len_mean": 431.09,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 16,
+          "mean_reward": -7.4615,
+          "episode_len_mean": 430.33,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 17,
+          "mean_reward": -7.4731,
+          "episode_len_mean": 429.47,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 18,
+          "mean_reward": -7.4461,
+          "episode_len_mean": 428.8,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 19,
+          "mean_reward": -7.495,
+          "episode_len_mean": 428.89,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 20,
+          "mean_reward": -7.4891,
+          "episode_len_mean": 429.89,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 21,
+          "mean_reward": -7.4463,
+          "episode_len_mean": 430.0,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 22,
+          "mean_reward": -7.4273,
+          "episode_len_mean": 429.45,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 23,
+          "mean_reward": -7.3627,
+          "episode_len_mean": 429.12,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 24,
+          "mean_reward": -7.4204,
+          "episode_len_mean": 428.78,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 25,
+          "mean_reward": -7.38,
+          "episode_len_mean": 428.71,
+          "trainer": "FedRL",
+          "fed_round": true
+        }
+      ],
+      "evaluation": {
+        "campaign": [
+          {
+            "trainer": "FedRL",
+            "topology": "grid-3x3",
+            "n_runs": 5,
+            "n_completed": 5,
+            "n_failed": 0,
+            "aggregated": {
+              "avg_waiting_time": {
+                "mean": 11.5083,
+                "std": 1.5429,
+                "ci_95_lower": 10.1559,
+                "ci_95_upper": 12.8607,
+                "min": 9.5949,
+                "max": 13.0263
+              },
+              "avg_travel_time": {
+                "mean": 56.4256,
+                "std": 2.3713,
+                "ci_95_lower": 54.347,
+                "ci_95_upper": 58.5041,
+                "min": 53.4154,
+                "max": 58.4417
+              },
+              "throughput": {
+                "mean": 1.0,
+                "std": 0.0,
+                "ci_95_lower": 1.0,
+                "ci_95_upper": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "mean_reward": {
+                "mean": -0.0024,
+                "std": 0.0005,
+                "ci_95_lower": -0.0028,
+                "ci_95_upper": -0.0019,
+                "min": -0.003,
+                "max": -0.0017
+              },
+              "total_comm_cost": {
+                "mean": 0.0,
+                "std": 0.0,
+                "ci_95_lower": 0.0,
+                "ci_95_upper": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              }
+            },
+            "individual": [
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 42,
+                "mean_reward": -0.0024,
+                "total_reward": -9.9143,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 12.4107,
+                  "avg_travel_time": 57.5268,
+                  "avg_depart_delay": 0.6999,
+                  "throughput": 1.0,
+                  "completed_trips": 224,
+                  "total_waiting_time": 2780.0,
+                  "total_travel_time": 12886.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 43,
+                "mean_reward": -0.0027,
+                "total_reward": -10.8844,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 12.3981,
+                  "avg_travel_time": 58.4417,
+                  "avg_depart_delay": 0.6883,
+                  "throughput": 1.0,
+                  "completed_trips": 206,
+                  "total_waiting_time": 2554.0,
+                  "total_travel_time": 12039.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 44,
+                "mean_reward": -0.003,
+                "total_reward": -12.3092,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 13.0263,
+                  "avg_travel_time": 58.3904,
+                  "avg_depart_delay": 0.6721,
+                  "throughput": 1.0,
+                  "completed_trips": 228,
+                  "total_waiting_time": 2970.0,
+                  "total_travel_time": 13313.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 45,
+                "mean_reward": -0.002,
+                "total_reward": -8.0699,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 10.1116,
+                  "avg_travel_time": 54.3535,
+                  "avg_depart_delay": 0.6791,
+                  "throughput": 1.0,
+                  "completed_trips": 215,
+                  "total_waiting_time": 2174.0,
+                  "total_travel_time": 11686.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 46,
+                "mean_reward": -0.0017,
+                "total_reward": -6.754,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 9.5949,
+                  "avg_travel_time": 53.4154,
+                  "avg_depart_delay": 0.7339,
+                  "throughput": 1.0,
+                  "completed_trips": 195,
+                  "total_waiting_time": 1871.0,
+                  "total_travel_time": 10416.0
+                }
+              }
+            ],
+            "errors": []
+          }
+        ]
+      },
+      "weights_path": "C:\\Users\\user\\Documents\\GitHub\\RoadsidePrediction\\BackEnd\\trained_weights\\weights\\FedRL\\grid-3x3\\ranked.pkl",
+      "error": null,
+      "duration_seconds": 1937.82
+    },
+    {
+      "config": {
+        "name": "fedrl_grid-5x5_training",
+        "trainer_type": "FedRL",
+        "topology": "grid-5x5",
+        "n_episodes": 25,
+        "n_eval_runs": 5,
+        "base_seed": 42,
+        "ranked": true,
+        "horizon": 450,
+        "fedprox_mu": 0.0,
+        "alpha": 1.0,
+        "time_of_day": false,
+        "use_time_encoding": false,
+        "weights_path": null
+      },
+      "training_rewards": [
+        {
+          "episode": 1,
+          "mean_reward": -22.4709,
+          "episode_len_mean": 478.75,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 2,
+          "mean_reward": -21.4128,
+          "episode_len_mean": 481.12,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 3,
+          "mean_reward": -20.7224,
+          "episode_len_mean": 480.58,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 4,
+          "mean_reward": -20.6865,
+          "episode_len_mean": 481.03,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 5,
+          "mean_reward": -20.3548,
+          "episode_len_mean": 480.29,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 6,
+          "mean_reward": -20.0116,
+          "episode_len_mean": 479.24,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 7,
+          "mean_reward": -19.4775,
+          "episode_len_mean": 477.74,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 8,
+          "mean_reward": -18.9987,
+          "episode_len_mean": 477.06,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 9,
+          "mean_reward": -18.7454,
+          "episode_len_mean": 476.45,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 10,
+          "mean_reward": -18.5357,
+          "episode_len_mean": 475.46,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 11,
+          "mean_reward": -18.2907,
+          "episode_len_mean": 475.29,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 12,
+          "mean_reward": -17.9883,
+          "episode_len_mean": 474.58,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 13,
+          "mean_reward": -17.5863,
+          "episode_len_mean": 473.98,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 14,
+          "mean_reward": -17.1172,
+          "episode_len_mean": 472.15,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 15,
+          "mean_reward": -16.9536,
+          "episode_len_mean": 471.67,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 16,
+          "mean_reward": -16.705,
+          "episode_len_mean": 470.65,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 17,
+          "mean_reward": -16.5657,
+          "episode_len_mean": 469.83,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 18,
+          "mean_reward": -16.5411,
+          "episode_len_mean": 469.67,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 19,
+          "mean_reward": -16.6777,
+          "episode_len_mean": 470.02,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 20,
+          "mean_reward": -16.8513,
+          "episode_len_mean": 469.57,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 21,
+          "mean_reward": -16.7357,
+          "episode_len_mean": 468.83,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 22,
+          "mean_reward": -16.6996,
+          "episode_len_mean": 469.49,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 23,
+          "mean_reward": -16.7415,
+          "episode_len_mean": 469.29,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 24,
+          "mean_reward": -16.631,
+          "episode_len_mean": 468.87,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 25,
+          "mean_reward": -16.4848,
+          "episode_len_mean": 467.9,
+          "trainer": "FedRL",
+          "fed_round": true
+        }
+      ],
+      "evaluation": {
+        "campaign": [
+          {
+            "trainer": "FedRL",
+            "topology": "grid-5x5",
+            "n_runs": 5,
+            "n_completed": 5,
+            "n_failed": 0,
+            "aggregated": {
+              "avg_waiting_time": {
+                "mean": 16.8335,
+                "std": 1.3667,
+                "ci_95_lower": 15.6355,
+                "ci_95_upper": 18.0314,
+                "min": 14.8866,
+                "max": 18.3317
+              },
+              "avg_travel_time": {
+                "mean": 83.4622,
+                "std": 2.4868,
+                "ci_95_lower": 81.2824,
+                "ci_95_upper": 85.6419,
+                "min": 79.937,
+                "max": 86.7207
+              },
+              "throughput": {
+                "mean": 1.0,
+                "std": 0.0,
+                "ci_95_lower": 1.0,
+                "ci_95_upper": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "mean_reward": {
+                "mean": -0.0018,
+                "std": 0.0003,
+                "ci_95_lower": -0.002,
+                "ci_95_upper": -0.0015,
+                "min": -0.0021,
+                "max": -0.0014
+              },
+              "total_comm_cost": {
+                "mean": 0.0,
+                "std": 0.0,
+                "ci_95_lower": 0.0,
+                "ci_95_upper": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              }
+            },
+            "individual": [
+              {
+                "trainer": "FedRL",
+                "topology": "grid-5x5",
+                "seed": 42,
+                "mean_reward": -0.0014,
+                "total_reward": -16.1122,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 14.8866,
+                  "avg_travel_time": 79.937,
+                  "avg_depart_delay": 0.5607,
+                  "throughput": 1.0,
+                  "completed_trips": 397,
+                  "total_waiting_time": 5910.0,
+                  "total_travel_time": 31735.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-5x5",
+                "seed": 43,
+                "mean_reward": -0.0017,
+                "total_reward": -18.866,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 16.8659,
+                  "avg_travel_time": 83.2098,
+                  "avg_depart_delay": 0.6485,
+                  "throughput": 1.0,
+                  "completed_trips": 410,
+                  "total_waiting_time": 6915.0,
+                  "total_travel_time": 34116.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-5x5",
+                "seed": 44,
+                "mean_reward": -0.0021,
+                "total_reward": -23.7274,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 18.3317,
+                  "avg_travel_time": 86.7207,
+                  "avg_depart_delay": 0.642,
+                  "throughput": 1.0,
+                  "completed_trips": 401,
+                  "total_waiting_time": 7351.0,
+                  "total_travel_time": 34775.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-5x5",
+                "seed": 45,
+                "mean_reward": -0.002,
+                "total_reward": -22.6698,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 17.8627,
+                  "avg_travel_time": 84.5858,
+                  "avg_depart_delay": 0.7847,
+                  "throughput": 1.0,
+                  "completed_trips": 408,
+                  "total_waiting_time": 7288.0,
+                  "total_travel_time": 34511.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-5x5",
+                "seed": 46,
+                "mean_reward": -0.0015,
+                "total_reward": -17.4294,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 16.2204,
+                  "avg_travel_time": 82.8575,
+                  "avg_depart_delay": 0.6352,
+                  "throughput": 1.0,
+                  "completed_trips": 372,
+                  "total_waiting_time": 6034.0,
+                  "total_travel_time": 30823.0
+                }
+              }
+            ],
+            "errors": []
+          }
+        ]
+      },
+      "weights_path": "C:\\Users\\user\\Documents\\GitHub\\RoadsidePrediction\\BackEnd\\trained_weights\\weights\\FedRL\\grid-5x5\\ranked.pkl",
+      "error": null,
+      "duration_seconds": 5867.36
+    },
+    {
+      "config": {
+        "name": "marl_grid-3x3_training",
+        "trainer_type": "MARL",
+        "topology": "grid-3x3",
+        "n_episodes": 25,
+        "n_eval_runs": 5,
+        "base_seed": 42,
+        "ranked": true,
+        "horizon": 450,
+        "fedprox_mu": 0.0,
+        "alpha": 1.0,
+        "time_of_day": false,
+        "use_time_encoding": false,
+        "weights_path": null
+      },
+      "training_rewards": [
+        {
+          "episode": 1,
+          "mean_reward": -10.9971,
+          "episode_len_mean": 438.89,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 2,
+          "mean_reward": -9.897,
+          "episode_len_mean": 439.06,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 3,
+          "mean_reward": -9.163,
+          "episode_len_mean": 438.59,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 4,
+          "mean_reward": -8.772,
+          "episode_len_mean": 437.22,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 5,
+          "mean_reward": -8.6568,
+          "episode_len_mean": 437.2,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 6,
+          "mean_reward": -8.568,
+          "episode_len_mean": 438.09,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 7,
+          "mean_reward": -8.389,
+          "episode_len_mean": 437.31,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 8,
+          "mean_reward": -8.2278,
+          "episode_len_mean": 435.93,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 9,
+          "mean_reward": -8.1364,
+          "episode_len_mean": 434.96,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 10,
+          "mean_reward": -8.1219,
+          "episode_len_mean": 434.5,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 11,
+          "mean_reward": -7.9824,
+          "episode_len_mean": 433.98,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 12,
+          "mean_reward": -7.7501,
+          "episode_len_mean": 433.33,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 13,
+          "mean_reward": -7.6941,
+          "episode_len_mean": 432.19,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 14,
+          "mean_reward": -7.7131,
+          "episode_len_mean": 432.04,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 15,
+          "mean_reward": -7.7284,
+          "episode_len_mean": 432.12,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 16,
+          "mean_reward": -7.6473,
+          "episode_len_mean": 431.74,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 17,
+          "mean_reward": -7.6265,
+          "episode_len_mean": 430.96,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 18,
+          "mean_reward": -7.7459,
+          "episode_len_mean": 429.94,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 19,
+          "mean_reward": -7.8038,
+          "episode_len_mean": 430.39,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 20,
+          "mean_reward": -7.8401,
+          "episode_len_mean": 431.66,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 21,
+          "mean_reward": -7.7703,
+          "episode_len_mean": 431.59,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 22,
+          "mean_reward": -7.7761,
+          "episode_len_mean": 431.14,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 23,
+          "mean_reward": -7.7338,
+          "episode_len_mean": 431.61,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 24,
+          "mean_reward": -7.7718,
+          "episode_len_mean": 431.29,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 25,
+          "mean_reward": -7.7149,
+          "episode_len_mean": 430.8,
+          "trainer": "MARL",
+          "fed_round": false
+        }
+      ],
+      "evaluation": {
+        "campaign": [
+          {
+            "trainer": "MARL",
+            "topology": "grid-3x3",
+            "n_runs": 5,
+            "n_completed": 5,
+            "n_failed": 0,
+            "aggregated": {
+              "avg_waiting_time": {
+                "mean": 15.9474,
+                "std": 1.5863,
+                "ci_95_lower": 14.5569,
+                "ci_95_upper": 17.3379,
+                "min": 13.9421,
+                "max": 18.2432
+              },
+              "avg_travel_time": {
+                "mean": 61.9584,
+                "std": 2.3866,
+                "ci_95_lower": 59.8665,
+                "ci_95_upper": 64.0504,
+                "min": 59.2842,
+                "max": 65.5045
+              },
+              "throughput": {
+                "mean": 1.0,
+                "std": 0.0,
+                "ci_95_lower": 1.0,
+                "ci_95_upper": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "mean_reward": {
+                "mean": -0.0032,
+                "std": 0.0006,
+                "ci_95_lower": -0.0037,
+                "ci_95_upper": -0.0027,
+                "min": -0.0037,
+                "max": -0.0023
+              },
+              "total_comm_cost": {
+                "mean": 0.0,
+                "std": 0.0,
+                "ci_95_lower": 0.0,
+                "ci_95_upper": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              }
+            },
+            "individual": [
+              {
+                "trainer": "MARL",
+                "topology": "grid-3x3",
+                "seed": 42,
+                "mean_reward": -0.0037,
+                "total_reward": -14.8743,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 18.2432,
+                  "avg_travel_time": 65.5045,
+                  "avg_depart_delay": 0.6722,
+                  "throughput": 1.0,
+                  "completed_trips": 222,
+                  "total_waiting_time": 4050.0,
+                  "total_travel_time": 14542.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-3x3",
+                "seed": 43,
+                "mean_reward": -0.0034,
+                "total_reward": -13.8949,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 16.2663,
+                  "avg_travel_time": 62.1859,
+                  "avg_depart_delay": 0.6935,
+                  "throughput": 1.0,
+                  "completed_trips": 199,
+                  "total_waiting_time": 3237.0,
+                  "total_travel_time": 12375.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-3x3",
+                "seed": 44,
+                "mean_reward": -0.0037,
+                "total_reward": -14.9631,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 16.136,
+                  "avg_travel_time": 62.5044,
+                  "avg_depart_delay": 0.6687,
+                  "throughput": 1.0,
+                  "completed_trips": 228,
+                  "total_waiting_time": 3679.0,
+                  "total_travel_time": 14251.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-3x3",
+                "seed": 45,
+                "mean_reward": -0.0028,
+                "total_reward": -11.3993,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 15.1495,
+                  "avg_travel_time": 60.3131,
+                  "avg_depart_delay": 0.6945,
+                  "throughput": 1.0,
+                  "completed_trips": 214,
+                  "total_waiting_time": 3242.0,
+                  "total_travel_time": 12907.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-3x3",
+                "seed": 46,
+                "mean_reward": -0.0023,
+                "total_reward": -9.4285,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 13.9421,
+                  "avg_travel_time": 59.2842,
+                  "avg_depart_delay": 0.7194,
+                  "throughput": 1.0,
+                  "completed_trips": 190,
+                  "total_waiting_time": 2649.0,
+                  "total_travel_time": 11264.0
+                }
+              }
+            ],
+            "errors": []
+          }
+        ]
+      },
+      "weights_path": "C:\\Users\\user\\Documents\\GitHub\\RoadsidePrediction\\BackEnd\\trained_weights\\weights\\MARL\\grid-3x3\\ranked.pkl",
+      "error": null,
+      "duration_seconds": 1937.83
+    },
+    {
+      "config": {
+        "name": "marl_grid-5x5_training",
+        "trainer_type": "MARL",
+        "topology": "grid-5x5",
+        "n_episodes": 25,
+        "n_eval_runs": 5,
+        "base_seed": 42,
+        "ranked": true,
+        "horizon": 450,
+        "fedprox_mu": 0.0,
+        "alpha": 1.0,
+        "time_of_day": false,
+        "use_time_encoding": false,
+        "weights_path": null
+      },
+      "training_rewards": [
+        {
+          "episode": 1,
+          "mean_reward": -22.4709,
+          "episode_len_mean": 478.75,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 2,
+          "mean_reward": -21.2836,
+          "episode_len_mean": 478.69,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 3,
+          "mean_reward": -20.1582,
+          "episode_len_mean": 477.84,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 4,
+          "mean_reward": -20.0191,
+          "episode_len_mean": 478.03,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 5,
+          "mean_reward": -19.9257,
+          "episode_len_mean": 476.8,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 6,
+          "mean_reward": -19.8315,
+          "episode_len_mean": 476.28,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 7,
+          "mean_reward": -19.4349,
+          "episode_len_mean": 476.16,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 8,
+          "mean_reward": -19.1174,
+          "episode_len_mean": 475.37,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 9,
+          "mean_reward": -18.9016,
+          "episode_len_mean": 475.19,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 10,
+          "mean_reward": -18.7481,
+          "episode_len_mean": 474.61,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 11,
+          "mean_reward": -18.5221,
+          "episode_len_mean": 474.26,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 12,
+          "mean_reward": -18.2689,
+          "episode_len_mean": 473.89,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 13,
+          "mean_reward": -17.9612,
+          "episode_len_mean": 473.25,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 14,
+          "mean_reward": -17.6614,
+          "episode_len_mean": 471.69,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 15,
+          "mean_reward": -17.5917,
+          "episode_len_mean": 471.89,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 16,
+          "mean_reward": -17.4266,
+          "episode_len_mean": 471.35,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 17,
+          "mean_reward": -17.2086,
+          "episode_len_mean": 471.37,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 18,
+          "mean_reward": -17.2119,
+          "episode_len_mean": 471.89,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 19,
+          "mean_reward": -17.3011,
+          "episode_len_mean": 471.51,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 20,
+          "mean_reward": -17.4353,
+          "episode_len_mean": 471.31,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 21,
+          "mean_reward": -17.3506,
+          "episode_len_mean": 470.86,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 22,
+          "mean_reward": -17.2667,
+          "episode_len_mean": 471.06,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 23,
+          "mean_reward": -17.3811,
+          "episode_len_mean": 471.14,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 24,
+          "mean_reward": -17.2822,
+          "episode_len_mean": 470.3,
+          "trainer": "MARL",
+          "fed_round": false
+        },
+        {
+          "episode": 25,
+          "mean_reward": -17.1079,
+          "episode_len_mean": 470.32,
+          "trainer": "MARL",
+          "fed_round": false
+        }
+      ],
+      "evaluation": {
+        "campaign": [
+          {
+            "trainer": "MARL",
+            "topology": "grid-5x5",
+            "n_runs": 5,
+            "n_completed": 5,
+            "n_failed": 0,
+            "aggregated": {
+              "avg_waiting_time": {
+                "mean": 23.6453,
+                "std": 0.7618,
+                "ci_95_lower": 22.9776,
+                "ci_95_upper": 24.313,
+                "min": 22.5455,
+                "max": 24.6456
+              },
+              "avg_travel_time": {
+                "mean": 91.515,
+                "std": 0.9953,
+                "ci_95_lower": 90.6425,
+                "ci_95_upper": 92.3874,
+                "min": 89.9672,
+                "max": 92.5247
+              },
+              "throughput": {
+                "mean": 1.0,
+                "std": 0.0,
+                "ci_95_lower": 1.0,
+                "ci_95_upper": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "mean_reward": {
+                "mean": -0.0023,
+                "std": 0.0003,
+                "ci_95_lower": -0.0025,
+                "ci_95_upper": -0.002,
+                "min": -0.0026,
+                "max": -0.002
+              },
+              "total_comm_cost": {
+                "mean": 0.0,
+                "std": 0.0,
+                "ci_95_lower": 0.0,
+                "ci_95_upper": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              }
+            },
+            "individual": [
+              {
+                "trainer": "MARL",
+                "topology": "grid-5x5",
+                "seed": 42,
+                "mean_reward": -0.0021,
+                "total_reward": -23.8516,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 23.891,
+                  "avg_travel_time": 91.1463,
+                  "avg_depart_delay": 0.564,
+                  "throughput": 1.0,
+                  "completed_trips": 376,
+                  "total_waiting_time": 8983.0,
+                  "total_travel_time": 34271.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-5x5",
+                "seed": 43,
+                "mean_reward": -0.0021,
+                "total_reward": -23.0779,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 22.5455,
+                  "avg_travel_time": 89.9672,
+                  "avg_depart_delay": 0.6585,
+                  "throughput": 1.0,
+                  "completed_trips": 396,
+                  "total_waiting_time": 8928.0,
+                  "total_travel_time": 35627.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-5x5",
+                "seed": 44,
+                "mean_reward": -0.0026,
+                "total_reward": -28.8283,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 23.4311,
+                  "avg_travel_time": 91.9541,
+                  "avg_depart_delay": 0.6384,
+                  "throughput": 1.0,
+                  "completed_trips": 392,
+                  "total_waiting_time": 9185.0,
+                  "total_travel_time": 36046.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-5x5",
+                "seed": 45,
+                "mean_reward": -0.0025,
+                "total_reward": -28.1155,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 23.7132,
+                  "avg_travel_time": 91.9825,
+                  "avg_depart_delay": 0.7788,
+                  "throughput": 1.0,
+                  "completed_trips": 401,
+                  "total_waiting_time": 9509.0,
+                  "total_travel_time": 36885.0
+                }
+              },
+              {
+                "trainer": "MARL",
+                "topology": "grid-5x5",
+                "seed": 46,
+                "mean_reward": -0.002,
+                "total_reward": -22.7029,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 24.6456,
+                  "avg_travel_time": 92.5247,
+                  "avg_depart_delay": 0.6397,
+                  "throughput": 1.0,
+                  "completed_trips": 364,
+                  "total_waiting_time": 8971.0,
+                  "total_travel_time": 33679.0
+                }
+              }
+            ],
+            "errors": []
+          }
+        ]
+      },
+      "weights_path": "C:\\Users\\user\\Documents\\GitHub\\RoadsidePrediction\\BackEnd\\trained_weights\\weights\\MARL\\grid-5x5\\ranked.pkl",
+      "error": null,
+      "duration_seconds": 5907.81
+    },
+    {
+      "config": {
+        "name": "sarl_grid-3x3_training",
+        "trainer_type": "SARL",
+        "topology": "grid-3x3",
+        "n_episodes": 25,
+        "n_eval_runs": 5,
+        "base_seed": 42,
+        "ranked": true,
+        "horizon": 450,
+        "fedprox_mu": 0.0,
+        "alpha": 1.0,
+        "time_of_day": false,
+        "use_time_encoding": false,
+        "weights_path": null
+      },
+      "training_rewards": [
+        {
+          "episode": 1,
+          "mean_reward": -10.1312,
+          "episode_len_mean": 433.11,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 2,
+          "mean_reward": -9.4526,
+          "episode_len_mean": 433.61,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 3,
+          "mean_reward": -8.7084,
+          "episode_len_mean": 431.96,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 4,
+          "mean_reward": -8.298,
+          "episode_len_mean": 431.32,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 5,
+          "mean_reward": -8.2611,
+          "episode_len_mean": 432.83,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 6,
+          "mean_reward": -8.2459,
+          "episode_len_mean": 434.0,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 7,
+          "mean_reward": -8.1236,
+          "episode_len_mean": 433.44,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 8,
+          "mean_reward": -7.9466,
+          "episode_len_mean": 432.97,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 9,
+          "mean_reward": -7.8085,
+          "episode_len_mean": 432.29,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 10,
+          "mean_reward": -7.7908,
+          "episode_len_mean": 431.71,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 11,
+          "mean_reward": -7.6579,
+          "episode_len_mean": 431.23,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 12,
+          "mean_reward": -7.4347,
+          "episode_len_mean": 431.12,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 13,
+          "mean_reward": -7.4011,
+          "episode_len_mean": 430.79,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 14,
+          "mean_reward": -7.3676,
+          "episode_len_mean": 431.38,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 15,
+          "mean_reward": -7.4256,
+          "episode_len_mean": 430.73,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 16,
+          "mean_reward": -7.2787,
+          "episode_len_mean": 429.77,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 17,
+          "mean_reward": -7.2829,
+          "episode_len_mean": 428.95,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 18,
+          "mean_reward": -7.2886,
+          "episode_len_mean": 427.9,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 19,
+          "mean_reward": -7.3275,
+          "episode_len_mean": 428.37,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 20,
+          "mean_reward": -7.3134,
+          "episode_len_mean": 428.86,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 21,
+          "mean_reward": -7.2269,
+          "episode_len_mean": 429.04,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 22,
+          "mean_reward": -7.1795,
+          "episode_len_mean": 428.63,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 23,
+          "mean_reward": -7.1837,
+          "episode_len_mean": 427.91,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 24,
+          "mean_reward": -7.1463,
+          "episode_len_mean": 426.82,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 25,
+          "mean_reward": -7.122,
+          "episode_len_mean": 426.73,
+          "trainer": "SARL",
+          "fed_round": false
+        }
+      ],
+      "evaluation": {
+        "campaign": [
+          {
+            "trainer": "SARL",
+            "topology": "grid-3x3",
+            "n_runs": 5,
+            "n_completed": 5,
+            "n_failed": 0,
+            "aggregated": {
+              "avg_waiting_time": {
+                "mean": 10.3536,
+                "std": 1.226,
+                "ci_95_lower": 9.2789,
+                "ci_95_upper": 11.4282,
+                "min": 8.7588,
+                "max": 12.1787
+              },
+              "avg_travel_time": {
+                "mean": 54.7779,
+                "std": 1.6939,
+                "ci_95_lower": 53.2931,
+                "ci_95_upper": 56.2626,
+                "min": 52.4975,
+                "max": 57.2754
+              },
+              "throughput": {
+                "mean": 1.0,
+                "std": 0.0,
+                "ci_95_lower": 1.0,
+                "ci_95_upper": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "mean_reward": {
+                "mean": -0.0022,
+                "std": 0.0005,
+                "ci_95_lower": -0.0026,
+                "ci_95_upper": -0.0018,
+                "min": -0.0027,
+                "max": -0.0015
+              },
+              "total_comm_cost": {
+                "mean": 0.0,
+                "std": 0.0,
+                "ci_95_lower": 0.0,
+                "ci_95_upper": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              }
+            },
+            "individual": [
+              {
+                "trainer": "SARL",
+                "topology": "grid-3x3",
+                "seed": 42,
+                "mean_reward": -0.0021,
+                "total_reward": -8.5471,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 10.3901,
+                  "avg_travel_time": 54.8206,
+                  "avg_depart_delay": 0.675,
+                  "throughput": 1.0,
+                  "completed_trips": 223,
+                  "total_waiting_time": 2317.0,
+                  "total_travel_time": 12225.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-3x3",
+                "seed": 43,
+                "mean_reward": -0.0027,
+                "total_reward": -11.0376,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 12.1787,
+                  "avg_travel_time": 57.2754,
+                  "avg_depart_delay": 0.6847,
+                  "throughput": 1.0,
+                  "completed_trips": 207,
+                  "total_waiting_time": 2521.0,
+                  "total_travel_time": 11856.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-3x3",
+                "seed": 44,
+                "mean_reward": -0.0024,
+                "total_reward": -9.5532,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 9.9957,
+                  "avg_travel_time": 54.6061,
+                  "avg_depart_delay": 0.6684,
+                  "throughput": 1.0,
+                  "completed_trips": 231,
+                  "total_waiting_time": 2309.0,
+                  "total_travel_time": 12614.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-3x3",
+                "seed": 45,
+                "mean_reward": -0.0022,
+                "total_reward": -9.03,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 10.4444,
+                  "avg_travel_time": 54.6898,
+                  "avg_depart_delay": 0.6877,
+                  "throughput": 1.0,
+                  "completed_trips": 216,
+                  "total_waiting_time": 2256.0,
+                  "total_travel_time": 11813.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-3x3",
+                "seed": 46,
+                "mean_reward": -0.0015,
+                "total_reward": -5.9161,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 8.7588,
+                  "avg_travel_time": 52.4975,
+                  "avg_depart_delay": 0.7249,
+                  "throughput": 1.0,
+                  "completed_trips": 199,
+                  "total_waiting_time": 1743.0,
+                  "total_travel_time": 10447.0
+                }
+              }
+            ],
+            "errors": []
+          }
+        ]
+      },
+      "weights_path": "C:\\Users\\user\\Documents\\GitHub\\RoadsidePrediction\\BackEnd\\trained_weights\\weights\\SARL\\grid-3x3\\ranked.pkl",
+      "error": null,
+      "duration_seconds": 1837.16
+    },
+    {
+      "config": {
+        "name": "sarl_grid-5x5_training",
+        "trainer_type": "SARL",
+        "topology": "grid-5x5",
+        "n_episodes": 25,
+        "n_eval_runs": 5,
+        "base_seed": 42,
+        "ranked": true,
+        "horizon": 450,
+        "fedprox_mu": 0.0,
+        "alpha": 1.0,
+        "time_of_day": false,
+        "use_time_encoding": false,
+        "weights_path": null
+      },
+      "training_rewards": [
+        {
+          "episode": 1,
+          "mean_reward": -22.9048,
+          "episode_len_mean": 479.0,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 2,
+          "mean_reward": -20.799,
+          "episode_len_mean": 483.75,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 3,
+          "mean_reward": -19.5966,
+          "episode_len_mean": 480.42,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 4,
+          "mean_reward": -19.5659,
+          "episode_len_mean": 479.52,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 5,
+          "mean_reward": -19.7176,
+          "episode_len_mean": 479.15,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 6,
+          "mean_reward": -19.5326,
+          "episode_len_mean": 478.18,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 7,
+          "mean_reward": -19.1709,
+          "episode_len_mean": 477.36,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 8,
+          "mean_reward": -18.8183,
+          "episode_len_mean": 476.82,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 9,
+          "mean_reward": -18.5328,
+          "episode_len_mean": 476.03,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 10,
+          "mean_reward": -18.3884,
+          "episode_len_mean": 475.29,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 11,
+          "mean_reward": -18.0898,
+          "episode_len_mean": 475.22,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 12,
+          "mean_reward": -17.8096,
+          "episode_len_mean": 474.5,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 13,
+          "mean_reward": -17.3627,
+          "episode_len_mean": 473.53,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 14,
+          "mean_reward": -17.0985,
+          "episode_len_mean": 472.11,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 15,
+          "mean_reward": -17.0108,
+          "episode_len_mean": 471.15,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 16,
+          "mean_reward": -16.7605,
+          "episode_len_mean": 470.86,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 17,
+          "mean_reward": -16.4946,
+          "episode_len_mean": 470.32,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 18,
+          "mean_reward": -16.3264,
+          "episode_len_mean": 469.83,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 19,
+          "mean_reward": -16.4578,
+          "episode_len_mean": 470.41,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 20,
+          "mean_reward": -16.5372,
+          "episode_len_mean": 470.01,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 21,
+          "mean_reward": -16.4518,
+          "episode_len_mean": 469.69,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 22,
+          "mean_reward": -16.3653,
+          "episode_len_mean": 469.69,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 23,
+          "mean_reward": -16.4849,
+          "episode_len_mean": 469.39,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 24,
+          "mean_reward": -16.4062,
+          "episode_len_mean": 469.34,
+          "trainer": "SARL",
+          "fed_round": false
+        },
+        {
+          "episode": 25,
+          "mean_reward": -16.2455,
+          "episode_len_mean": 469.03,
+          "trainer": "SARL",
+          "fed_round": false
+        }
+      ],
+      "evaluation": {
+        "campaign": [
+          {
+            "trainer": "SARL",
+            "topology": "grid-5x5",
+            "n_runs": 5,
+            "n_completed": 5,
+            "n_failed": 0,
+            "aggregated": {
+              "avg_waiting_time": {
+                "mean": 17.4277,
+                "std": 1.4863,
+                "ci_95_lower": 16.1249,
+                "ci_95_upper": 18.7305,
+                "min": 15.2401,
+                "max": 18.9446
+              },
+              "avg_travel_time": {
+                "mean": 83.7195,
+                "std": 2.4816,
+                "ci_95_lower": 81.5443,
+                "ci_95_upper": 85.8947,
+                "min": 80.1955,
+                "max": 86.5197
+              },
+              "throughput": {
+                "mean": 1.0,
+                "std": 0.0,
+                "ci_95_lower": 1.0,
+                "ci_95_upper": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "mean_reward": {
+                "mean": -0.0018,
+                "std": 0.0003,
+                "ci_95_lower": -0.002,
+                "ci_95_upper": -0.0015,
+                "min": -0.0021,
+                "max": -0.0015
+              },
+              "total_comm_cost": {
+                "mean": 0.0,
+                "std": 0.0,
+                "ci_95_lower": 0.0,
+                "ci_95_upper": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              }
+            },
+            "individual": [
+              {
+                "trainer": "SARL",
+                "topology": "grid-5x5",
+                "seed": 42,
+                "mean_reward": -0.0015,
+                "total_reward": -17.369,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 15.2401,
+                  "avg_travel_time": 80.1955,
+                  "avg_depart_delay": 0.5574,
+                  "throughput": 1.0,
+                  "completed_trips": 404,
+                  "total_waiting_time": 6157.0,
+                  "total_travel_time": 32399.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-5x5",
+                "seed": 43,
+                "mean_reward": -0.0016,
+                "total_reward": -18.2987,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 17.2181,
+                  "avg_travel_time": 83.1152,
+                  "avg_depart_delay": 0.6424,
+                  "throughput": 1.0,
+                  "completed_trips": 408,
+                  "total_waiting_time": 7025.0,
+                  "total_travel_time": 33911.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-5x5",
+                "seed": 44,
+                "mean_reward": -0.002,
+                "total_reward": -22.9364,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 18.6798,
+                  "avg_travel_time": 86.5197,
+                  "avg_depart_delay": 0.6444,
+                  "throughput": 1.0,
+                  "completed_trips": 406,
+                  "total_waiting_time": 7584.0,
+                  "total_travel_time": 35127.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-5x5",
+                "seed": 45,
+                "mean_reward": -0.0021,
+                "total_reward": -23.8395,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 18.9446,
+                  "avg_travel_time": 85.6337,
+                  "avg_depart_delay": 0.7786,
+                  "throughput": 1.0,
+                  "completed_trips": 415,
+                  "total_waiting_time": 7862.0,
+                  "total_travel_time": 35538.0
+                }
+              },
+              {
+                "trainer": "SARL",
+                "topology": "grid-5x5",
+                "seed": 46,
+                "mean_reward": -0.0016,
+                "total_reward": -17.4867,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 17.056,
+                  "avg_travel_time": 83.1333,
+                  "avg_depart_delay": 0.6411,
+                  "throughput": 1.0,
+                  "completed_trips": 375,
+                  "total_waiting_time": 6396.0,
+                  "total_travel_time": 31175.0
+                }
+              }
+            ],
+            "errors": []
+          }
+        ]
+      },
+      "weights_path": "C:\\Users\\user\\Documents\\GitHub\\RoadsidePrediction\\BackEnd\\trained_weights\\weights\\SARL\\grid-5x5\\ranked.pkl",
+      "error": null,
+      "duration_seconds": 5607.44
+    },
+    {
+      "config": {
+        "name": "fedprox_mu0.01_grid-3x3",
+        "trainer_type": "FedRL",
+        "topology": "grid-3x3",
+        "n_episodes": 25,
+        "n_eval_runs": 5,
+        "base_seed": 42,
+        "ranked": true,
+        "horizon": 450,
+        "fedprox_mu": 0.01,
+        "alpha": 1.0,
+        "time_of_day": false,
+        "use_time_encoding": false,
+        "weights_path": null
+      },
+      "training_rewards": [
+        {
+          "episode": 1,
+          "mean_reward": -10.9971,
+          "episode_len_mean": 438.89,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 2,
+          "mean_reward": -9.9082,
+          "episode_len_mean": 439.83,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 3,
+          "mean_reward": -9.3538,
+          "episode_len_mean": 438.04,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 4,
+          "mean_reward": -9.0634,
+          "episode_len_mean": 436.92,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 5,
+          "mean_reward": -9.0238,
+          "episode_len_mean": 436.71,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 6,
+          "mean_reward": -8.9526,
+          "episode_len_mean": 437.0,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 7,
+          "mean_reward": -8.7031,
+          "episode_len_mean": 435.66,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 8,
+          "mean_reward": -8.5003,
+          "episode_len_mean": 434.73,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 9,
+          "mean_reward": -8.3734,
+          "episode_len_mean": 433.64,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 10,
+          "mean_reward": -8.289,
+          "episode_len_mean": 433.13,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 11,
+          "mean_reward": -8.1005,
+          "episode_len_mean": 432.51,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 12,
+          "mean_reward": -7.8038,
+          "episode_len_mean": 431.44,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 13,
+          "mean_reward": -7.7511,
+          "episode_len_mean": 430.5,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 14,
+          "mean_reward": -7.667,
+          "episode_len_mean": 430.77,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 15,
+          "mean_reward": -7.6073,
+          "episode_len_mean": 430.38,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 16,
+          "mean_reward": -7.4676,
+          "episode_len_mean": 430.09,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 17,
+          "mean_reward": -7.5445,
+          "episode_len_mean": 429.36,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 18,
+          "mean_reward": -7.5503,
+          "episode_len_mean": 428.79,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 19,
+          "mean_reward": -7.6256,
+          "episode_len_mean": 429.65,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 20,
+          "mean_reward": -7.6038,
+          "episode_len_mean": 430.9,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 21,
+          "mean_reward": -7.5695,
+          "episode_len_mean": 430.69,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 22,
+          "mean_reward": -7.5948,
+          "episode_len_mean": 430.45,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 23,
+          "mean_reward": -7.5968,
+          "episode_len_mean": 431.13,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 24,
+          "mean_reward": -7.6209,
+          "episode_len_mean": 431.23,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 25,
+          "mean_reward": -7.5499,
+          "episode_len_mean": 430.93,
+          "trainer": "FedRL",
+          "fed_round": true
+        }
+      ],
+      "evaluation": {
+        "campaign": [
+          {
+            "trainer": "FedRL",
+            "topology": "grid-3x3",
+            "n_runs": 5,
+            "n_completed": 5,
+            "n_failed": 0,
+            "aggregated": {
+              "avg_waiting_time": {
+                "mean": 11.0016,
+                "std": 1.6131,
+                "ci_95_lower": 9.5876,
+                "ci_95_upper": 12.4155,
+                "min": 8.6068,
+                "max": 13.0093
+              },
+              "avg_travel_time": {
+                "mean": 56.2481,
+                "std": 2.4127,
+                "ci_95_lower": 54.1333,
+                "ci_95_upper": 58.3629,
+                "min": 52.8835,
+                "max": 59.3302
+              },
+              "throughput": {
+                "mean": 1.0,
+                "std": 0.0,
+                "ci_95_lower": 1.0,
+                "ci_95_upper": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "mean_reward": {
+                "mean": -0.0023,
+                "std": 0.0003,
+                "ci_95_lower": -0.0026,
+                "ci_95_upper": -0.002,
+                "min": -0.0026,
+                "max": -0.0018
+              },
+              "total_comm_cost": {
+                "mean": 0.0,
+                "std": 0.0,
+                "ci_95_lower": 0.0,
+                "ci_95_upper": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              }
+            },
+            "individual": [
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 42,
+                "mean_reward": -0.0022,
+                "total_reward": -8.8897,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 10.8393,
+                  "avg_travel_time": 56.183,
+                  "avg_depart_delay": 0.6697,
+                  "throughput": 1.0,
+                  "completed_trips": 224,
+                  "total_waiting_time": 2428.0,
+                  "total_travel_time": 12585.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 43,
+                "mean_reward": -0.0022,
+                "total_reward": -9.0751,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 8.6068,
+                  "avg_travel_time": 52.8835,
+                  "avg_depart_delay": 0.688,
+                  "throughput": 1.0,
+                  "completed_trips": 206,
+                  "total_waiting_time": 1773.0,
+                  "total_travel_time": 10894.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 44,
+                "mean_reward": -0.0026,
+                "total_reward": -10.4135,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 11.7586,
+                  "avg_travel_time": 57.5172,
+                  "avg_depart_delay": 0.6693,
+                  "throughput": 1.0,
+                  "completed_trips": 232,
+                  "total_waiting_time": 2728.0,
+                  "total_travel_time": 13344.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 45,
+                "mean_reward": -0.0026,
+                "total_reward": -10.3975,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 13.0093,
+                  "avg_travel_time": 59.3302,
+                  "avg_depart_delay": 0.6816,
+                  "throughput": 1.0,
+                  "completed_trips": 215,
+                  "total_waiting_time": 2797.0,
+                  "total_travel_time": 12756.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 46,
+                "mean_reward": -0.0018,
+                "total_reward": -7.2074,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 10.794,
+                  "avg_travel_time": 55.3266,
+                  "avg_depart_delay": 0.727,
+                  "throughput": 1.0,
+                  "completed_trips": 199,
+                  "total_waiting_time": 2148.0,
+                  "total_travel_time": 11010.0
+                }
+              }
+            ],
+            "errors": []
+          }
+        ]
+      },
+      "weights_path": "C:\\Users\\user\\Documents\\GitHub\\RoadsidePrediction\\BackEnd\\trained_weights\\weights\\FedRL\\grid-3x3\\ranked.pkl",
+      "error": null,
+      "duration_seconds": 2033.18
+    },
+    {
+      "config": {
+        "name": "fedprox_mu0.1_grid-3x3",
+        "trainer_type": "FedRL",
+        "topology": "grid-3x3",
+        "n_episodes": 25,
+        "n_eval_runs": 5,
+        "base_seed": 42,
+        "ranked": true,
+        "horizon": 450,
+        "fedprox_mu": 0.1,
+        "alpha": 1.0,
+        "time_of_day": false,
+        "use_time_encoding": false,
+        "weights_path": null
+      },
+      "training_rewards": [
+        {
+          "episode": 1,
+          "mean_reward": -10.9971,
+          "episode_len_mean": 438.89,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 2,
+          "mean_reward": -9.9082,
+          "episode_len_mean": 439.83,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 3,
+          "mean_reward": -9.2604,
+          "episode_len_mean": 439.07,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 4,
+          "mean_reward": -9.0773,
+          "episode_len_mean": 437.42,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 5,
+          "mean_reward": -9.1427,
+          "episode_len_mean": 438.87,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 6,
+          "mean_reward": -9.1841,
+          "episode_len_mean": 439.59,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 7,
+          "mean_reward": -9.1079,
+          "episode_len_mean": 439.6,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 8,
+          "mean_reward": -8.8493,
+          "episode_len_mean": 439.14,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 9,
+          "mean_reward": -8.7149,
+          "episode_len_mean": 438.06,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 10,
+          "mean_reward": -8.6604,
+          "episode_len_mean": 437.55,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 11,
+          "mean_reward": -8.5404,
+          "episode_len_mean": 437.12,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 12,
+          "mean_reward": -8.3194,
+          "episode_len_mean": 436.7,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 13,
+          "mean_reward": -8.2333,
+          "episode_len_mean": 435.72,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 14,
+          "mean_reward": -8.2058,
+          "episode_len_mean": 435.79,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 15,
+          "mean_reward": -8.0877,
+          "episode_len_mean": 435.46,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 16,
+          "mean_reward": -7.8434,
+          "episode_len_mean": 434.09,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 17,
+          "mean_reward": -7.7426,
+          "episode_len_mean": 433.16,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 18,
+          "mean_reward": -7.7085,
+          "episode_len_mean": 431.68,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 19,
+          "mean_reward": -7.7445,
+          "episode_len_mean": 431.65,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 20,
+          "mean_reward": -7.766,
+          "episode_len_mean": 432.49,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 21,
+          "mean_reward": -7.6527,
+          "episode_len_mean": 432.16,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 22,
+          "mean_reward": -7.6839,
+          "episode_len_mean": 430.57,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 23,
+          "mean_reward": -7.5648,
+          "episode_len_mean": 430.44,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 24,
+          "mean_reward": -7.5528,
+          "episode_len_mean": 430.48,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 25,
+          "mean_reward": -7.4784,
+          "episode_len_mean": 429.49,
+          "trainer": "FedRL",
+          "fed_round": true
+        }
+      ],
+      "evaluation": {
+        "campaign": [
+          {
+            "trainer": "FedRL",
+            "topology": "grid-3x3",
+            "n_runs": 5,
+            "n_completed": 5,
+            "n_failed": 0,
+            "aggregated": {
+              "avg_waiting_time": {
+                "mean": 11.1906,
+                "std": 2.885,
+                "ci_95_lower": 8.6617,
+                "ci_95_upper": 13.7194,
+                "min": 8.3664,
+                "max": 15.5143
+              },
+              "avg_travel_time": {
+                "mean": 56.1451,
+                "std": 4.5511,
+                "ci_95_lower": 52.1559,
+                "ci_95_upper": 60.1343,
+                "min": 51.9698,
+                "max": 63.1143
+              },
+              "throughput": {
+                "mean": 1.0,
+                "std": 0.0,
+                "ci_95_lower": 1.0,
+                "ci_95_upper": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "mean_reward": {
+                "mean": -0.0022,
+                "std": 0.0004,
+                "ci_95_lower": -0.0025,
+                "ci_95_upper": -0.0019,
+                "min": -0.0028,
+                "max": -0.0018
+              },
+              "total_comm_cost": {
+                "mean": 0.0,
+                "std": 0.0,
+                "ci_95_lower": 0.0,
+                "ci_95_upper": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              }
+            },
+            "individual": [
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 42,
+                "mean_reward": -0.0022,
+                "total_reward": -8.8712,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 12.1749,
+                  "avg_travel_time": 57.7265,
+                  "avg_depart_delay": 0.6873,
+                  "throughput": 1.0,
+                  "completed_trips": 223,
+                  "total_waiting_time": 2715.0,
+                  "total_travel_time": 12873.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 43,
+                "mean_reward": -0.002,
+                "total_reward": -8.1665,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 8.8152,
+                  "avg_travel_time": 52.4123,
+                  "avg_depart_delay": 0.679,
+                  "throughput": 1.0,
+                  "completed_trips": 211,
+                  "total_waiting_time": 1860.0,
+                  "total_travel_time": 11059.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 44,
+                "mean_reward": -0.0022,
+                "total_reward": -8.7441,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 8.3664,
+                  "avg_travel_time": 51.9698,
+                  "avg_depart_delay": 0.6667,
+                  "throughput": 1.0,
+                  "completed_trips": 232,
+                  "total_waiting_time": 1941.0,
+                  "total_travel_time": 12057.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 45,
+                "mean_reward": -0.0028,
+                "total_reward": -11.3707,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 15.5143,
+                  "avg_travel_time": 63.1143,
+                  "avg_depart_delay": 0.6786,
+                  "throughput": 1.0,
+                  "completed_trips": 210,
+                  "total_waiting_time": 3258.0,
+                  "total_travel_time": 13254.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 46,
+                "mean_reward": -0.0018,
+                "total_reward": -7.1546,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 11.0821,
+                  "avg_travel_time": 55.5026,
+                  "avg_depart_delay": 0.7287,
+                  "throughput": 1.0,
+                  "completed_trips": 195,
+                  "total_waiting_time": 2161.0,
+                  "total_travel_time": 10823.0
+                }
+              }
+            ],
+            "errors": []
+          }
+        ]
+      },
+      "weights_path": "C:\\Users\\user\\Documents\\GitHub\\RoadsidePrediction\\BackEnd\\trained_weights\\weights\\FedRL\\grid-3x3\\ranked.pkl",
+      "error": null,
+      "duration_seconds": 2034.41
+    },
+    {
+      "config": {
+        "name": "tod_with_encoding_grid-3x3",
+        "trainer_type": "FedRL",
+        "topology": "grid-3x3",
+        "n_episodes": 25,
+        "n_eval_runs": 5,
+        "base_seed": 42,
+        "ranked": true,
+        "horizon": 450,
+        "fedprox_mu": 0.0,
+        "alpha": 1.0,
+        "time_of_day": true,
+        "use_time_encoding": true,
+        "weights_path": null
+      },
+      "training_rewards": [
+        {
+          "episode": 1,
+          "mean_reward": -38.3546,
+          "episode_len_mean": 469.38,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 2,
+          "mean_reward": -27.9477,
+          "episode_len_mean": 463.94,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 3,
+          "mean_reward": -25.6775,
+          "episode_len_mean": 460.35,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 4,
+          "mean_reward": -21.8002,
+          "episode_len_mean": 453.66,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 5,
+          "mean_reward": -21.6145,
+          "episode_len_mean": 451.52,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 6,
+          "mean_reward": -20.8581,
+          "episode_len_mean": 450.74,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 7,
+          "mean_reward": -19.8554,
+          "episode_len_mean": 449.44,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 8,
+          "mean_reward": -19.3442,
+          "episode_len_mean": 447.65,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 9,
+          "mean_reward": -18.2975,
+          "episode_len_mean": 446.24,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 10,
+          "mean_reward": -17.5221,
+          "episode_len_mean": 444.64,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 11,
+          "mean_reward": -17.1464,
+          "episode_len_mean": 443.68,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 12,
+          "mean_reward": -15.3768,
+          "episode_len_mean": 441.19,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 13,
+          "mean_reward": -15.1318,
+          "episode_len_mean": 439.37,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 14,
+          "mean_reward": -14.3329,
+          "episode_len_mean": 437.17,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 15,
+          "mean_reward": -14.6087,
+          "episode_len_mean": 437.35,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 16,
+          "mean_reward": -13.7002,
+          "episode_len_mean": 435.98,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 17,
+          "mean_reward": -13.8937,
+          "episode_len_mean": 434.95,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 18,
+          "mean_reward": -14.2786,
+          "episode_len_mean": 434.6,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 19,
+          "mean_reward": -14.1297,
+          "episode_len_mean": 434.01,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 20,
+          "mean_reward": -14.3793,
+          "episode_len_mean": 433.71,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 21,
+          "mean_reward": -14.4084,
+          "episode_len_mean": 432.88,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 22,
+          "mean_reward": -15.0634,
+          "episode_len_mean": 433.59,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 23,
+          "mean_reward": -15.4654,
+          "episode_len_mean": 433.25,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 24,
+          "mean_reward": -15.5908,
+          "episode_len_mean": 433.17,
+          "trainer": "FedRL",
+          "fed_round": true
+        },
+        {
+          "episode": 25,
+          "mean_reward": -15.9162,
+          "episode_len_mean": 434.22,
+          "trainer": "FedRL",
+          "fed_round": true
+        }
+      ],
+      "evaluation": {
+        "campaign": [
+          {
+            "trainer": "FedRL",
+            "topology": "grid-3x3",
+            "n_runs": 5,
+            "n_completed": 5,
+            "n_failed": 0,
+            "aggregated": {
+              "avg_waiting_time": {
+                "mean": 12.4053,
+                "std": 1.3326,
+                "ci_95_lower": 11.2372,
+                "ci_95_upper": 13.5733,
+                "min": 10.5459,
+                "max": 13.9686
+              },
+              "avg_travel_time": {
+                "mean": 57.1927,
+                "std": 1.9419,
+                "ci_95_lower": 55.4906,
+                "ci_95_upper": 58.8948,
+                "min": 54.199,
+                "max": 58.9058
+              },
+              "throughput": {
+                "mean": 1.0,
+                "std": 0.0,
+                "ci_95_lower": 1.0,
+                "ci_95_upper": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "mean_reward": {
+                "mean": -0.0025,
+                "std": 0.0005,
+                "ci_95_lower": -0.0029,
+                "ci_95_upper": -0.0021,
+                "min": -0.0029,
+                "max": -0.0017
+              },
+              "total_comm_cost": {
+                "mean": 0.0,
+                "std": 0.0,
+                "ci_95_lower": 0.0,
+                "ci_95_upper": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              }
+            },
+            "individual": [
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 42,
+                "mean_reward": -0.0027,
+                "total_reward": -10.9704,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 13.9686,
+                  "avg_travel_time": 58.9058,
+                  "avg_depart_delay": 0.6839,
+                  "throughput": 1.0,
+                  "completed_trips": 223,
+                  "total_waiting_time": 3115.0,
+                  "total_travel_time": 13136.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 43,
+                "mean_reward": -0.0029,
+                "total_reward": -11.6271,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 12.4363,
+                  "avg_travel_time": 57.799,
+                  "avg_depart_delay": 0.6911,
+                  "throughput": 1.0,
+                  "completed_trips": 204,
+                  "total_waiting_time": 2537.0,
+                  "total_travel_time": 11791.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 44,
+                "mean_reward": -0.0029,
+                "total_reward": -11.6777,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 13.3013,
+                  "avg_travel_time": 58.6681,
+                  "avg_depart_delay": 0.6634,
+                  "throughput": 1.0,
+                  "completed_trips": 229,
+                  "total_waiting_time": 3046.0,
+                  "total_travel_time": 13435.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 45,
+                "mean_reward": -0.0023,
+                "total_reward": -9.2158,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 11.7742,
+                  "avg_travel_time": 56.3917,
+                  "avg_depart_delay": 0.6799,
+                  "throughput": 1.0,
+                  "completed_trips": 217,
+                  "total_waiting_time": 2555.0,
+                  "total_travel_time": 12237.0
+                }
+              },
+              {
+                "trainer": "FedRL",
+                "topology": "grid-3x3",
+                "seed": 46,
+                "mean_reward": -0.0017,
+                "total_reward": -6.9188,
+                "comm_costs": {},
+                "total_comm_cost": 0,
+                "tripinfo": {
+                  "avg_waiting_time": 10.5459,
+                  "avg_travel_time": 54.199,
+                  "avg_depart_delay": 0.7111,
+                  "throughput": 1.0,
+                  "completed_trips": 196,
+                  "total_waiting_time": 2067.0,
+                  "total_travel_time": 10623.0
+                }
+              }
+            ],
+            "errors": []
+          }
+        ]
+      },
+      "weights_path": "C:\\Users\\user\\Documents\\GitHub\\RoadsidePrediction\\BackEnd\\trained_weights\\weights\\FedRL\\grid-3x3\\ranked.pkl",
+      "error": null,
+      "duration_seconds": 2235.05
+    }
+  ]
+}

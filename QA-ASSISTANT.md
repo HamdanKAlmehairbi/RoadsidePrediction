@@ -447,7 +447,170 @@ A: The components are standard — PPO, SUMO, FedAvg are not our invention. What
 
 ### Key Takeaways
 - All RL strategies reduce waiting time by 75-85% vs fixed-time
-- FedRL uses 41% less communication than centralized approaches
+- FedRL uses 39% less communication than centralized approaches
 - FedRL's advantage grows with network size (trails on 3×3, leads on 5×5)
 - MARL performs worst among RL strategies — local specialization without knowledge sharing hurts
 - FedProx shows modest 4% improvement — expected to increase with higher heterogeneity
+
+---
+
+## TA/PROFESSOR CRITIQUE PATTERNS (FROM OTHER PRESENTATIONS)
+
+These are recurring critique themes observed from TA and professor feedback on other course presentations. Each one has a countermeasure prepared for our project.
+
+### Pattern 1: "What exactly is YOUR contribution?"
+**How they ask it:** "Can you summarize your contribution?" / "This is just fine-tuning of a pre-existing thing" / "How do we know this is your contribution?"
+
+**Countermeasure:** "Our contribution is the standardized benchmarking framework itself — the 8 controlled layers, the intersection-agnostic observation space design, and the fair comparison that does not exist in the literature. No existing work compares SARL, MARL, and FedRL under identical conditions. Each of the 7 papers in this space uses different setups. Our contribution is the controlled evaluation framework and the findings it produces — specifically, that FedRL's advantage grows with network size and that it achieves 39% less communication with comparable performance. Those findings are new because the fair comparison did not exist before."
+
+### Pattern 2: "Show me the model / architecture details"
+**How they ask it:** "You don't show any figures, any layers, any neural network" / "If this is your contribution, show us the model"
+
+**Countermeasure:** "The policy network is a fully connected network — two hidden layers of 256 neurons each, ReLU activation, input dimension 14, output dimension 2. This is Ray RLlib's default architecture. We deliberately did not customize the architecture because our goal is benchmarking training strategies, not neural architecture search. Using the same default architecture across all strategies ensures the comparison is fair."
+
+### Pattern 3: "Why this model / method? What alternatives did you consider?"
+**How they ask it:** "Why exactly this model? There are much better competitors" / "Where is the reference?"
+
+**Countermeasure:** "We chose PPO because it is the most common algorithm in the FedRL traffic literature. FedLight uses A2C, Bao et al. use DQN, Hudson et al. and Fu et al. use PPO. Since our goal is benchmarking training strategies, not algorithms, we needed a stable well-supported algorithm that works across all three strategy types. The algorithm is not our variable under test — it is a controlled variable."
+
+### Pattern 4: "Training is noisy / too few epochs / not properly tuned"
+**How they ask it:** "Training is extremely noisy" / "50 epochs is too small" / "You chose a spike, not a trend"
+
+**Countermeasure:** "We trained for 25 episodes as a midterm checkpoint. The convergence curves show the reward plateauing by episode 20 on both topologies. We also ran a separate 50-episode experiment on Grid 5x5 that confirmed the same plateau around episode 25-30. For the final evaluation, we plan to increase to 50 episodes. However, our key finding — the relative ordering of strategies and the communication cost difference — is stable and does not depend on episode count."
+
+### Pattern 5: "Dataset is too small / not representative"
+**How they ask it:** "How do you know results generalize?" / "Is the data set enough?"
+
+**Countermeasure:** "We acknowledge that one demand setting is insufficient, which is why the second half includes low, medium, and high demand evaluation — 32 total configurations. The synthetic grids are standard in this field, but we are also aware of their limitations. Our observation space is designed to handle real-world networks through ratio-based features, and we have begun integration work with RESCO benchmark networks."
+
+### Pattern 6: "Where is the deployment / real-world validation?"
+**How they ask it:** "There is no deployment" / "Deploying on a computer is not an edge device"
+
+**Countermeasure:** "This is a simulation-based benchmarking study, which is standard for this stage of research. All 7 papers in the FedRL traffic literature evaluate in simulation — none deploy on real traffic infrastructure. Our system runs real SUMO simulations with real traffic physics. The policy inference is lightweight — a small neural network on a 14-dimensional input — so deployment on edge hardware is feasible but validation of that is future work."
+
+### Pattern 7: "Justify your results — why does X outperform Y?"
+**How they ask it:** "Why the big difference?" / "Why is the result so low?"
+
+**Countermeasures:**
+- Why FedRL achieves highest reward: Agents specialize locally but share knowledge through aggregation — best of both worlds. SARL cannot specialize, MARL cannot share. Reward-weighting ensures the best policies contribute most.
+- Why FedRL achieves lower waiting time: Each agent makes locally tuned decisions informed by the full network's experience. SARL applies one generic policy everywhere. MARL agents optimize selfishly with no awareness of neighbors. The gap grows on larger networks.
+- Why FedRL uses less communication: SARL and MARL stream data every timestep. FedRL sends 50KB of weights once per episode. Same knowledge, compressed into model parameters instead of continuous raw data.
+
+### Pattern 8: "What about ablation studies / parameter sensitivity?"
+**How they ask it:** "We need more ablation" / "How strong is the attack?" / "We need more details"
+
+**Countermeasure:** "We have preliminary ablation results for FedProx with mu values of 0.0, 0.01, and 0.1, and for time-of-day demand variation. The full ablation studies with Wilcoxon significance tests across all demand settings are planned for the final evaluation. The infrastructure to run these is built and tested."
+
+### Pattern 9: "Your evaluation metrics need more rigor"
+**How they ask it:** "How realistic is it?" / "Show the training properly"
+
+**Countermeasure:** "Each configuration is evaluated with 5 Monte Carlo runs using different random seeds, and all results include standard deviation error bars. For the final evaluation, we plan to increase to 10 runs and apply Wilcoxon signed-rank tests for pairwise significance."
+
+---
+
+## DEEP ARCHITECTURE Q&A
+
+### Neural Network Details
+
+**Q: Why two hidden layers? Why not one, or three?**
+A: RLlib's default. We used the default because architecture is a controlled variable. Two layers with 256 neurons provides sufficient capacity for 14-dimensional input without overfitting. Changing it would introduce a confound.
+
+**Q: Why 256 neurons? That seems arbitrary.**
+A: RLlib's default. For a 14-dim input with binary output, 256 provides significantly more capacity than needed, ensuring the network is never the bottleneck. All strategies have the same excess capacity.
+
+**Q: 70,000 parameters for a binary decision — isn't that overparameterized?**
+A: Yes, intentionally. If the network were too small, differences between strategies might be caused by capacity limits, not the strategy itself. Overparameterizing ensures the network is never the limiting factor.
+
+**Q: Why ReLU and not tanh or sigmoid?**
+A: ReLU is the standard default in deep RL. Avoids vanishing gradient problem. Since all strategies use the same activation, the choice does not affect the comparison.
+
+**Q: Did you try any other architectures?**
+A: No, deliberately. Our research question is about training strategy, not architecture. Introducing architecture variation would confound the comparison.
+
+### Observation Space Details
+
+**Q: Lane occupancy — why vehicle length divided by lane length instead of count?**
+A: Different vehicles have different lengths. A truck occupying 12 meters contributes more to congestion than a car at 4 meters. Length-based occupancy captures physical road usage accurately.
+
+**Q: Why is halted defined as speed below 0.1 m/s and not exactly zero?**
+A: Vehicles in SUMO rarely reach exactly 0.0 due to floating-point dynamics. A vehicle at 0.05 m/s is effectively stopped. 0.1 m/s is the standard threshold in traffic simulation literature.
+
+**Q: Speed ratio returns 1.0 when no vehicles. Why not 0?**
+A: Empty road means traffic flows perfectly — nothing is congested. Returning 1.0 (maximum flow) correctly represents this. Returning 0 would incorrectly signal that traffic is completely stopped.
+
+**Q: 7 phase features but most are zero. Isn't that wasteful?**
+A: In our grids, mostly G, r, and y are used. But including all 7 makes the space complete for any SUMO network including real-world networks with complex signals. Zeros carry valid signal meaning "this state is not active."
+
+**Q: Ranking features require global information. Doesn't that defeat local training?**
+A: In simulation, rankings are computed centrally because we have full observability. In real deployment, rankings could be computed during the aggregation round — the server already communicates with all intersections. Adds minimal overhead. Between rounds, agents use stale rankings, which is acceptable because congestion patterns change slowly.
+
+### Action Space Details
+
+**Q: What if the agent wants to go back to a previous phase?**
+A: It cannot directly — must advance through the full cycle. But it can stay on any phase up to 120 seconds, and the cycle repeats. The agent effectively controls phase duration.
+
+**Q: What happens if the agent always picks action 0?**
+A: The 120-second maximum forces a phase change regardless. The agent cannot permanently freeze the light. In practice, agents learn to switch frequently because the reward penalizes congestion buildup.
+
+### Reward Function Details
+
+**Q: Can the reward exceed -1?**
+A: Yes, unbounded below. With o=1.0, h=1.0, maximum penalty is -(2.0)^2 = -4.0 per intersection. On a 9-intersection grid, worst possible is -36. PPO handles this through value function clipping and advantage normalization.
+
+**Q: Did you try other reward formulations?**
+A: No. The reward function is a controlled variable. Changing it between strategies would make comparison invalid. Changing it across all strategies would change the research question.
+
+### PPO Hyperparameter Details
+
+**Q: What does train batch size of 4000 mean practically?**
+A: The agent collects 4000 timesteps of experience before performing a gradient update. On 9 intersections, that is roughly 444 decisions per intersection before learning happens. This is also the federated aggregation interval.
+
+**Q: GAE lambda 1.0 means full Monte Carlo returns. Why?**
+A: Lambda 1.0 gives lowest bias at cost of higher variance. For 450-timestep episodes, trajectories are short enough that variance is manageable. Lower lambda would introduce bias by relying on potentially uncalibrated value function estimates.
+
+**Q: Why not tune hyperparameters per strategy?**
+A: That would violate standardization. If FedRL got different hyperparameters than MARL, we could not attribute performance differences to the strategy alone.
+
+### Training Infrastructure Details
+
+**Q: What does num_workers=0 mean?**
+A: Single-threaded training. No parallel environment workers. Ensures deterministic behavior — same seed produces same results every time. With parallel workers, nondeterministic thread scheduling introduces variance.
+
+**Q: Why no GPU?**
+A: The networks are small (70,000 parameters). GPU overhead for kernel launches and memory transfers would actually make training slower at this scale. The bottleneck is SUMO simulation, not neural network computation.
+
+**Q: What is an episode in practice?**
+A: One SUMO simulation run of 450 timesteps (7.5 minutes of simulated traffic). New routes generated from the seed. Agents take actions, rewards accumulate. After 450 steps, PPO updates the policy.
+
+### Federated Aggregation Details
+
+**Q: What exactly gets averaged?**
+A: All neural network weights and biases from every intersection's policy. For each parameter key in the network, the new weight equals the weighted sum of all intersections' weights, where coefficients are proportional to each intersection's accumulated reward.
+
+**Q: After aggregation, every intersection has identical weights. Doesn't that destroy specialization?**
+A: Temporarily yes. But each intersection immediately resumes local training from the shared starting point. Within a few training steps, agents begin diverging based on their local traffic. The aggregation provides a strong initialization; local training refines it.
+
+**Q: What prevents a poorly performing intersection from poisoning the model?**
+A: Reward-weighted averaging naturally reduces poor performers' influence. We do not have formal byzantine robustness — all agents are honest in our setup. Byzantine robustness is a valid concern for real-world deployment but outside our scope.
+
+---
+
+## GENERAL "WHY" QUESTIONS
+
+### Why synthetic data?
+Because we need to guarantee every strategy faces exactly the same traffic. With real-world data, there are uncontrollable variables — demand fluctuations, sensor noise, missing data. Synthetic generation with a fixed seed means identical vehicles at identical times on identical routes for every experiment. It also gives us controlled heterogeneity — center intersections have more lanes than edges, which specifically tests whether the observation space handles different intersection types. Real networks have heterogeneity too, but it is uncontrolled and hard to isolate.
+
+### Why federated aggregation?
+Because the alternative is either sending all raw data to one place or learning in complete isolation. Centralized training requires 64 bytes per intersection per timestep continuously. For 25 intersections over 200,000 timesteps, that is hundreds of megabytes. Federated replaces continuous streaming with periodic compact weight exchanges — about 50KB per agent per round. The communication is infrequent and small but the knowledge transfer is substantial because weights encode everything the agent learned over an entire episode.
+
+### Why this evaluation approach?
+Because training reward alone does not tell you how the policy performs in practice. Evaluation runs the trained policy in a fresh simulation with no learning and no exploration. Monte Carlo evaluation with five different seeds tests generalization, not memorization. Metrics come directly from SUMO's tripinfo output — simulator-verified, not subject to bugs in our code.
+
+### Why this training setup?
+25 episodes because curves plateau by episode 20. Single-threaded because benchmarking requires determinism. No GPU because the bottleneck is SUMO simulation, not neural network computation. These choices prioritize controlled comparison over raw training speed.
+
+### Why PPO?
+Because it is the most stable and widely-used policy gradient algorithm for multi-agent RL, and it is the standard in the FedRL traffic literature. PPO clips the policy update to prevent catastrophic collapse. We needed an algorithm that reliably converges across all three strategy types without per-strategy tuning. PPO does that. The algorithm choice is not our contribution — it is a controlled variable.
+
+### Why this reward function?
+Because it captures the right incentive with minimal complexity. Occupancy and halted occupancy are available every timestep via TraCI. The quadratic form imposes disproportionately larger penalty on high congestion, which is correct because congestion compounds. We adopted it from the traffic RL literature for consistency and comparability. Changing the reward would introduce a confound.

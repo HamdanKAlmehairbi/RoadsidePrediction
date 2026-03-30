@@ -1,0 +1,100 @@
+PRESENTATION SCRIPT (~7 min)
+=============================
+
+SLIDE 1 — Title (0:00 - 0:10) [Al Rayassi]
+
+"Our project compares three reinforcement learning training strategies for traffic signal control — single-agent, multi-agent, and federated — all evaluated under identical controlled conditions."
+
+
+SLIDE 2 — Research Context (0:10 - 0:40) [Al Rayassi]
+
+"Traffic congestion costs 87 billion US dollars annually, and most traffic lights still run on fixed timers. Reinforcement learning can train them to adapt, but every paper in this space uses a different experimental setup, so when two papers report different results, it is unclear whether the difference comes from the strategy or the setup. That is why we built a framework that controls everything except the training strategy, so the comparison is fair."
+
+
+SLIDE 3 — Literature Gaps (0:40 - 1:10) [Al Rayassi]
+
+"FedLight in 2021 first applied federated learning to traffic signals but tested on a single topology with no comparison to non-federated methods. Hudson et al. in 2022 added an intersection-agnostic representation but used pre-trained weights and no statistical testing. Bao et al. in 2023 used a different algorithm and reward entirely, making results incomparable. Existing benchmarks like RESCO and LibSignal compare RL algorithms and simulators but none evaluate federated training strategies or measure communication trade-offs."
+
+
+SLIDE 4 — Our Contribution (1:10 - 1:30) [Al Rayassi]
+
+"To fill that gap we built a benchmarking framework that isolates training strategy as the only variable while everything else is controlled. An intersection-agnostic observation space that makes federated weight sharing across different intersection types possible. Reward-weighted aggregation that prevents good policies from being diluted by weak ones. And a multi-demand evaluation protocol that reveals when each strategy works and when it does not."
+
+[TRANSITION: "I will hand over to Majid for the technical details."]
+
+
+SLIDE 5 — Simulation Layer (1:30 - 2:00) [Majid]
+
+"We use SUMO, a microscopic traffic simulator that models individual vehicles with real driving physics. We interact with it through TraCI, a Python API for reading sensor data and controlling traffic lights each timestep. Each intersection produces a 14-feature observation vector. We use ratios not counts because 10 cars on a 2-lane road is congestion but 10 cars on a 6-lane road is not. Halted occupancy is separate because stopped vehicles cause cascading delays that moving vehicles do not. Phase state is encoded as color fractions so the format is identical for any intersection size. And ranking features tell each agent how congested it is relative to neighbors. All normalized between zero and one, computed by the same code for every strategy."
+
+
+SLIDE 6 — The RL Agent (2:00 - 2:30) [Majid]
+
+"Each agent takes 14 numbers and picks a binary action — keep the current phase or switch. Binary because a phase-selection action would have different dimensions per intersection type, and you cannot share weights between networks with different output sizes. The reward is negative congestion squared — occupancy plus halted occupancy, summed and squared. The squaring makes the penalty grow faster at high congestion, pushing agents to prevent queues rather than tolerate them. Halted vehicles appear in both terms intentionally because stopped traffic causes more disruption. We train with PPO using two hidden layers of 256 neurons. This entire design is identical across all three strategies — it is a controlled variable."
+
+
+SLIDE 7 — Dataset and Evaluation (2:30 - 2:55) [Majid]
+
+"Two synthetic SUMO grids — 3x3 with 9 intersections and 5x5 with 25. Synthetic because we need controlled heterogeneity where center intersections have more lanes than edges, and full reproducibility through seeds. Traffic at 360 vehicles per lane per hour. Each episode is 450 timesteps — about 7 and a half minutes of simulated traffic. We train for 25 episodes with convergence confirmed by episode 20 in a separate 50-episode run. Evaluation uses 5 Monte Carlo runs with different seeds on unseen traffic, metrics from SUMO's own trip output."
+
+
+SLIDE 8 — Demand Settings (2:55 - 3:10) [Majid]
+
+"One demand setting is not enough, so we plan four — low at 150, medium at 360, high at 600, and variable between 200 and 700. That gives 32 configurations to identify where each strategy's advantage appears and where it disappears."
+
+
+SLIDE 9 — Three Strategies (3:10 - 3:45) [Majid]
+
+"SARL uses one shared policy for all intersections — sees everything but all data flows centrally every timestep. MARL gives each intersection its own policy with a central trainer coordinating, so communication stays high. FedRL gives each intersection its own policy but training is local. Once per episode, agents send model weights to a server that computes a reward-weighted average — intersections that performed better contribute more. Between rounds, zero server communication. We chose reward-weighted over equal-weight because a busy center intersection has more useful knowledge than a quiet corner."
+
+[TRANSITION: "Abdallah will walk through our results."]
+
+
+SLIDE 10 — Learning Curves (3:45 - 4:10) [Abdallah]
+
+"All three strategies learn over 25 episodes with FedRL achieving the highest reward on both grids. On 3x3, SARL starts faster since one policy sees all data immediately, but FedRL overtakes it around episode 15 through aggregation. On 5x5 the gap is larger because each agent sees less of the overall dynamics individually, making shared knowledge more valuable. FedRL combines local specialization with collective experience — SARL cannot specialize, MARL cannot share."
+
+
+SLIDE 11 — Waiting Time (4:10 - 4:40) [Abdallah]
+
+"All RL strategies reduce waiting time by 75 to 85 percent versus fixed-time. SARL edges out FedRL on 3x3 — 10.4 versus 11.5 seconds — because one policy captures a small network efficiently. On 5x5, FedRL leads at 16.8 versus MARL at 23.6 because each agent makes locally tuned decisions informed by the broader network through aggregation, while MARL agents optimize for their own intersection with no awareness of neighbors. The best strategy depends on network size — that is a benchmarking finding."
+
+
+SLIDE 12 — Communication Cost (4:40 - 5:00) [Abdallah]
+
+"SARL and MARL transmit 163 to 485 MB because they send 64 bytes of observations per intersection per timestep continuously. FedRL transmits 39 percent less because it exchanges 50 kilobytes of model weights once per episode instead. Over 200,000 timesteps that difference adds up. For edge deployment on wireless networks, that reduction is what makes the system practical."
+
+[TRANSITION: "Mohammad will cover trade-offs and next steps."]
+
+
+SLIDE 13 — Trade-off Analysis (5:00 - 5:20) [Blooshi]
+
+"SARL works best on small networks but scales poorly and needs high bandwidth. MARL allows specialization but requires constant coordination. FedRL suits larger networks with bandwidth constraints — performance improves with scale and data stays local. Fixed-time is only adequate under very low demand. The communication and scalability columns are backed by our results. The demand-dependent columns are what the remaining experiments will fill in."
+
+
+SLIDE 14 — Next Steps (5:20 - 5:40) [Blooshi]
+
+"Five areas remain. Multi-demand evaluation under low, medium, high, and variable traffic. Additional models including hierarchical federated learning and cooperative reward shaping. Aggregation variants — reward-weighted FedAvg, naive FedAvg, and FedProx. Real-world networks from the RESCO benchmark. And completing the trade-off matrix with evidence. Infrastructure is built — remaining work is execution and analysis."
+
+
+SLIDE 15 — Contributions (5:40 - 5:50) [Blooshi]
+
+"Majid led system architecture and RL design. Hamdan implemented the federated learning loop. Abdallah built the SUMO environment. I developed baselines and evaluation. Mohamed conducted the literature review and experimental analysis."
+
+
+SLIDE 16 — Thank You (5:50 - 6:00) [Blooshi]
+
+"All RL strategies reduce waiting time by 75 to 85 percent. FedRL matches centralized performance at 39 percent less communication, with its advantage growing as networks scale. The second half completes the multi-demand evaluation and trade-off analysis. Thank you."
+
+
+=============================
+TIMING SUMMARY
+=============================
+
+Total: ~6 min. Leaves 4 minutes for Q&A or natural pacing to 9-10 min.
+
+Speaker          Slides    Time
+Al Rayassi       1-4       ~1:30
+Majid            5-9       ~2:15
+Abdallah         10-12     ~1:15
+Blooshi          13-16     ~1:00
