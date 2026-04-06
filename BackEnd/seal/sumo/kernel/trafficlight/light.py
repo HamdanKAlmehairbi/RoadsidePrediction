@@ -58,8 +58,12 @@ class TrafficLight:
         """Update the current state by interacting with `traci`."""
         try:
             self.phase = traci.trafficlight.getRedYellowGreenState(self.id)
-            self.state = self.program.index(self.phase)
-        except traci.exceptions.FatalTraCIError:
+            if self.phase in self.program:
+                self.state = self.program.index(self.phase)
+            else:
+                # Phase not in program — can happen with non-standard topologies
+                self.state = 0
+        except (traci.exceptions.FatalTraCIError, traci.exceptions.TraCIException):
             pass
 
     def next_phase(self) -> None:
@@ -69,7 +73,7 @@ class TrafficLight:
             self.state = next_state
             self.phase = next_phase
             traci.trafficlight.setRedYellowGreenState(self.id, self.phase)
-        except traci.exceptions.FatalTraCIError:
+        except (traci.exceptions.FatalTraCIError, traci.exceptions.TraCIException):
             pass
 
     def get_program(
@@ -154,38 +158,64 @@ class TrafficLight:
 
         return np.array(obs)
 
+    def _get_controlled_lanes(self) -> list:
+        """Get controlled lanes with error handling for non-standard topologies."""
+        try:
+            lanes = traci.trafficlight.getControlledLanes(self.id)
+            # Deduplicate lanes (SUMO can return duplicates for complex junctions)
+            return list(dict.fromkeys(lanes))
+        except (traci.exceptions.TraCIException, traci.exceptions.FatalTraCIError):
+            return []
+
     def get_num_of_controlled_vehicles(self) -> int:
-        return sum(traci.lane.getLastStepVehicleNumber(lane)
-                   for lane in traci.trafficlight.getControlledLanes(self.id))
+        try:
+            return sum(traci.lane.getLastStepVehicleNumber(lane)
+                       for lane in self._get_controlled_lanes())
+        except (traci.exceptions.TraCIException, traci.exceptions.FatalTraCIError):
+            return 0
 
     def __get_lane_occupancy(self) -> float:
-        lane_lengths = sum(traci.lane.getLength(l)
-                           for l in traci.trafficlight.getControlledLanes(self.id))
-        vehicle_lengths = sum(sum(traci.vehicle.getLength(v)
-                                  for v in traci.lane.getLastStepVehicleIDs(l))
-                              for l in traci.trafficlight.getControlledLanes(self.id))
-        return min(vehicle_lengths/lane_lengths, 1.0)
+        try:
+            lanes = self._get_controlled_lanes()
+            if not lanes:
+                return 0.0
+            lane_lengths = sum(traci.lane.getLength(l) for l in lanes)
+            if lane_lengths == 0:
+                return 0.0
+            vehicle_lengths = sum(sum(traci.vehicle.getLength(v)
+                                      for v in traci.lane.getLastStepVehicleIDs(l))
+                                  for l in lanes)
+            return min(vehicle_lengths / lane_lengths, 1.0)
+        except (traci.exceptions.TraCIException, traci.exceptions.FatalTraCIError):
+            return 0.0
 
     def __get_halted_lane_occupancy(self) -> float:
-        lane_lengths = sum(traci.lane.getLength(l)
-                           for l in traci.trafficlight.getControlledLanes(self.id))
-        halted_lengths = sum(sum(traci.vehicle.getLength(v)
-                                 for v in traci.lane.getLastStepVehicleIDs(l)
-                                 if traci.vehicle.getSpeed(v) < HALTING_SPEED)
-                             for l in traci.trafficlight.getControlledLanes(self.id))
-        return min(halted_lengths/lane_lengths, 1.0)
+        try:
+            lanes = self._get_controlled_lanes()
+            if not lanes:
+                return 0.0
+            lane_lengths = sum(traci.lane.getLength(l) for l in lanes)
+            if lane_lengths == 0:
+                return 0.0
+            halted_lengths = sum(sum(traci.vehicle.getLength(v)
+                                     for v in traci.lane.getLastStepVehicleIDs(l)
+                                     if traci.vehicle.getSpeed(v) < HALTING_SPEED)
+                                 for l in lanes)
+            return min(halted_lengths / lane_lengths, 1.0)
+        except (traci.exceptions.TraCIException, traci.exceptions.FatalTraCIError):
+            return 0.0
 
     def __get_speed_ratio(self) -> float:
-        max_lane_speeds = vehicle_speeds = 0
-        for l in traci.trafficlight.getControlledLanes(self.id):
-            for v in traci.lane.getLastStepVehicleIDs(l):
-                speed_limit = traci.lane.getMaxSpeed(l)
-                vehicle_speeds += min(traci.vehicle.getSpeed(v), speed_limit)
-                max_lane_speeds += speed_limit
-        # We need to "clip" average speed because drivers sometimes exceed the
-        # speed limit. If there were 0 vehicles on controlled lanes by the traffic light,
-        # then the case is caught by the ZeroDivisionError and returns 0.
         try:
+            max_lane_speeds = vehicle_speeds = 0
+            for l in self._get_controlled_lanes():
+                for v in traci.lane.getLastStepVehicleIDs(l):
+                    speed_limit = traci.lane.getMaxSpeed(l)
+                    vehicle_speeds += min(traci.vehicle.getSpeed(v), speed_limit)
+                    max_lane_speeds += speed_limit
+            if max_lane_speeds == 0:
+                return 1.0
             return min(1.0, vehicle_speeds / max_lane_speeds)
-        except ZeroDivisionError:
+        except (traci.exceptions.TraCIException, traci.exceptions.FatalTraCIError,
+                ZeroDivisionError):
             return 1.0

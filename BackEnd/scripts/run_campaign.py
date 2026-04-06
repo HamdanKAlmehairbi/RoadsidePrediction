@@ -97,6 +97,11 @@ def train_and_evaluate(
                 alpha=config.alpha,
                 time_of_day=config.time_of_day,
                 use_time_encoding=config.use_time_encoding,
+                vplph=config.vplph,
+                aggr=config.aggr,
+                fed_tau=config.fed_tau,
+                fed_cluster=config.fed_cluster,
+                fed_partial=config.fed_partial,
             )
             training_output = run_training_loop(trainer, n_episodes=config.n_episodes)
             result.training_rewards = training_output.get("rewards", [])
@@ -124,6 +129,7 @@ def train_and_evaluate(
             horizon=config.horizon,
             weights_path=weights_path,
             use_time_encoding=config.use_time_encoding,
+            vplph=config.vplph,
         )
         mc_result = run_monte_carlo(mc_config, on_progress=on_progress)
         result.evaluation = mc_result

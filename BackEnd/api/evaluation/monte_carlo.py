@@ -59,6 +59,7 @@ class MCConfig:
     horizon: int = 450
     weights_path: Optional[str] = None
     use_time_encoding: bool = False
+    vplph: int = 360
 
 
 @dataclass
@@ -212,6 +213,7 @@ def run_monte_carlo(
                 weights_path=weights_path,
                 horizon=config.horizon,
                 use_time_encoding=config.use_time_encoding,
+                vplph=config.vplph,
             )
             metrics = compute_trial_metrics(trial_result)
             individual_results.append(metrics_to_dict(metrics))

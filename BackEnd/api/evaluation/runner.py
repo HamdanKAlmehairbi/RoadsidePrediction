@@ -133,6 +133,7 @@ def run_trial(
     horizon: int = 450,
     alpha: float = 1.0,
     use_time_encoding: bool = False,
+    vplph: int = 360,
 ) -> TrialResult:
     """Execute a single evaluation episode.
 
@@ -165,7 +166,7 @@ def run_trial(
         "rand_routes_on_reset": True,
         "ranked": ranked,
         "use_dynamic_seed": False,
-        "rand_route_args": {"seed": seed},
+        "rand_route_args": {"seed": seed, "vehicles_per_lane_per_hour": vplph},
         "horizon": horizon,
         "alpha": alpha,
         "use_time_encoding": use_time_encoding,

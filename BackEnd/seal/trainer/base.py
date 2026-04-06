@@ -89,6 +89,7 @@ class BaseTrainer(ABC):
         self.alpha = kwargs.get("alpha", 1.0)
         self.time_of_day = kwargs.get("time_of_day", False)
         self.use_time_encoding = kwargs.get("use_time_encoding", False)
+        self.vplph = kwargs.get("vplph", 360)
 
         self.out_prefix = out_prefix
         self.net_dir = self.net_file.split(os.sep)[-1].split(".")[0]
@@ -212,6 +213,7 @@ class BaseTrainer(ABC):
             "alpha": self.alpha,
             "time_of_day": self.time_of_day,
             "use_time_encoding": self.use_time_encoding,
+            "rand_route_args": {"vehicles_per_lane_per_hour": self.vplph},
         }
 
     def save_test_policy(self) -> Weights:

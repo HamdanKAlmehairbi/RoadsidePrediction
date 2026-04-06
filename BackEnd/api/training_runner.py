@@ -65,7 +65,9 @@ def get_net_file(topology: str) -> str:
 def create_trainer(trainer_type: str, topology: str, ranked: bool,
                    fed_step: int = 1, aggr: str = None, n_episodes: int = 50,
                    fedprox_mu: float = 0.0, alpha: float = 1.0,
-                   time_of_day: bool = False, use_time_encoding: bool = False):
+                   time_of_day: bool = False, use_time_encoding: bool = False,
+                   vplph: int = 360, fed_tau: float = 1.0,
+                   fed_cluster: bool = False, fed_partial: bool = False):
     """Create a SEAL trainer instance.
 
     Returns the trainer object (not yet setup — call .train() or use
@@ -85,11 +87,12 @@ def create_trainer(trainer_type: str, topology: str, ranked: bool,
         "alpha": alpha,
         "time_of_day": time_of_day,
         "use_time_encoding": use_time_encoding,
+        "vplph": vplph,
     }
 
     trainer_upper = trainer_type.upper()
     if trainer_upper == "FEDRL":
-        weight_fn = aggr or "naive"
+        weight_fn = aggr or "pos_reward"
         # Map API aggr names to internal weight_fn keys
         aggr_map = {
             "naive": "naive",
@@ -99,11 +102,14 @@ def create_trainer(trainer_type: str, topology: str, ranked: bool,
             "neg_reward": "neg_reward",
             "traffic": "traffic",
         }
-        weight_fn = aggr_map.get(weight_fn, "naive")
+        weight_fn = aggr_map.get(weight_fn, "pos_reward")
         trainer = FedPolicyTrainer(
             fed_step=fed_step,
             weight_fn=weight_fn,
             fedprox_mu=fedprox_mu,
+            fed_tau=fed_tau,
+            fed_cluster=fed_cluster,
+            fed_partial=fed_partial,
             **common_kwargs,
         )
     elif trainer_upper == "MARL":

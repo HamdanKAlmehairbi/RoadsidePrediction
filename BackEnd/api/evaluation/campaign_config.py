@@ -77,6 +77,11 @@ class ExtensionConfig:
     time_of_day: bool = False
     use_time_encoding: bool = False
     weights_path: Optional[str] = None
+    vplph: int = 360
+    aggr: str = "pos_reward"
+    fed_tau: float = 1.0
+    fed_cluster: bool = False
+    fed_partial: bool = False
 
 
 @dataclass

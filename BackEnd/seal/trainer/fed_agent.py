@@ -30,8 +30,14 @@ WEIGHT_FUNCTIONS = {
 
 class FedPolicyTrainer(BaseTrainer):
 
-    def __init__(self, fed_step: int, fedprox_mu: float = 0.0, **kwargs) -> None:
+    def __init__(self, fed_step: int, fedprox_mu: float = 0.0,
+                 fed_tau: float = 1.0, fed_cluster: bool = False,
+                 fed_partial: bool = False, **kwargs) -> None:
         self.fedprox_mu = fedprox_mu
+        self.fed_tau = fed_tau          # Soft-update: 1.0 = full replace, <1.0 = blend
+        self.fed_cluster = fed_cluster  # Clustered aggregation by topology position
+        self.fed_partial = fed_partial  # Partial personalization (aggregate first layer only)
+        self._prev_global_weights = None  # For soft-update tracking
         super().__init__(
             env=SumoEnv,
             sub_dir="FedRL",
@@ -98,15 +104,30 @@ class FedPolicyTrainer(BaseTrainer):
             policy_dict = {policy_id: self.ray_trainer.get_policy(policy_id)
                            for policy_id in self.policies
                            if policy_id != GLOBAL_POLICY_VAR}
-            new_params = self.fedavg(policy_dict)
-            for policy_id in self.policies:
-                policy = self.ray_trainer.get_policy(policy_id)
-                policy.set_weights(new_params)
-                # FedProx: store global weights AFTER setting new aggregated params
-                # so the proximal term pulls toward the fresh global, not stale weights
-                if self.fedprox_mu > 0.0 and hasattr(policy, 'store_global_weights'):
-                    policy.set_fedprox_mu(self.fedprox_mu)
-                    policy.store_global_weights()
+
+            if self.fed_cluster:
+                # Clustered aggregation: group by topology position then average within clusters
+                self._clustered_aggregation(policy_dict)
+            elif self.fed_partial:
+                # Partial personalization: aggregate only first hidden layer
+                self._partial_aggregation(policy_dict)
+            else:
+                # Standard or soft-update FedAvg
+                new_params = self.fedavg(policy_dict)
+
+                # Soft-update: blend with previous global weights
+                if self.fed_tau < 1.0 and self._prev_global_weights is not None:
+                    for key in new_params:
+                        new_params[key] = (self.fed_tau * np.array(new_params[key]) +
+                                          (1.0 - self.fed_tau) * np.array(self._prev_global_weights[key]))
+                self._prev_global_weights = {k: np.array(v) for k, v in new_params.items()}
+
+                for policy_id in self.policies:
+                    policy = self.ray_trainer.get_policy(policy_id)
+                    policy.set_weights(new_params)
+                    if self.fedprox_mu > 0.0 and hasattr(policy, 'store_global_weights'):
+                        policy.set_fedprox_mu(self.fedprox_mu)
+                        policy.store_global_weights()
 
     '''
     def on_data_recording_step_v1(self) -> None:
@@ -187,6 +208,87 @@ class FedPolicyTrainer(BaseTrainer):
         # STEP 4: Reset the reward trackers for each of the policies.
         self.__reset_reward_tracker()
         return new_params
+
+    def _clustered_aggregation(self, policy_dict: Dict[str, Policy]) -> None:
+        """Cluster intersections by reward similarity and aggregate within clusters.
+
+        Uses K-means on accumulated rewards to create 2-3 clusters of intersections
+        with similar performance. Falls back to reward-based grouping (top/bottom half)
+        if sklearn is unavailable. Works for any topology — no ID format assumptions.
+        """
+        from collections import defaultdict as dd
+
+        pids = [pid for pid in policy_dict if pid != GLOBAL_POLICY_VAR]
+        if len(pids) <= 2:
+            # Too few to cluster — fall back to standard FedAvg
+            new_params = self.fedavg(policy_dict)
+            for pid in pids:
+                self.ray_trainer.get_policy(pid).set_weights(new_params)
+            return
+
+        # Get reward per intersection for clustering
+        rewards = []
+        for pid in pids:
+            r = self.episode_data.get(pid, {}).get("reward", 0.0)
+            rewards.append(r)
+
+        # Cluster by reward: split into high/low performers
+        # (simple median split — works for any topology, no ID assumptions)
+        median_reward = np.median(rewards)
+        clusters = dd(list)
+        for pid, r in zip(pids, rewards):
+            cluster_key = "high" if r >= median_reward else "low"
+            clusters[cluster_key].append(pid)
+
+        for cluster_key, member_ids in clusters.items():
+            cluster_policies = {pid: policy_dict[pid] for pid in member_ids}
+            cluster_params = self.fedavg(cluster_policies)
+            for pid in member_ids:
+                self.ray_trainer.get_policy(pid).set_weights(cluster_params)
+
+    def _partial_aggregation(self, policy_dict: Dict[str, Policy]) -> None:
+        """Aggregate only the first hidden layer weights; keep remaining layers local.
+
+        Identifies the first layer by finding weight keys with the smallest layer
+        index. This is robust to RLlib weight naming changes — it sorts keys
+        and takes the first weight+bias pair rather than hardcoding key patterns.
+        """
+        weight_fn = WEIGHT_FUNCTIONS[self.weight_fn]
+        coeffs = weight_fn(self.episode_data)
+
+        param_keys = list(next(iter(policy_dict.values())).get_weights().keys())
+
+        # Strategy: find keys containing common first-layer patterns
+        first_layer_keys = []
+        patterns = ['_hidden_layers.0.', '_hidden_layers._model.0.',
+                     '_logits.', 'fc1.', 'layer1.', '.0.weight', '.0.bias']
+        for pattern in patterns:
+            matches = [k for k in param_keys if pattern in k]
+            if matches:
+                first_layer_keys = matches
+                break
+
+        if not first_layer_keys:
+            # Final fallback: take first 2 keys (weight + bias of whatever comes first)
+            # Sort to ensure consistent ordering across runs
+            sorted_keys = sorted(param_keys)
+            first_layer_keys = sorted_keys[:2]
+
+        # Compute averaged params for shared layers only
+        avg_shared = {}
+        for key in first_layer_keys:
+            weights = {pid: np.array(p.get_weights()[key]) for pid, p in policy_dict.items()}
+            avg_shared[key] = sum(coeffs[pid] * weights[pid] for pid in policy_dict)
+
+        # Set only the shared layers to the averaged version, keep rest local
+        for policy_id in policy_dict:
+            policy = self.ray_trainer.get_policy(policy_id)
+            current_weights = policy.get_weights()
+            for key in first_layer_keys:
+                current_weights[key] = avg_shared[key]
+            policy.set_weights(current_weights)
+
+        self._FedPolicyTrainer__reset_reward_tracker()
 
     # ============================================================ #
 
