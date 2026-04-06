@@ -23,6 +23,7 @@ Usage:
 """
 import logging
 import math
+import random
 import statistics
 from dataclasses import dataclass, field
 from typing import Callable, List, Optional
@@ -60,6 +61,7 @@ class MCConfig:
     weights_path: Optional[str] = None
     use_time_encoding: bool = False
     vplph: int = 360
+    alpha: float = 1.0
 
 
 @dataclass
@@ -120,15 +122,31 @@ def _aggregate_metrics(metrics_list: List[TrialMetrics]) -> dict:
     n = len(metrics_list)
 
     def _stat_block(values: List[float]) -> dict:
-        """Compute statistics for a list of numeric values."""
+        """Compute statistics with bootstrap 95% CI."""
         mean_val = statistics.mean(values)
         std_val = statistics.stdev(values) if n > 1 else 0.0
-        margin = 1.96 * std_val / math.sqrt(n)
+
+        # Bootstrap CI (10000 resamples)
+        if n >= 3:
+            boot_means = []
+            rng = random.Random(42)  # deterministic bootstrap
+            for _ in range(10000):
+                sample = [rng.choice(values) for _ in range(n)]
+                boot_means.append(statistics.mean(sample))
+            boot_means.sort()
+            ci_lower = boot_means[int(0.025 * len(boot_means))]
+            ci_upper = boot_means[int(0.975 * len(boot_means))]
+        else:
+            # Too few samples for bootstrap, fall back to normal approx
+            margin = 1.96 * std_val / math.sqrt(n) if n > 0 else 0.0
+            ci_lower = mean_val - margin
+            ci_upper = mean_val + margin
+
         return {
             "mean": round(mean_val, 4),
             "std": round(std_val, 4),
-            "ci_95_lower": round(mean_val - margin, 4),
-            "ci_95_upper": round(mean_val + margin, 4),
+            "ci_95_lower": round(ci_lower, 4),
+            "ci_95_upper": round(ci_upper, 4),
             "min": round(min(values), 4),
             "max": round(max(values), 4),
         }
@@ -212,6 +230,7 @@ def run_monte_carlo(
                 ranked=config.ranked,
                 weights_path=weights_path,
                 horizon=config.horizon,
+                alpha=config.alpha,
                 use_time_encoding=config.use_time_encoding,
                 vplph=config.vplph,
             )

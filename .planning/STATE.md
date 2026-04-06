@@ -6,9 +6,9 @@ status: unknown
 stopped_at: Completed 08-02-PLAN.md
 last_updated: "2026-03-23T09:46:31.621Z"
 progress:
-  total_phases: 9
+  total_phases: 11
   completed_phases: 3
-  total_plans: 14
+  total_plans: 20
   completed_plans: 13
 ---
 
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-22)
 
 **Core value:** Real FedRL experiments working end-to-end with publishable results
-**Current focus:** Phase 08 — experiment-execution-analysis
+**Current focus:** Phase 09 — pre-experiment-hardening (before HPC run)
 
 ## Current Position
 
-Phase: 08 (experiment-execution-analysis) — EXECUTING
-Plan: 3 of 3
+Phase: 09 (pre-experiment-hardening) — READY TO PLAN
+Plan: 0 of 3
 
 ## Performance Metrics
 
@@ -97,11 +97,36 @@ None.
 
 ### Blockers/Concerns
 
-- Large grid topologies (5x5, 7x7) may be slow for interactive evaluation — async jobs mitigates this (implemented in 03-04)
-- Need to verify pre-trained weight compatibility for transfer testing
+- Cologne-8 demand levels: 150/360/600 VPLPH may be too high for cologne-8 (many more lanes). Consider 50-150 VPLPH for cologne-8.
+- Cross-seed stats aggregation: reporting code doesn't yet aggregate across training seeds — Phase 11 task
+- Training comm bytes tracked but not surfaced in MC eval stats — Phase 11 task
+- FedDistill consensus logits computed from zero observation (weak signal, functional)
+- Dummy envs in on_policy_setup() not explicitly closed (potential SUMO process leak)
 
 ## Session Continuity
 
-Last session: 2026-03-23T09:46:31.618Z
-Stopped at: Completed 08-02-PLAN.md
+Last session: 2026-04-06
+Stopped at: Phase 9 — implemented all 10 training strategies, fixed audit issues, ready for HPC
 Resume file: None
+
+### What was done this session (2026-04-06):
+1. Cleaned up MDs, moved non-dev docs to archive/
+2. Installed Codex plugin, enabled review gate
+3. Added Codex verification to GSD verify-phase workflow
+4. Pre-flight check: fixed pandas/numpy compat, null eval crash, missing matplotlib in requirements
+5. Fixed MARL eval (per-agent policy save), alpha computation (shift-normalize), both from CODEX-AUDIT
+6. Added 6 PRE-experiment requirements (training seeds, multi-demand, throughput, comm cost, bootstrap CI, effect size) — all implemented
+7. Added 3 new ablation configs: strategy comparison (with baselines), aggregation (pure: naive/reward/traffic), fedrl-variants
+8. Fixed results-overwrite bug in save_campaign_results (now appends)
+9. Fixed aggregation ablation confound (replaced FedProx arm with traffic-weighted)
+10. Fixed cooperative eval (alpha now flows to MCConfig → run_trial)
+11. Fixed PPO hyperparameters in CLAUDE.md to match code
+12. Added Bonferroni correction to Wilcoxon tests
+13. Implemented 5 NEW training strategies: Gossip RL, Mean Field RL, CTDE, HierFed, FedDistill
+14. Fixed critical bugs from audit: training_data init, CTDE env init order, Gossip save_test_policy, FedRL episode_data accumulation
+15. Created paper-targets.md with tiered task lists (ITSC / T-ITS / NeurIPS D&B)
+16. Updated experiment design to 2-tier: Tier 1 (10 strategies, 270 runs), Tier 2 (ablations after results)
+
+### Next steps:
+- Run Tier 1 experiments on HPC: `--ablation strategy --topologies grid-3x3 grid-5x5 cologne-8 --demand-levels 150 360 600 --training-seeds 42 123 456`
+- After HPC results: Phase 11 post-experiment analysis

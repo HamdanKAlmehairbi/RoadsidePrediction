@@ -164,6 +164,10 @@ def compute_trial_metrics(trial_result) -> TrialMetrics:
     # --- Tripinfo ---
     tripinfo = compute_tripinfo_metrics(trial_result.tripinfo_path)
 
+    # Override throughput with real value: completed / spawned
+    if trial_result.n_vehicles_total > 0:
+        tripinfo.throughput = tripinfo.completed_trips / trial_result.n_vehicles_total
+
     return TrialMetrics(
         tripinfo=tripinfo,
         mean_reward=mean_reward,

@@ -59,7 +59,7 @@ class ExtensionConfig:
         ranked: Whether to use ranked observation features.
         horizon: Maximum episode length in simulation steps.
         fedprox_mu: FedProx proximal term coefficient (0.0 = disabled).
-        alpha: Cooperative reward shaping coefficient (1.0 = full cooperative).
+        alpha: Cooperative reward shaping coefficient (1.0 = selfish/local only, 0.1 = near-fully cooperative).
         time_of_day: Enable time-of-day demand curriculum during training.
         use_time_encoding: Append sin/cos time features to observations.
         weights_path: If set, skip training and evaluate these weights directly.
@@ -77,6 +77,7 @@ class ExtensionConfig:
     time_of_day: bool = False
     use_time_encoding: bool = False
     weights_path: Optional[str] = None
+    training_seed: int = 54321
     vplph: int = 360
     aggr: str = "pos_reward"
     fed_tau: float = 1.0

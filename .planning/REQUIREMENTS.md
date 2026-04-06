@@ -73,6 +73,31 @@
 - [ ] **CAMP-06**: Publishable output: comparison tables (LaTeX), bar charts with error bars
 - [x] **CAMP-07**: Results persistence: all configs and seeds logged alongside results as JSON
 
+### Pre-Experiment Hardening (PRE)
+
+- [ ] **PRE-01**: Multiple training seeds — campaign runner accepts `training_seeds` list, runs each config N times with different RLlib seeds
+- [ ] **PRE-02**: Multi-demand configs — campaign configs generate low (150), medium (360), high (600) VPLPH variants
+- [ ] **PRE-03**: Fix throughput metric — replace hardcoded 1.0 with real vehicle count from tripinfo
+- [ ] **PRE-04**: Fix communication cost accounting — measure actual bytes per aggregation round, not best-effort env logging
+- [ ] **PRE-05**: Bootstrap confidence intervals — replace normal approximation CI with bootstrap (n=10 is too small for z-intervals)
+- [ ] **PRE-06**: Effect size reporting — add Cohen's d or rank-biserial r alongside Wilcoxon p-values
+
+### New Training Strategies (STRAT)
+
+- [ ] **STRAT-01**: Gossip RL — per-agent policies with peer-to-peer neighbor-only weight averaging (no central server)
+- [ ] **STRAT-02**: Mean Field RL — per-agent policies with mean neighbor action appended to observation vector
+- [ ] **STRAT-03**: CTDE — centralized critic (global state) with decentralized per-agent actors
+
+### Post-Experiment Analysis (POST)
+
+- [ ] **POST-01**: Communication-performance Pareto curves — plot comm cost vs performance for each strategy
+- [ ] **POST-02**: Per-intersection fairness analysis — Gini coefficient or max/min reward ratio across intersections
+- [ ] **POST-03**: Demand heterogeneity analysis — how strategy ranking changes across demand levels
+- [ ] **POST-04**: Training seed variance — separate train-time variance from eval-time variance in reporting
+- [ ] **POST-05**: Mechanistic explanation — why FedRL/MARL/SARL differ (aggregation-as-regularization, specialization tradeoff)
+- [ ] **POST-06**: Wall-clock and sample efficiency comparison — time-to-threshold and episodes-to-threshold
+- [ ] **POST-07**: Updated experiment report with all new analyses for paper draft
+
 ## v2 Requirements
 
 ### Advanced UI
@@ -139,12 +164,25 @@
 | CAMP-05 | Phase 7 | Complete |
 | CAMP-06 | Phase 7 | Pending |
 | CAMP-07 | Phase 7 | Complete |
+| PRE-01 | Phase 9 | Pending |
+| PRE-02 | Phase 9 | Pending |
+| PRE-03 | Phase 9 | Pending |
+| PRE-04 | Phase 9 | Pending |
+| PRE-05 | Phase 9 | Pending |
+| PRE-06 | Phase 9 | Pending |
+| POST-01 | Phase 10 | Pending |
+| POST-02 | Phase 10 | Pending |
+| POST-03 | Phase 10 | Pending |
+| POST-04 | Phase 10 | Pending |
+| POST-05 | Phase 10 | Pending |
+| POST-06 | Phase 10 | Pending |
+| POST-07 | Phase 10 | Pending |
 
 **Coverage:**
-- v1 requirements: 43 total
-- Mapped to phases: 43
+- v1 requirements: 56 total
+- Mapped to phases: 56
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-22*
-*Last updated: 2026-03-23 after Phase 7 planning*
+*Last updated: 2026-04-06 after pre/post experiment phases added*

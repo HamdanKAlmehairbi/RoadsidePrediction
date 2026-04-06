@@ -102,6 +102,7 @@ def train_and_evaluate(
                 fed_tau=config.fed_tau,
                 fed_cluster=config.fed_cluster,
                 fed_partial=config.fed_partial,
+                training_seed=config.training_seed,
             )
             training_output = run_training_loop(trainer, n_episodes=config.n_episodes)
             result.training_rewards = training_output.get("rewards", [])
@@ -130,6 +131,7 @@ def train_and_evaluate(
             weights_path=weights_path,
             use_time_encoding=config.use_time_encoding,
             vplph=config.vplph,
+            alpha=config.alpha,
         )
         mc_result = run_monte_carlo(mc_config, on_progress=on_progress)
         result.evaluation = mc_result
@@ -153,6 +155,8 @@ def run_baseline_campaign(
     topologies: Optional[List[str]] = None,
     n_eval_runs: int = 10,
     dry_run_seeds: Optional[int] = None,
+    training_seeds: Optional[List[int]] = None,
+    demand_levels: Optional[List[int]] = None,
 ) -> List[CampaignResult]:
     """Run the SEAL paper baseline reproduction campaign.
 
@@ -166,12 +170,21 @@ def run_baseline_campaign(
         n_eval_runs: Number of MC evaluation runs per config.
         dry_run_seeds: If set (e.g. 2), override n_eval_runs to this value.
             Useful for quick smoke testing (--dry-run 1).
+        training_seeds: Training seeds to use per config. For baseline (eval-only)
+            configs these are passed through but don't affect training.
+        demand_levels: VPLPH demand levels to test.
 
     Returns:
         List of CampaignResult — one per (trainer, topology) combination.
     """
+    import copy
+
     if topologies is None:
         topologies = ["grid-3x3", "grid-5x5"]
+    if training_seeds is None:
+        training_seeds = [54321]
+    if demand_levels is None:
+        demand_levels = [360]
 
     effective_n_runs = dry_run_seeds if dry_run_seeds is not None else n_eval_runs
 
@@ -180,36 +193,54 @@ def run_baseline_campaign(
 
     configs: List[ExtensionConfig] = []
 
-    # RL trainers — use example weights (no training needed)
-    for trainer in rl_trainers:
-        for topology in topologies:
-            weights_path = resolve_example_weights(trainer, topology)
-            if weights_path is None:
-                logger.warning(
-                    "No example weights for %s on %s — skipping",
-                    trainer, topology,
-                )
-                continue
-            cfg = ExtensionConfig(
-                name=f"{trainer.lower()}_{topology}_baseline",
-                trainer_type=trainer,
-                topology=topology,
-                n_eval_runs=effective_n_runs,
-                weights_path=weights_path,
-            )
-            configs.append(cfg)
+    multi_seed = len(training_seeds) > 1
+    multi_demand = len(demand_levels) > 1
 
-    # Non-RL baselines — no weights needed, MCConfig handles them directly
-    for trainer in baseline_trainers:
-        for topology in topologies:
-            cfg = ExtensionConfig(
-                name=f"{trainer.replace('-', '_')}_{topology}_baseline",
-                trainer_type=trainer,
-                topology=topology,
-                n_eval_runs=effective_n_runs,
-                weights_path="__baseline__",  # sentinel: evaluated via MCConfig directly
-            )
-            configs.append(cfg)
+    for demand in demand_levels:
+        # RL trainers — use example weights (no training needed)
+        for trainer in rl_trainers:
+            for topology in topologies:
+                weights_path = resolve_example_weights(trainer, topology)
+                if weights_path is None:
+                    logger.warning(
+                        "No example weights for %s on %s — skipping",
+                        trainer, topology,
+                    )
+                    continue
+                for seed in training_seeds:
+                    base_name = f"{trainer.lower()}_{topology}_baseline"
+                    suffix = ""
+                    if multi_seed:
+                        suffix += f"_s{seed}"
+                    if multi_demand:
+                        suffix += f"_d{demand}"
+                    cfg = ExtensionConfig(
+                        name=base_name + suffix,
+                        trainer_type=trainer,
+                        topology=topology,
+                        n_eval_runs=effective_n_runs,
+                        weights_path=weights_path,
+                        training_seed=seed,
+                        vplph=demand,
+                    )
+                    configs.append(cfg)
+
+        # Non-RL baselines — no weights needed, MCConfig handles them directly
+        for trainer in baseline_trainers:
+            for topology in topologies:
+                base_name = f"{trainer.replace('-', '_')}_{topology}_baseline"
+                suffix = ""
+                if multi_demand:
+                    suffix += f"_d{demand}"
+                cfg = ExtensionConfig(
+                    name=base_name + suffix,
+                    trainer_type=trainer,
+                    topology=topology,
+                    n_eval_runs=effective_n_runs,
+                    weights_path="__baseline__",  # sentinel: evaluated via MCConfig directly
+                    vplph=demand,
+                )
+                configs.append(cfg)
 
     results: List[CampaignResult] = []
     total = len(configs)
@@ -286,18 +317,42 @@ def save_campaign_results(
     output_dir = os.path.join(_BACKEND_DIR, "results", "campaigns", campaign_name)
     os.makedirs(output_dir, exist_ok=True)
 
-    # Save results.json
-    results_data = [result_to_dict(r) for r in results]
+    # Save results.json — append to existing results for multi-sweep campaigns
     results_path = os.path.join(output_dir, "results.json")
-    with open(results_path, "w", encoding="utf-8") as fp:
-        json.dump({"results": results_data}, fp, default=str, indent=2)
-    logger.info("Saved %d campaign results to %s", len(results), results_path)
+    existing_results = []
+    if os.path.exists(results_path):
+        try:
+            with open(results_path, "r", encoding="utf-8") as fp:
+                existing_data = json.load(fp)
+                existing_results = existing_data.get("results", [])
+        except (json.JSONDecodeError, KeyError):
+            pass
 
-    # Save config.json
-    configs_data = [config_to_dict(r.config) for r in results]
+    new_results = [result_to_dict(r) for r in results]
+    all_results = existing_results + new_results
+    with open(results_path, "w", encoding="utf-8") as fp:
+        json.dump({"results": all_results}, fp, default=str, indent=2)
+    logger.info(
+        "Saved %d new + %d existing = %d total campaign results to %s",
+        len(new_results), len(existing_results), len(all_results), results_path,
+    )
+
+    # Save config.json — append to existing configs for multi-sweep campaigns
     config_path = os.path.join(output_dir, "config.json")
+    existing_configs = []
+    if os.path.exists(config_path):
+        try:
+            with open(config_path, "r", encoding="utf-8") as fp:
+                existing_configs = json.load(fp)
+                if not isinstance(existing_configs, list):
+                    existing_configs = []
+        except (json.JSONDecodeError, ValueError):
+            pass
+
+    new_configs = [config_to_dict(r.config) for r in results]
+    all_configs = existing_configs + new_configs
     with open(config_path, "w", encoding="utf-8") as fp:
-        json.dump(configs_data, fp, default=str, indent=2)
+        json.dump(all_configs, fp, default=str, indent=2)
     logger.info("Saved campaign configs to %s", config_path)
 
     return output_dir
@@ -348,6 +403,22 @@ def main():
         dest="output_name",
         help="Name for the output directory under BackEnd/results/campaigns/",
     )
+    parser.add_argument(
+        "--training-seeds",
+        nargs="+",
+        type=int,
+        default=[54321],
+        dest="training_seeds",
+        help="Training seeds to run per config (e.g. --training-seeds 42 123 456)",
+    )
+    parser.add_argument(
+        "--demand-levels",
+        nargs="+",
+        type=int,
+        default=[360],
+        dest="demand_levels",
+        help="VPLPH demand levels to test (e.g. --demand-levels 150 360 600)",
+    )
 
     args = parser.parse_args()
 
@@ -366,6 +437,8 @@ def main():
         topologies=args.topologies,
         n_eval_runs=args.n_eval_runs,
         dry_run_seeds=args.dry_run,
+        training_seeds=args.training_seeds,
+        demand_levels=args.demand_levels,
     )
 
     output_dir = save_campaign_results(results, campaign_name=args.output_name)

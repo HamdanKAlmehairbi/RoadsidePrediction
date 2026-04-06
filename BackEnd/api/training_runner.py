@@ -67,13 +67,15 @@ def create_trainer(trainer_type: str, topology: str, ranked: bool,
                    fedprox_mu: float = 0.0, alpha: float = 1.0,
                    time_of_day: bool = False, use_time_encoding: bool = False,
                    vplph: int = 360, fed_tau: float = 1.0,
-                   fed_cluster: bool = False, fed_partial: bool = False):
+                   fed_cluster: bool = False, fed_partial: bool = False,
+                   training_seed: int = 54321):
     """Create a SEAL trainer instance.
 
     Returns the trainer object (not yet setup — call .train() or use
     run_training_loop() for per-episode streaming).
     """
     from seal.trainer.fed_agent import FedPolicyTrainer
+    from seal.trainer.mean_field_agent import MeanFieldTrainer
     from seal.trainer.multi_agent import MultiPolicyTrainer
     from seal.trainer.single_agent import SinglePolicyTrainer
 
@@ -88,6 +90,7 @@ def create_trainer(trainer_type: str, topology: str, ranked: bool,
         "time_of_day": time_of_day,
         "use_time_encoding": use_time_encoding,
         "vplph": vplph,
+        "training_seed": training_seed,
     }
 
     trainer_upper = trainer_type.upper()
@@ -116,9 +119,32 @@ def create_trainer(trainer_type: str, topology: str, ranked: bool,
         trainer = MultiPolicyTrainer(**common_kwargs)
     elif trainer_upper == "SARL":
         trainer = SinglePolicyTrainer(**common_kwargs)
+    elif trainer_upper == "MEANFIELD":
+        trainer = MeanFieldTrainer(**common_kwargs)
+    elif trainer_upper == "GOSSIP":
+        from seal.trainer.gossip_agent import GossipPolicyTrainer
+        trainer = GossipPolicyTrainer(
+            gossip_step=fed_step,
+            **common_kwargs,
+        )
+    elif trainer_upper == "CTDE":
+        from seal.trainer.ctde_agent import CTDETrainer
+        trainer = CTDETrainer(**common_kwargs)
+    elif trainer_upper == "HIERFED":
+        from seal.trainer.hierfed_agent import HierFedTrainer
+        trainer = HierFedTrainer(
+            fed_step=fed_step,
+            **common_kwargs,
+        )
+    elif trainer_upper == "FEDDISTILL":
+        from seal.trainer.feddistill_agent import FedDistillTrainer
+        trainer = FedDistillTrainer(
+            fed_step=fed_step,
+            **common_kwargs,
+        )
     else:
         raise ValueError(f"Unknown trainer type '{trainer_type}'. "
-                         f"Use 'FedRL', 'MARL', or 'SARL'.")
+                         f"Use 'FedRL', 'MARL', 'SARL', 'MeanField', 'Gossip', 'CTDE', 'HierFed', or 'FedDistill'.")
 
     return trainer
 
@@ -195,10 +221,16 @@ def run_training_loop(trainer, n_episodes: int, on_episode_done=None):
     trainer.ray_trainer.save(trainer.model_path)
     trainer.ray_trainer.stop()
 
+    # Extract total communication bytes (FedRL only)
+    total_comm_bytes = 0
+    if trainer.training_data.get("total_comm_bytes"):
+        total_comm_bytes = trainer.training_data["total_comm_bytes"][-1]
+
     return {
         "rewards": rewards_list,
         "weights_path": weights_path,
         "training_data": dict(trainer.training_data),
+        "total_comm_bytes": total_comm_bytes,
     }
 
 

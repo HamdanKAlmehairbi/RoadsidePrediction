@@ -57,11 +57,18 @@ class FedPolicyTrainer(BaseTrainer):
         self.reward_tracker = defaultdict(float)
         self.episode_data = defaultdict(lambda: defaultdict(float))
         self.weight_fn = kwargs.get("weight_fn", DEFAULT_AGGR_FN)
+        # Communication cost tracking (bytes)
+        self.training_data["comm_bytes_per_round"] = []
+        self.training_data["total_comm_bytes"] = []
         assert self.weight_fn in WEIGHT_FUNCTIONS
 
     def __reset_reward_tracker(self) -> None:
         for policy in self.reward_tracker:
             self.reward_tracker[policy] = 0.0
+        # Also reset episode_data so aggregation weights reflect current round only
+        for policy in self.episode_data:
+            self.episode_data[policy]["reward"] = 0.0
+            self.episode_data[policy]["num_vehicles"] = 0.0
 
     def on_make_final_policy(self) -> Weights:
         policy_dict = {policy_id: self.ray_trainer.get_policy(policy_id)
@@ -128,6 +135,25 @@ class FedPolicyTrainer(BaseTrainer):
                     if self.fedprox_mu > 0.0 and hasattr(policy, 'store_global_weights'):
                         policy.set_fedprox_mu(self.fedprox_mu)
                         policy.store_global_weights()
+
+        # --- Communication cost tracking (bytes) ---
+        if aggregate_this_round:
+            # Measure bytes for one model's weights
+            sample_policy = next(
+                self.ray_trainer.get_policy(pid)
+                for pid in self.policies if pid != GLOBAL_POLICY_VAR
+            )
+            model_bytes = sum(
+                np.array(v).nbytes for v in sample_policy.get_weights().values()
+            )
+            n_clients = len([pid for pid in self.policies if pid != GLOBAL_POLICY_VAR])
+            round_bytes = model_bytes * (n_clients + 1)  # uploads + broadcast
+        else:
+            round_bytes = 0
+        self.training_data["comm_bytes_per_round"].append(round_bytes)
+        prev_total = (self.training_data["total_comm_bytes"][-1]
+                      if self.training_data["total_comm_bytes"] else 0)
+        self.training_data["total_comm_bytes"].append(prev_total + round_bytes)
 
     '''
     def on_data_recording_step_v1(self) -> None:

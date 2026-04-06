@@ -90,7 +90,9 @@ class BaseTrainer(ABC):
         self.time_of_day = kwargs.get("time_of_day", False)
         self.use_time_encoding = kwargs.get("use_time_encoding", False)
         self.vplph = kwargs.get("vplph", 360)
+        self.training_seed = kwargs.get("training_seed", 54321)
 
+        self.training_data = defaultdict(list)
         self.out_prefix = out_prefix
         self.net_dir = self.net_file.split(os.sep)[-1].split(".")[0]
         self.out_checkpoint_dir = os.path.join(
@@ -189,7 +191,7 @@ class BaseTrainer(ABC):
                 env_config=self.env_config_fn(),
             )
             .framework("torch")
-            .debugging(log_level=self.log_level, seed=RAY_TRAINER_SEED)
+            .debugging(log_level=self.log_level, seed=self.training_seed)
             .training(lr=self.learning_rate, gamma=self.gamma)
             .multi_agent(
                 policies=self.policies,

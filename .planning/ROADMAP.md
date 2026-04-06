@@ -15,6 +15,8 @@ Transform a mock-data dashboard into a real FedRL research platform. Phases 0-2 
 - [ ] **Phase 6: Frontend Enhancements** - Wire all pages to real data, new Evaluation page
 - [ ] **Phase 7: Experiment Campaigns** - Reproduce paper, evaluate extensions, publishable results
 - [ ] **Phase 8: Experiment Execution & Analysis** - Run all campaigns against live SUMO, generate publishable artifacts
+- [ ] **Phase 9: Pre-Experiment Hardening** - Fix methodology gaps: training seeds, multi-demand, real metrics, stronger stats
+- [ ] **Phase 10: Post-Experiment Analysis** - Pareto curves, fairness, demand heterogeneity, mechanistic explanations, paper report
 
 ## Phase Details
 
@@ -132,6 +134,56 @@ Plans:
 - [ ] 06-02: Build Evaluation page with results table and charts
 - [ ] 06-03: Enhance Compare and Index pages
 
+### Phase 9: Pre-Experiment Hardening
+**Goal:** Fix methodology gaps + implement 3 new training strategies (Gossip RL, Mean Field RL, CTDE) to create an 8-way strategy comparison spectrum from fully independent to fully shared
+**Depends on:** Phase 8 (uses campaign infrastructure)
+**Requirements**: PRE-01, PRE-02, PRE-03, PRE-04, PRE-05, PRE-06, STRAT-01, STRAT-02, STRAT-03
+**Success Criteria** (what must be TRUE):
+  1. Campaign runner accepts `training_seeds` list and multi-demand configs
+  2. Throughput and communication cost metrics are real, not hardcoded
+  3. Bootstrap CI and Bonferroni-corrected Wilcoxon with effect size
+  4. GossipPolicyTrainer averages weights with topological neighbors only
+  5. MeanFieldTrainer augments observation with mean neighbor action
+  6. CTDETrainer uses centralized critic with global state, decentralized actors
+  7. All 8 strategies run on grid-3x3 without error (smoke test)
+**Plans**: 4 plans
+
+Plans:
+- [x] 09-01: Training seed support, multi-demand configs, throughput fix, comm cost fix, bootstrap CI, effect size, Bonferroni
+- [ ] 09-02: Gossip RL trainer — peer-to-peer neighbor weight averaging
+- [ ] 09-03: Mean Field RL trainer — mean neighbor action observation augmentation
+- [ ] 09-04: CTDE trainer — centralized critic, decentralized actors
+
+### Phase 10: HPC Experiments
+**Goal:** Run two-tier experiment campaign on HPC
+**Depends on:** Phase 9
+**Experiment Design:**
+  - **Tier 1 (core):** 8 strategies × 3 topologies × 3 demands × 3 seeds = 216 runs
+  - **Tier 2 (ablations):** Designed after Tier 1 results — targeted ablations on top strategies only
+  - Strategies: SARL, MARL, FedRL, Gossip RL, Mean Field, CTDE, fixed-time, max-pressure
+
+Plans:
+- [ ] 10-01: Tier 1 experiment execution (216 runs)
+- [ ] 10-02: Tier 2 ablation design based on Tier 1 results
+
+### Phase 11: Post-Experiment Analysis
+**Goal:** Transform raw HPC results into publishable empirical analysis — Pareto curves, fairness metrics, demand heterogeneity analysis, mechanistic explanations, and paper-ready report
+**Depends on:** Phase 10 (HPC results)
+**Requirements**: POST-01, POST-02, POST-03, POST-04, POST-05, POST-06, POST-07
+**Success Criteria** (what must be TRUE):
+  1. Communication-performance Pareto plot shows tradeoff curve across strategies
+  2. Per-intersection fairness metric (Gini) computed for each strategy × topology
+  3. Strategy ranking table shows how winner changes across demand levels
+  4. Training variance separated from eval variance in error reporting
+  5. Report includes mechanistic explanation section (not just numbers)
+  6. Wall-clock and sample efficiency comparison included
+  7. Updated EXPERIMENT_REPORT.md ready for paper draft integration
+
+Plans:
+- [ ] 11-01: Pareto curves, fairness analysis, and demand heterogeneity
+- [ ] 11-02: Variance decomposition and efficiency analysis
+- [ ] 11-03: Mechanistic explanation and final paper-ready report
+
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
@@ -144,6 +196,9 @@ Plans:
 | 5. Advanced Extensions | 0/3 | Not started | - |
 | 6. Frontend Enhancements | 0/3 | Not started | - |
 | 7. Experiment Campaigns | 3/3 | Complete | 2026-03-23 |
+| 9. Pre-Experiment Hardening | 1/4 | In progress | - |
+| 10. HPC Experiments | 0/2 | Not started | - |
+| 11. Post-Experiment Analysis | 0/3 | Not started | - |
 
 ### Phase 7: Experiment Campaigns
 

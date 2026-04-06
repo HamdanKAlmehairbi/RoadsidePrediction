@@ -34,16 +34,20 @@ def neg_reward_weight_function(episode_data: Dict) -> Dict[str, float]:
 
 
 def pos_reward_weight_function(episode_data: Dict) -> Dict[str, float]:
-    total_reward = sum(policy_data["reward"] 
-                       for policy_data in episode_data.values())
-    try:
-        coeffs = {
-            policy: policy_data["reward"] / total_reward
-            for (policy, policy_data) in episode_data.items()
-        }
-    except ZeroDivisionError:
-        coeffs = naive_weight_function(episode_data)
-    return coeffs
+    """Shift-and-normalize reward weighting.
+
+    Computes alpha_k = (R_k - R_min) / sum(R_j - R_min), ensuring all
+    coefficients are non-negative regardless of reward sign. Falls back
+    to naive (uniform) weighting when all rewards are identical.
+    """
+    rewards = {policy: data["reward"] for policy, data in episode_data.items()}
+    r_min = min(rewards.values())
+    shifted = {policy: r - r_min for policy, r in rewards.items()}
+    total_shifted = sum(shifted.values())
+    if total_shifted == 0:
+        # All rewards identical — fall back to uniform
+        return naive_weight_function(episode_data)
+    return {policy: shifted[policy] / total_shifted for policy in episode_data}
 
 
 def traffic_weight_function(episode_data: Dict) -> Dict[str, float]:

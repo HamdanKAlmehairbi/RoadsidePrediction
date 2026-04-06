@@ -41,7 +41,7 @@ from ..training_runner import (
 logger = logging.getLogger(__name__)
 
 # All supported trainer types
-TRAINERS = ["FedRL", "MARL", "SARL", "fixed-time", "max-pressure"]
+TRAINERS = ["FedRL", "MARL", "SARL", "MeanField", "Gossip", "CTDE", "HierFed", "FedDistill", "fixed-time", "max-pressure"]
 
 # All supported topologies (derived from TOPOLOGY_MAP)
 TOPOLOGIES = list(TOPOLOGY_MAP.keys())
@@ -150,13 +150,16 @@ def run_trial(
         and unique vehicle count.
     """
     from seal.sumo.env import SumoEnv
+    from seal.sumo.mean_field_env import MeanFieldSumoEnv
 
     if trainer_type not in TRAINERS:
         raise ValueError(
             f"Unknown trainer_type '{trainer_type}'. Must be one of {TRAINERS}"
         )
 
-    is_rl = trainer_type in ("FedRL", "MARL", "SARL")
+    is_mean_field = trainer_type == "MeanField"
+    is_ctde = trainer_type == "CTDE"
+    is_rl = trainer_type in ("FedRL", "MARL", "SARL", "MeanField", "Gossip", "CTDE", "HierFed", "FedDistill")
     is_max_pressure = trainer_type == "max-pressure"
 
     # Build environment config
@@ -174,6 +177,7 @@ def run_trial(
 
     # --- Policy setup for RL trainers ---
     policy = None
+    multi_policies = None  # Per-agent policies for MARL specialization
     if is_rl:
         ensure_ray()
         from ray.rllib.algorithms.ppo import PPOConfig, PPOTorchPolicy
@@ -183,7 +187,9 @@ def run_trial(
             weights_path = resolve_weights_path(trainer_type, topology, ranked)
 
         # Create env temporarily to get spaces
-        _dummy_env = SumoEnv(config=env_config)
+        # MeanField needs the augmented observation space (+1 dim)
+        _EnvCls = MeanFieldSumoEnv if is_mean_field else SumoEnv
+        _dummy_env = _EnvCls(config=env_config)
         obs_space = _dummy_env.observation_space
         act_space = _dummy_env.action_space
         _dummy_env.close()
@@ -197,12 +203,48 @@ def run_trial(
             .framework("torch")
         ).to_dict()
 
-        policy = PPOTorchPolicy(obs_space, act_space, ppo_config)
-        weights = load_weights(weights_path)
-        policy.set_weights(weights)
+        weights_data = load_weights(weights_path)
+
+        # Check for MARL/CTDE multi-policy format (per-agent specialized weights)
+        if isinstance(weights_data, dict) and weights_data.get("__multi_policy__"):
+            # CTDE policies were trained with augmented obs (local + global).
+            # Build policies with the augmented obs space so weights load correctly.
+            if weights_data.get("__ctde__"):
+                n_agents = len(weights_data["policies"])
+                local_dim = obs_space.shape[0]
+                global_dim = local_dim * n_agents
+                total_dim = local_dim + global_dim
+                ctde_low = np.full(total_dim, -np.inf, dtype=np.float32)
+                ctde_high = np.full(total_dim, np.inf, dtype=np.float32)
+                ctde_low[:local_dim] = obs_space.low
+                ctde_high[:local_dim] = obs_space.high
+                for i in range(n_agents):
+                    start = local_dim + i * local_dim
+                    ctde_low[start:start + local_dim] = obs_space.low
+                    ctde_high[start:start + local_dim] = obs_space.high
+                from gymnasium import spaces as gym_spaces
+                ctde_obs_space = gym_spaces.Box(
+                    low=ctde_low, high=ctde_high, dtype=np.float32
+                )
+                policy_obs_space = ctde_obs_space
+            else:
+                policy_obs_space = obs_space
+
+            multi_policies = {}
+            for agent_id, agent_weights in weights_data["policies"].items():
+                p = PPOTorchPolicy(policy_obs_space, act_space, ppo_config)
+                p.set_weights(agent_weights)
+                multi_policies[agent_id] = p
+            logger.info("Loaded %d per-agent policies from %s", len(multi_policies), weights_path)
+        else:
+            # Single policy (SARL, FedRL, or legacy MARL averaged weights)
+            policy = PPOTorchPolicy(obs_space, act_space, ppo_config)
+            policy.set_weights(weights_data)
 
     # --- Run episode ---
-    env = SumoEnv(config=env_config)
+    # MeanField evaluation needs the augmented env to produce correct observations
+    _RunEnvCls = MeanFieldSumoEnv if is_mean_field else SumoEnv
+    env = _RunEnvCls(config=env_config)
     obs, info = env.reset(seed=seed)
     agent_ids = list(obs.keys())
 
@@ -212,7 +254,33 @@ def run_trial(
 
     while True:
         # --- Compute actions ---
-        if is_rl and policy is not None:
+        if is_rl and multi_policies is not None:
+            # MARL/CTDE: use per-agent specialized policies
+            actions = {}
+            for agent_id in agent_ids:
+                agent_obs = obs.get(agent_id)
+                if agent_obs is not None:
+                    agent_policy = multi_policies.get(agent_id)
+                    if agent_policy is None:
+                        # Fallback for unknown agent IDs: use first available policy
+                        agent_policy = next(iter(multi_policies.values()))
+                    if is_ctde:
+                        # Pad local obs with zeros for the global state portion.
+                        # During training, global state was appended; at eval we
+                        # use decentralized execution with zero-padded global.
+                        local_dim = agent_obs.shape[0]
+                        n_agents = len(agent_ids)
+                        padded = np.zeros(
+                            local_dim + local_dim * n_agents, dtype=np.float32
+                        )
+                        padded[:local_dim] = agent_obs
+                        action, _, _ = agent_policy.compute_single_action(padded)
+                    else:
+                        action, _, _ = agent_policy.compute_single_action(agent_obs)
+                    actions[agent_id] = int(action)
+                else:
+                    actions[agent_id] = 0
+        elif is_rl and policy is not None:
             actions = {}
             for agent_id in agent_ids:
                 agent_obs = obs.get(agent_id)

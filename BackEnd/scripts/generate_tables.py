@@ -172,7 +172,7 @@ def wilcoxon_compare(
     _TRIPINFO_METRICS = {"avg_waiting_time", "avg_travel_time", "throughput"}
 
     def _extract_values(result: dict) -> list:
-        eval_ = result.get("evaluation", {})
+        eval_ = result.get("evaluation") or {}
         # Handle campaign_to_dict wrapped format: {"campaign": [{..., "individual": [...]}]}
         if "campaign" in eval_ and isinstance(eval_["campaign"], list):
             campaign_entries = eval_["campaign"]
@@ -186,7 +186,7 @@ def wilcoxon_compare(
             return [r[metric] for r in individual if metric in r]
 
     def _n_completed(result: dict) -> int:
-        eval_ = result.get("evaluation", {})
+        eval_ = result.get("evaluation") or {}
         if not eval_:
             return 0
         if "campaign" in eval_ and isinstance(eval_["campaign"], list):
@@ -194,8 +194,8 @@ def wilcoxon_compare(
             return entry.get("n_completed", 0)
         return eval_.get("n_completed", 0)
 
-    eval_a = results_a.get("evaluation", {})
-    eval_b = results_b.get("evaluation", {})
+    eval_a = results_a.get("evaluation") or {}
+    eval_b = results_b.get("evaluation") or {}
     n_completed_a = _n_completed(results_a)
     n_completed_b = _n_completed(results_b)
 
@@ -214,15 +214,47 @@ def wilcoxon_compare(
 
     try:
         stat, p = stats.wilcoxon(values_a, values_b)
+        # Rank-biserial effect size: r = 1 - (2*W) / (n*(n+1)/2)
+        # where W is the smaller of the two rank sums
+        n_pairs = len(values_a)
+        r_effect = 1.0 - (2.0 * stat) / (n_pairs * (n_pairs + 1) / 2)
         return {
             "valid": True,
             "statistic": float(stat),
             "p_value": float(p),
             "significant": p < 0.05,
+            "effect_size_r": round(r_effect, 4),
             "n": min(len(values_a), len(values_b)),
         }
     except ValueError as exc:
         return {"valid": False, "reason": str(exc)}
+
+
+def apply_bonferroni(results: list, alpha: float = 0.05) -> list:
+    """Apply Bonferroni correction to a list of wilcoxon_compare results.
+
+    Updates 'significant' field using corrected threshold alpha/m where
+    m is the number of valid tests. Adds 'p_corrected' field.
+
+    Args:
+        results: List of dicts from wilcoxon_compare().
+        alpha: Family-wise error rate (default 0.05).
+
+    Returns:
+        Same list with updated 'significant' and added 'p_corrected' fields.
+    """
+    valid = [r for r in results if r.get("valid")]
+    m = len(valid)
+    if m == 0:
+        return results
+    threshold = alpha / m
+    for r in results:
+        if r.get("valid"):
+            p_corr = min(r["p_value"] * m, 1.0)
+            r["p_corrected"] = round(p_corr, 6)
+            r["significant"] = p_corr < alpha
+            r["bonferroni_m"] = m
+    return results
 
 
 # ---------------------------------------------------------------------------
@@ -639,7 +671,7 @@ def generate_ablation_table_with_pvalues(
     lines = [
         "\\begin{tabular}{lcc}",
         "\\toprule",
-        f"Config & {metric.replace('_', ' ').title()} (mean $\\pm$ std) & $p$-value \\\\",
+        f"Config & {metric.replace('_', ' ').title()} (mean $\\pm$ std) & Significance \\\\",
         "\\midrule",
     ]
 
@@ -653,9 +685,9 @@ def generate_ablation_table_with_pvalues(
         if i == best_idx:
             mean_str = f"\\textbf{{{mean_val:.1f}}} $\\pm$ {std_val:.1f}"
 
-        # Compute p-value
+        # Compute p-value and effect size
         if name == baseline_name or baseline_result is None:
-            p_str = "---"
+            sig_str = "---"
         else:
             # Find this result dict
             other_result = None
@@ -664,15 +696,15 @@ def generate_ablation_table_with_pvalues(
                     other_result = r
                     break
             if other_result is None:
-                p_str = "n/a"
+                sig_str = "n/a"
             else:
                 wc = wilcoxon_compare(baseline_result, other_result, metric)
                 if wc["valid"]:
-                    p_str = f"$p={wc['p_value']:.3f}$"
+                    sig_str = f"$p={wc['p_value']:.3f}$, $r={wc['effect_size_r']:.2f}$"
                 else:
-                    p_str = "n/a"
+                    sig_str = "n/a"
 
-        lines.append(f"{name} & {mean_str} & {p_str} \\\\")
+        lines.append(f"{name} & {mean_str} & {sig_str} \\\\")
 
     lines += [
         "\\bottomrule",

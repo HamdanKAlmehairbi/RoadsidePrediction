@@ -183,6 +183,8 @@
 │       │
 │       ├── sumo/                   # SUMO simulation environment
 │       │   ├── env.py              # SumoEnv — multi-agent gym env; step(), reset(), reward
+│       │   ├── ctde_env.py          # CTDESumoEnv — wraps SumoEnv; augments obs with global state for centralized training
+│       │   ├── mean_field_env.py   # MeanFieldSumoEnv — wraps SumoEnv; augments obs with mean neighbor action
 │       │   ├── abstract_env.py     # AbstractSumoEnv — base class; episode lifecycle, random routes
 │       │   ├── config.py           # Constants: feature indices, MIN/MAX_DELAY, phase state defs
 │       │   ├── timer.py            # ActionTimer — enforces min/max delays between phase changes
@@ -208,6 +210,8 @@
 │           ├── base.py             # BaseTrainer — abstract; checkpoints, PPO setup, training loop
 │           ├── fed_agent.py        # FedPolicyTrainer — FedRL with federated averaging
 │           ├── fedprox_policy.py   # FedProx PPO policy subclass with proximal loss term
+│           ├── mean_field_agent.py  # MeanFieldTrainer — per-agent policies + mean neighbor action obs
+│           ├── ctde_agent.py       # CTDETrainer — Centralized Training Decentralized Execution
 │           ├── multi_agent.py      # MultiPolicyTrainer — MARL with independent per-agent policies
 │           ├── single_agent.py     # SinglePolicyTrainer — SARL with one shared policy
 │           ├── weight_aggr.py      # Aggregation functions: naive, pos_reward, neg_reward, traffic

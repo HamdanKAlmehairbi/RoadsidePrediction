@@ -186,6 +186,15 @@ def build_time_of_day_configs(
             use_time_encoding=False,
         ),
         ExtensionConfig(
+            name="tod_no_encoding",
+            trainer_type="FedRL",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+            time_of_day=True,
+            use_time_encoding=False,
+        ),
+        ExtensionConfig(
             name="tod_with_encoding",
             trainer_type="FedRL",
             topology=topology,
@@ -193,6 +202,186 @@ def build_time_of_day_configs(
             n_eval_runs=n_eval_runs,
             time_of_day=True,
             use_time_encoding=True,
+        ),
+    ]
+
+
+def build_strategy_configs(
+    topology: str = "grid-3x3",
+    n_episodes: int = 50,
+    n_eval_runs: int = 10,
+) -> List[ExtensionConfig]:
+    """Core 10-way strategy comparison: the full spectrum from independent to shared.
+
+    MARL        — fully independent, no sharing
+    MeanField   — independent + neighbor action in obs (approximate interaction)
+    CTDE        — independent actors, shared critic (global training signal)
+    Gossip      — peer-to-peer neighbor weight averaging (decentralized mesh)
+    HierFed     — two-tier cluster-then-global weight averaging (tree topology)
+    FedDistill  — share action logits not weights (knowledge distillation)
+    FedRL       — central server weight averaging (star topology)
+    SARL        — one shared policy (full sharing)
+    fixed-time  — non-RL floor baseline
+    max-pressure — non-RL floor baseline
+    """
+    return [
+        ExtensionConfig(
+            name="marl",
+            trainer_type="MARL",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+        ),
+        ExtensionConfig(
+            name="mean_field",
+            trainer_type="MeanField",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+        ),
+        ExtensionConfig(
+            name="ctde",
+            trainer_type="CTDE",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+        ),
+        ExtensionConfig(
+            name="gossip",
+            trainer_type="Gossip",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+        ),
+        ExtensionConfig(
+            name="hierfed",
+            trainer_type="HierFed",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+        ),
+        ExtensionConfig(
+            name="feddistill",
+            trainer_type="FedDistill",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+        ),
+        ExtensionConfig(
+            name="fedrl",
+            trainer_type="FedRL",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+        ),
+        ExtensionConfig(
+            name="sarl",
+            trainer_type="SARL",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+        ),
+        ExtensionConfig(
+            name="fixed_time",
+            trainer_type="fixed-time",
+            topology=topology,
+            n_episodes=0,
+            n_eval_runs=n_eval_runs,
+            weights_path="__baseline__",
+        ),
+        ExtensionConfig(
+            name="max_pressure",
+            trainer_type="max-pressure",
+            topology=topology,
+            n_episodes=0,
+            n_eval_runs=n_eval_runs,
+            weights_path="__baseline__",
+        ),
+    ]
+
+
+def build_aggregation_configs(
+    topology: str = "grid-3x3",
+    n_episodes: int = 50,
+    n_eval_runs: int = 10,
+) -> List[ExtensionConfig]:
+    """Pure aggregation strategy ablation: naive vs reward-weighted vs traffic-weighted.
+
+    All use FedRL with mu=0.0 — only the aggregation weighting rule changes.
+    FedProx is excluded here (it changes the loss function, not aggregation).
+    """
+    return [
+        ExtensionConfig(
+            name="aggr_naive",
+            trainer_type="FedRL",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+            aggr="naive",
+            fedprox_mu=0.0,
+        ),
+        ExtensionConfig(
+            name="aggr_reward_weighted",
+            trainer_type="FedRL",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+            aggr="pos_reward",
+            fedprox_mu=0.0,
+        ),
+        ExtensionConfig(
+            name="aggr_traffic_weighted",
+            trainer_type="FedRL",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+            aggr="traffic",
+            fedprox_mu=0.0,
+        ),
+    ]
+
+
+def build_fedrl_variant_configs(
+    topology: str = "grid-3x3",
+    n_episodes: int = 50,
+    n_eval_runs: int = 10,
+) -> List[ExtensionConfig]:
+    """FedRL variant ablation: standard vs clustered vs partial vs soft-update.
+
+    Tests how different federation strategies affect per-intersection specialization
+    and convergence.
+    """
+    return [
+        ExtensionConfig(
+            name="fedrl_standard",
+            trainer_type="FedRL",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+        ),
+        ExtensionConfig(
+            name="fedrl_reward_grouped",
+            trainer_type="FedRL",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+            fed_cluster=True,
+        ),
+        ExtensionConfig(
+            name="fedrl_partial",
+            trainer_type="FedRL",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+            fed_partial=True,
+        ),
+        ExtensionConfig(
+            name="fedrl_soft_tau0.5",
+            trainer_type="FedRL",
+            topology=topology,
+            n_episodes=n_episodes,
+            n_eval_runs=n_eval_runs,
+            fed_tau=0.5,
         ),
     ]
 
@@ -309,11 +498,18 @@ def main() -> None:
     )
     parser.add_argument(
         "--ablation",
-        choices=["fedprox", "cooperative", "time-of-day", "all"],
+        choices=[
+            "fedprox", "cooperative", "time-of-day",
+            "strategy", "aggregation", "fedrl-variants",
+            "all", "full",
+        ],
         required=True,
         help=(
             "Which ablation to run: 'fedprox' (mu sweep), 'cooperative' (alpha sweep), "
-            "'time-of-day' (fixed vs. ToD+encoding), or 'all' (all three sequentially)."
+            "'time-of-day' (fixed vs. ToD+encoding), 'strategy' (FedRL vs MARL vs SARL), "
+            "'aggregation' (naive vs reward-weighted vs FedProx), "
+            "'fedrl-variants' (standard vs clustered vs partial vs soft-update), "
+            "'all' (original 3 ablations), or 'full' (all 6 experiments)."
         ),
     )
     parser.add_argument(
@@ -353,15 +549,35 @@ def main() -> None:
         ),
     )
 
+    parser.add_argument(
+        "--training-seeds",
+        nargs="+",
+        type=int,
+        default=[54321],
+        dest="training_seeds",
+        help="Training seeds to run per config (e.g. --training-seeds 42 123 456)",
+    )
+    parser.add_argument(
+        "--demand-levels",
+        nargs="+",
+        type=int,
+        default=[360],
+        dest="demand_levels",
+        help="VPLPH demand levels to test (e.g. --demand-levels 150 360 600)",
+    )
+
     args = parser.parse_args()
 
     all_results: List[CampaignResult] = []
 
-    ablations_to_run = (
-        ["fedprox", "cooperative", "time-of-day"]
-        if args.ablation == "all"
-        else [args.ablation]
-    )
+    ALL_ORIGINAL = ["fedprox", "cooperative", "time-of-day"]
+    ALL_NEW = ["strategy", "aggregation", "fedrl-variants"]
+    if args.ablation == "all":
+        ablations_to_run = ALL_ORIGINAL
+    elif args.ablation == "full":
+        ablations_to_run = ALL_ORIGINAL + ALL_NEW
+    else:
+        ablations_to_run = [args.ablation]
 
     # --topologies takes precedence over --topology
     topologies = args.topologies if args.topologies else [args.topology]
@@ -370,40 +586,63 @@ def main() -> None:
         "fedprox": "fedprox-ablation",
         "cooperative": "cooperative-ablation",
         "time-of-day": "tod-ablation",
+        "strategy": "strategy-comparison",
+        "aggregation": "aggregation-ablation",
+        "fedrl-variants": "fedrl-variants",
     }
+
+    import copy
 
     for topology in topologies:
         logger.info("=== Topology: %s ===", topology)
-        for ablation in ablations_to_run:
-            logger.info("=== Starting ablation: %s (topology=%s) ===", ablation, topology)
-
-            if ablation == "fedprox":
-                configs = build_fedprox_configs(
-                    topology=topology,
-                    n_episodes=args.n_episodes,
-                    n_eval_runs=args.n_eval_runs,
-                )
-            elif ablation == "cooperative":
-                configs = build_cooperative_configs(
-                    topology=topology,
-                    n_episodes=args.n_episodes,
-                    n_eval_runs=args.n_eval_runs,
-                )
-            else:  # time-of-day
-                configs = build_time_of_day_configs(
-                    topology=topology,
-                    n_episodes=args.n_episodes,
-                    n_eval_runs=args.n_eval_runs,
+        for demand in args.demand_levels:
+            for ablation in ablations_to_run:
+                logger.info(
+                    "=== Starting ablation: %s (topology=%s, demand=%d) ===",
+                    ablation, topology, demand,
                 )
 
-            campaign_name = campaign_name_map[ablation]
-            results = run_ablation(
-                configs=configs,
-                ablation_name=campaign_name,
-                dry_run_seeds=args.dry_run,
-            )
-            all_results.extend(results)
-            logger.info("=== Ablation %s complete: %d configs ===", ablation, len(results))
+                builder_map = {
+                    "fedprox": build_fedprox_configs,
+                    "cooperative": build_cooperative_configs,
+                    "time-of-day": build_time_of_day_configs,
+                    "strategy": build_strategy_configs,
+                    "aggregation": build_aggregation_configs,
+                    "fedrl-variants": build_fedrl_variant_configs,
+                }
+                configs = builder_map[ablation](
+                    topology=topology,
+                    n_episodes=args.n_episodes,
+                    n_eval_runs=args.n_eval_runs,
+                )
+
+                # Set demand level on all configs
+                for cfg in configs:
+                    cfg.vplph = demand
+
+                # Expand configs across training seeds
+                expanded = []
+                for cfg in configs:
+                    for seed in args.training_seeds:
+                        c = copy.deepcopy(cfg)
+                        c.training_seed = seed
+                        if len(args.training_seeds) > 1 or len(args.demand_levels) > 1:
+                            suffix = ""
+                            if len(args.training_seeds) > 1:
+                                suffix += f"_s{seed}"
+                            if len(args.demand_levels) > 1:
+                                suffix += f"_d{demand}"
+                            c.name = c.name + suffix
+                        expanded.append(c)
+
+                campaign_name = campaign_name_map[ablation]
+                results = run_ablation(
+                    configs=expanded,
+                    ablation_name=campaign_name,
+                    dry_run_seeds=args.dry_run,
+                )
+                all_results.extend(results)
+                logger.info("=== Ablation %s complete: %d configs ===", ablation, len(results))
 
     _print_summary_table(all_results)
 
