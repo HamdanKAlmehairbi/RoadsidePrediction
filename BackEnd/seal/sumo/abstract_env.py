@@ -2,6 +2,8 @@ import gymnasium
 import numpy as np
 import os
 import random
+import shutil
+import tempfile
 
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Tuple
@@ -18,13 +20,22 @@ DEFAULT_SEED = 0
 class AbstractSumoEnv(ABC, MultiAgentEnv):
 
     def __init__(self, config: Dict[str, Any]):
-        self.config = config
-        self.rand_route_args = config.get("rand_route_args", {})
-        self.use_dynamic_seed = config.get("use_dynamic_seed", True)
-        self.ranked = config.get("ranked", DEFUALT_RANKED)
+        # Deep copy so we don't mutate the caller's dict (important when
+        # the same config is reused for dummy + real envs in eval runner).
+        import copy
+        self.config = copy.deepcopy(config)
+        self.rand_route_args = self.config.get("rand_route_args", {})
+        self.use_dynamic_seed = self.config.get("use_dynamic_seed", True)
+        self.ranked = self.config.get("ranked", DEFUALT_RANKED)
         self.env_seed = self.rand_route_args.get("seed", DEFAULT_SEED)
-        # Ex: "foo/bar" => "foo"
-        self.path = os.path.split(self.config["net-file"])[0]
+        # Create a process-specific working directory so parallel experiments
+        # don't clobber each other's route files (traffic.rou.xml, trips.trips.xml).
+        self._work_dir = tempfile.mkdtemp(prefix="sumo_env_")
+        net_basename = os.path.basename(self.config["net-file"])
+        dst_net = os.path.join(self._work_dir, net_basename)
+        shutil.copy2(self.config["net-file"], dst_net)
+        self.config["net-file"] = dst_net
+        self.path = self._work_dir
         self.horizon = config.get("horizon", None)
         self.time_of_day = config.get("time_of_day", False)
 
@@ -106,6 +117,9 @@ class AbstractSumoEnv(ABC, MultiAgentEnv):
 
     def close(self) -> None:
         self.kernel.close()
+        # Clean up process-specific temp directory
+        if hasattr(self, '_work_dir') and os.path.exists(self._work_dir):
+            shutil.rmtree(self._work_dir, ignore_errors=True)
 
     def seed(self, seed) -> None:
         """This is needed for Ray's RlLib package. It calls this function.
