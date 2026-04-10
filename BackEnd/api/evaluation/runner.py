@@ -337,7 +337,7 @@ def run_trial(
         os.makedirs(_RESULTS_DIR, exist_ok=True)
         dest_path = os.path.join(
             _RESULTS_DIR,
-            f"{trainer_type}_{topology}_{seed}.xml",
+            f"{trainer_type}_{topology}_d{vplph}_{seed}.xml",
         )
         shutil.copy2(TRIPINFO_OUT_FILENAME, dest_path)
         logger.info("Tripinfo saved to %s (%d trips)", dest_path, n_vehicles_from_tripinfo)

@@ -317,43 +317,70 @@ def save_campaign_results(
     output_dir = os.path.join(_BACKEND_DIR, "results", "campaigns", campaign_name)
     os.makedirs(output_dir, exist_ok=True)
 
-    # Save results.json — append to existing results for multi-sweep campaigns
+    # Save results.json — append with lockfile for parallel safety
     results_path = os.path.join(output_dir, "results.json")
-    existing_results = []
-    if os.path.exists(results_path):
-        try:
-            with open(results_path, "r", encoding="utf-8") as fp:
-                existing_data = json.load(fp)
-                existing_results = existing_data.get("results", [])
-        except (json.JSONDecodeError, KeyError):
-            pass
-
+    lock_path = results_path + ".lock"
     new_results = [result_to_dict(r) for r in results]
-    all_results = existing_results + new_results
-    with open(results_path, "w", encoding="utf-8") as fp:
-        json.dump({"results": all_results}, fp, default=str, indent=2)
-    logger.info(
-        "Saved %d new + %d existing = %d total campaign results to %s",
-        len(new_results), len(existing_results), len(all_results), results_path,
-    )
-
-    # Save config.json — append to existing configs for multi-sweep campaigns
-    config_path = os.path.join(output_dir, "config.json")
-    existing_configs = []
-    if os.path.exists(config_path):
-        try:
-            with open(config_path, "r", encoding="utf-8") as fp:
-                existing_configs = json.load(fp)
-                if not isinstance(existing_configs, list):
-                    existing_configs = []
-        except (json.JSONDecodeError, ValueError):
-            pass
-
     new_configs = [config_to_dict(r.config) for r in results]
-    all_configs = existing_configs + new_configs
-    with open(config_path, "w", encoding="utf-8") as fp:
-        json.dump(all_configs, fp, default=str, indent=2)
-    logger.info("Saved campaign configs to %s", config_path)
+
+    # Acquire lockfile (spin with backoff, works cross-platform)
+    lock_fd = None
+    for attempt in range(30):
+        try:
+            lock_fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            break
+        except FileExistsError:
+            time.sleep(1 + attempt * 0.5)
+    if lock_fd is None:
+        # Force remove stale lock after 30 attempts
+        logger.warning("Removing stale lock file: %s", lock_path)
+        try:
+            os.remove(lock_path)
+        except OSError:
+            pass
+        lock_fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+
+    try:
+        # Read existing results
+        existing_results = []
+        if os.path.exists(results_path):
+            try:
+                with open(results_path, "r", encoding="utf-8") as fp:
+                    existing_data = json.load(fp)
+                    existing_results = existing_data.get("results", [])
+            except (json.JSONDecodeError, KeyError):
+                pass
+
+        all_results = existing_results + new_results
+        with open(results_path, "w", encoding="utf-8") as fp:
+            json.dump({"results": all_results}, fp, default=str, indent=2)
+        logger.info(
+            "Saved %d new + %d existing = %d total campaign results to %s",
+            len(new_results), len(existing_results), len(all_results), results_path,
+        )
+
+        # Save config.json
+        config_path = os.path.join(output_dir, "config.json")
+        existing_configs = []
+        if os.path.exists(config_path):
+            try:
+                with open(config_path, "r", encoding="utf-8") as fp:
+                    existing_configs = json.load(fp)
+                    if not isinstance(existing_configs, list):
+                        existing_configs = []
+            except (json.JSONDecodeError, ValueError):
+                pass
+
+        all_configs = existing_configs + new_configs
+        with open(config_path, "w", encoding="utf-8") as fp:
+            json.dump(all_configs, fp, default=str, indent=2)
+        logger.info("Saved campaign configs to %s", config_path)
+    finally:
+        os.close(lock_fd)
+        try:
+            os.remove(lock_path)
+        except OSError:
+            pass
 
     return output_dir
 

@@ -635,7 +635,8 @@ def main() -> None:
                             c.name = c.name + suffix
                         expanded.append(c)
 
-                campaign_name = campaign_name_map[ablation]
+                base_campaign = campaign_name_map[ablation]
+                campaign_name = f"{base_campaign}/{topology}"
                 results = run_ablation(
                     configs=expanded,
                     ablation_name=campaign_name,

@@ -95,10 +95,13 @@ class BaseTrainer(ABC):
         self.training_data = defaultdict(list)
         self.out_prefix = out_prefix
         self.net_dir = self.net_file.split(os.sep)[-1].split(".")[0]
+        self.demand_dir = f"d{self.vplph}"
         self.out_checkpoint_dir = os.path.join(
-            self.out_checkpoint_dir, self.net_dir)
-        self.out_data_dir = os.path.join(self.out_data_dir, self.net_dir)
-        self.out_weights_dir = os.path.join(self.out_weights_dir, self.net_dir)
+            self.out_checkpoint_dir, self.net_dir, self.demand_dir)
+        self.out_data_dir = os.path.join(
+            self.out_data_dir, self.net_dir, self.demand_dir)
+        self.out_weights_dir = os.path.join(
+            self.out_weights_dir, self.net_dir, self.demand_dir)
 
         if not os.path.isdir(self.out_checkpoint_dir):
             os.makedirs(os.path.join(self.out_checkpoint_dir))
