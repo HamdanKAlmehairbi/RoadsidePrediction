@@ -95,7 +95,9 @@ class BaseTrainer(ABC):
         self.training_data = defaultdict(list)
         self.out_prefix = out_prefix
         self.net_dir = self.net_file.split(os.sep)[-1].split(".")[0]
-        self.demand_dir = f"d{self.vplph}"
+        # Include training_seed in the demand dir so multi-seed runs under
+        # the same (trainer, topology, demand) don't overwrite each other.
+        self.demand_dir = f"d{self.vplph}_s{self.training_seed}"
         self.out_checkpoint_dir = os.path.join(
             self.out_checkpoint_dir, self.net_dir, self.demand_dir)
         self.out_data_dir = os.path.join(

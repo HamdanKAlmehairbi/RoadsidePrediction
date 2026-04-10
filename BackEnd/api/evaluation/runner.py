@@ -78,17 +78,27 @@ class TrialResult:
     n_vehicles_total: int = 0
 
 
-def resolve_weights_path(trainer_type: str, topology: str, ranked: bool) -> Optional[str]:
+def resolve_weights_path(
+    trainer_type: str,
+    topology: str,
+    ranked: bool,
+    vplph: Optional[int] = None,
+    training_seed: Optional[int] = None,
+) -> Optional[str]:
     """Auto-discover weights for an RL trainer.
 
-    Search order:
-    1. trained_weights/{trainer_type}/{topology}/{ranked_str}.pkl
-    2. example_weights/ICCPS/Final/{trainer_type}/{topology}/{ranked_str}.pkl
+    Search order (first match wins):
+    1. trained_weights/weights/{trainer}/{topology}/d{vplph}_s{seed}/{ranked}.pkl  (exact)
+    2. trained_weights/weights/{trainer}/{topology}/d{vplph}_s*/{ranked}.pkl       (any seed)
+    3. trained_weights/weights/{trainer}/{topology}/{ranked}.pkl                   (legacy flat)
+    4. example_weights/ICCPS/Final/{trainer}/{topology}/{ranked}.pkl
 
     Args:
         trainer_type: One of "FedRL", "MARL", "SARL", "fixed-time", "max-pressure".
         topology: Topology name, e.g. "grid-3x3".
         ranked: Whether to look for ranked or unranked weights.
+        vplph: Optional demand level used to scope lookups to a specific d{vplph} dir.
+        training_seed: Optional training seed used to scope lookups to a specific s{seed} dir.
 
     Returns:
         Absolute path to the .pkl file, or None for non-RL trainers.
@@ -100,27 +110,44 @@ def resolve_weights_path(trainer_type: str, topology: str, ranked: bool) -> Opti
         return None
 
     ranked_str = "ranked" if ranked else "unranked"
+    base_dir = os.path.join(TRAINED_WEIGHTS_DIR, "weights", trainer_type, topology)
+    candidates = []
 
-    # Candidate 1: trained_weights directory
-    trained_path = os.path.join(
-        TRAINED_WEIGHTS_DIR, "weights", trainer_type, topology, f"{ranked_str}.pkl"
-    )
-    if os.path.isfile(trained_path):
-        logger.info("Using trained weights: %s", trained_path)
-        return trained_path
+    # Candidate 1: exact demand + seed scope
+    if vplph is not None and training_seed is not None:
+        candidates.append(
+            os.path.join(base_dir, f"d{vplph}_s{training_seed}", f"{ranked_str}.pkl")
+        )
 
-    # Candidate 2: example_weights directory (relative to BackEnd/)
+    # Candidate 2: any seed at this demand
+    if vplph is not None:
+        import glob
+        glob_pattern = os.path.join(base_dir, f"d{vplph}_s*", f"{ranked_str}.pkl")
+        matches = sorted(glob.glob(glob_pattern))
+        if matches:
+            candidates.append(matches[-1])  # most recent seed dir alphabetically
+
+    # Candidate 3: legacy flat layout (pre-demand-scoping)
+    candidates.append(os.path.join(base_dir, f"{ranked_str}.pkl"))
+
+    # Candidate 4: example_weights fallback
     backend_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
-    example_path = os.path.join(
-        backend_dir, "example_weights", "ICCPS", "Final", trainer_type, topology, f"{ranked_str}.pkl"
+    candidates.append(
+        os.path.join(
+            backend_dir, "example_weights", "ICCPS", "Final",
+            trainer_type, topology, f"{ranked_str}.pkl",
+        )
     )
-    if os.path.isfile(example_path):
-        logger.info("Using example weights: %s", example_path)
-        return example_path
+
+    for path in candidates:
+        if os.path.isfile(path):
+            logger.info("Using weights: %s", path)
+            return path
 
     raise FileNotFoundError(
         f"No weights found for trainer='{trainer_type}', topology='{topology}', "
-        f"ranked={ranked}. Checked:\n  {trained_path}\n  {example_path}"
+        f"ranked={ranked}, vplph={vplph}, training_seed={training_seed}. "
+        f"Checked:\n  " + "\n  ".join(candidates)
     )
 
 

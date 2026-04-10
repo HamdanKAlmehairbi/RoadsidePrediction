@@ -30,7 +30,12 @@ class AbstractSumoEnv(ABC, MultiAgentEnv):
         self.env_seed = self.rand_route_args.get("seed", DEFAULT_SEED)
         # Create a process-specific working directory so parallel experiments
         # don't clobber each other's route files (traffic.rou.xml, trips.trips.xml).
-        self._work_dir = tempfile.mkdtemp(prefix="sumo_env_")
+        # Include pid to prevent cross-process collisions when Ray workers fork.
+        self._work_dir = tempfile.mkdtemp(prefix=f"sumo_env_pid{os.getpid()}_")
+        # Remember the ORIGINAL net file path so reset() can self-heal if the
+        # temp copy ever disappears (e.g. after a close()/reset() cycle inside
+        # a Ray rollout worker).
+        self._source_net_file = self.config["net-file"]
         net_basename = os.path.basename(self.config["net-file"])
         dst_net = os.path.join(self._work_dir, net_basename)
         shutil.copy2(self.config["net-file"], dst_net)
@@ -75,6 +80,12 @@ class AbstractSumoEnv(ABC, MultiAgentEnv):
         if seed is not None:
             self.seed(seed)
         self.step_counter = 0
+        # Self-heal: if a prior close()/rmtree (or another env sharing the
+        # same pid) wiped our work_dir, re-create it and re-copy the net file
+        # so the next rand_routes() / SUMO start doesn't hit ENOENT.
+        if not os.path.exists(self.config["net-file"]):
+            os.makedirs(self._work_dir, exist_ok=True)
+            shutil.copy2(self._source_net_file, self.config["net-file"])
         if self.rand_routes_on_reset or self.__first_rand_routes_flag:
             self.rand_routes()
             self.__first_rand_routes_flag = False
@@ -116,10 +127,22 @@ class AbstractSumoEnv(ABC, MultiAgentEnv):
         )
 
     def close(self) -> None:
+        # Only close the SUMO kernel. Do NOT rmtree the work_dir here —
+        # Ray rollout workers frequently call close() between episodes and
+        # then call reset() again, so destroying the temp dir at close()
+        # caused ENOENT on the next rand_routes() (observed on SARL).
+        # The work_dir is cleaned up in __del__ instead.
         self.kernel.close()
-        # Clean up process-specific temp directory
-        if hasattr(self, '_work_dir') and os.path.exists(self._work_dir):
-            shutil.rmtree(self._work_dir, ignore_errors=True)
+
+    def __del__(self) -> None:
+        # Final cleanup of the process-specific temp directory. Runs at GC
+        # time so it cannot race with an in-progress reset().
+        try:
+            if hasattr(self, '_work_dir') and os.path.exists(self._work_dir):
+                shutil.rmtree(self._work_dir, ignore_errors=True)
+        except Exception:
+            # __del__ must never raise
+            pass
 
     def seed(self, seed) -> None:
         """This is needed for Ray's RlLib package. It calls this function.

@@ -6,7 +6,7 @@ import warnings
 import xml.etree.ElementTree as ET
 
 from collections import OrderedDict
-from gym import spaces
+from gymnasium import spaces
 from typing import Any, Dict, List, Set, Tuple, Union
 
 from seal.sumo.utils.core import get_node_id
