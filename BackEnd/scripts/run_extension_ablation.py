@@ -661,18 +661,14 @@ def main() -> None:
                     cfg.vplph = demand
 
                 # Expand configs across training seeds
+                # Always include demand and seed in config name for unique
+                # identification — required for crash-resume to work correctly.
                 expanded = []
                 for cfg in configs:
                     for seed in args.training_seeds:
                         c = copy.deepcopy(cfg)
                         c.training_seed = seed
-                        if len(args.training_seeds) > 1 or len(args.demand_levels) > 1:
-                            suffix = ""
-                            if len(args.training_seeds) > 1:
-                                suffix += f"_s{seed}"
-                            if len(args.demand_levels) > 1:
-                                suffix += f"_d{demand}"
-                            c.name = c.name + suffix
+                        c.name = f"{c.name}_d{demand}_s{seed}"
                         expanded.append(c)
 
                 base_campaign = campaign_name_map[ablation]
