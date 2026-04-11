@@ -29,6 +29,7 @@ It does NOT start the FastAPI server. All imports are direct:
     from api.evaluation.campaign_config import ExtensionConfig
 """
 import argparse
+import json
 import logging
 import os
 import sys
@@ -391,6 +392,28 @@ def build_fedrl_variant_configs(
 # ---------------------------------------------------------------------------
 
 
+def _load_completed_names(ablation_name: str) -> set:
+    """Load config names already saved in results.json for this ablation."""
+    _BACKEND_DIR = os.path.normpath(
+        os.path.join(os.path.dirname(__file__), "..")
+    )
+    results_path = os.path.join(
+        _BACKEND_DIR, "results", "campaigns", ablation_name, "results.json"
+    )
+    completed = set()
+    if os.path.exists(results_path):
+        try:
+            with open(results_path, "r", encoding="utf-8") as fp:
+                data = json.load(fp)
+                for r in data.get("results", []):
+                    name = r.get("config", {}).get("name")
+                    if name and not r.get("error"):
+                        completed.add(name)
+        except (json.JSONDecodeError, KeyError):
+            pass
+    return completed
+
+
 def run_ablation(
     configs: List[ExtensionConfig],
     ablation_name: str,
@@ -398,8 +421,9 @@ def run_ablation(
 ) -> List[CampaignResult]:
     """Run a single ablation study: train + evaluate each config, then save results.
 
-    Iterates through all configs, calls train_and_evaluate() for each, then
-    saves the combined results under results/campaigns/{ablation_name}/.
+    Supports resumption — skips configs whose names already appear (without
+    error) in the existing results.json for this ablation. Saves incrementally
+    after each config so progress survives crashes.
 
     Args:
         configs: List of ExtensionConfig — each represents one condition.
@@ -418,10 +442,24 @@ def run_ablation(
             ablation_name, dry_run_seeds,
         )
 
+    completed_names = _load_completed_names(ablation_name)
+    if completed_names:
+        logger.info(
+            "Ablation %s: resuming — %d configs already completed: %s",
+            ablation_name, len(completed_names), ", ".join(sorted(completed_names)),
+        )
+
     results: List[CampaignResult] = []
     total = len(configs)
 
     for i, config in enumerate(configs):
+        if config.name in completed_names:
+            logger.info(
+                "Ablation %s: SKIPPING '%s' (%d/%d) — already completed",
+                ablation_name, config.name, i + 1, total,
+            )
+            continue
+
         logger.info(
             "Ablation %s: running config '%s' (%d/%d)",
             ablation_name, config.name, i + 1, total,
@@ -433,7 +471,9 @@ def run_ablation(
             ablation_name, config.name, result.duration_seconds, result.error,
         )
 
-    save_campaign_results(results, ablation_name)
+        # Save incrementally so progress survives crashes
+        save_campaign_results([result], ablation_name)
+
     return results
 
 
