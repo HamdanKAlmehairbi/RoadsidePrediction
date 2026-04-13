@@ -605,6 +605,12 @@ def main() -> None:
         dest="demand_levels",
         help="VPLPH demand levels to test (e.g. --demand-levels 150 360 600)",
     )
+    parser.add_argument(
+        "--horizon",
+        type=int,
+        default=450,
+        help="Maximum episode length in simulation steps (default 450).",
+    )
 
     args = parser.parse_args()
 
@@ -656,9 +662,10 @@ def main() -> None:
                     n_eval_runs=args.n_eval_runs,
                 )
 
-                # Set demand level on all configs
+                # Set demand level and horizon on all configs
                 for cfg in configs:
                     cfg.vplph = demand
+                    cfg.horizon = args.horizon
 
                 # Expand configs across training seeds
                 # Always include demand and seed in config name for unique

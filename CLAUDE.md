@@ -118,6 +118,57 @@ Designed based on Tier 1 findings. Candidates: aggregation rule, FedProx mu, coo
 - `training_data` initialized in `BaseTrainer.__init__()` so subclasses can write to it before `on_setup()`
 - FedRL `episode_data` reset after each aggregation to avoid cumulative weighting bias
 
+## Experiment Findings (grid-3x3 complete, cologne-8 needs retest)
+
+### grid-3x3 (seed 42, 30 episodes, horizon 450) — COMPLETE
+- **All RL strategies crush baselines** by ~80-87% on avg wait time
+- Best by demand: FedRL (d150, 9.18s) → Gossip (d360, 11.29s) → SARL (d600, 14.90s)
+- **HierFed is most consistent** — top-3 at every demand level (mean 12.04s)
+- **CTDE is consistently worst** RL strategy (14.69/15.29/20.58s) — centralized critic hurts on homogeneous grids
+- fixed-time baseline: 71.96/75.89/91.82s; max-pressure: 147.76/160.54/143.60s
+- `sarl_d150` failed due to temp-dir race condition (now fixed in `abstract_env.py`)
+- Results: `results/campaigns/strategy-comparison/grid-3x3/results.json`
+
+### cologne-8 (seed 42, 30 episodes, horizon 450) — NEEDS RETEST
+- **RL appears to lose to fixed-time** (RL best: HierFed 54-62s vs fixed-time 39-50s)
+- **BUT this is a survivorship bias / horizon truncation problem:**
+  - fixed-time completes only ~168 trips; RL completes ~275-303 trips (1.6-1.8x more)
+  - fixed-time's 78s arterial green phase serves main road fast but **starves side streets**
+  - Unfinished vehicles (40-50% of demand under fixed-time) aren't counted in avg_wait
+  - `avg_waiting_time = total_wait / completed_trips` — fewer completions = artificially lower average
+  - When penalized for unserved vehicles, SARL beats fixed-time at d360, HierFed ties at d150
+- **Convergence curves show RL hasn't converged** at 30 episodes on cologne-8 (still climbing)
+- **Drive time inflation**: RL adds 22-38s of pure driving time over fixed-time, indicating spillback from RL phase decisions flooding short downstream links (12m-601m lane length range)
+- cologne-8 has **heterogeneous TLS** (4-8 phases, one with 78s dominant green) vs grid-3x3's uniform [42,3,42,3]
+
+### cologne-8 Retest Plan
+Retest with `--n-episodes 100 --horizon 900` to fix both issues:
+1. **horizon 900** (was 450): lets all vehicles complete so wait metrics are fair across strategies
+2. **100 episodes** (was 30): gives RL enough training to converge on the harder network
+```bash
+cd BackEnd && python scripts/run_extension_ablation.py \
+    --ablation strategy --topologies cologne-8 \
+    --demand-levels 150 360 600 --training-seeds 42 \
+    --n-episodes 100 --n-eval-runs 5 --horizon 900
+```
+**Clear old results first** to avoid mixing 30ep/100ep data:
+```bash
+rm BackEnd/results/campaigns/strategy-comparison/cologne-8/results.json
+rm BackEnd/results/campaigns/strategy-comparison/cologne-8/config.json
+```
+
+### Methodological Findings (important for paper)
+1. **`avg_waiting_time` is misleading** when trip completion rates differ — strategies that starve side streets show artificially low averages. Report trip count alongside wait, or use total person-delay.
+2. **Synthetic grid results don't transfer** to real networks — RL dominates grid-3x3 but struggles on cologne-8. Papers testing only on grids overstate RL effectiveness.
+3. **HierFed's cluster-then-global averaging** is the most robust approach across both topologies — it groups similar intersections before averaging, naturally handling heterogeneity.
+4. **Training budget interacts with network complexity** — 30 episodes suffices for grid-3x3 (converges by episode 15) but not cologne-8 (8 heterogeneous intersections, complex spillback dynamics).
+
+## Known Patterns (avoid regressions)
+- `demand_dir` in `base.py` is `d{vplph}_s{training_seed}` — weights are scoped by demand AND seed
+- `abstract_env.py` cleanup is in `__del__` not `close()` — moving it back to `close()` will re-trigger the SARL race condition
+- `run_extension_ablation.py` saves incrementally (one config at a time) and supports crash-resume via `_load_completed_names()`
+- Config names always include `_d{demand}_s{seed}` suffix for unique resume keys
+
 ## GSD Planning
 - Phase 9: Pre-experiment hardening (methodology fixes + new trainers) — IN PROGRESS
 - Phase 10: HPC experiments (Tier 1: 270 runs, Tier 2: TBD)
