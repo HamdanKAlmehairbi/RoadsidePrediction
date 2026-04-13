@@ -2,7 +2,7 @@
   "results": [
     {
       "config": {
-        "name": "marl_d150",
+        "name": "marl_d150_s42",
         "trainer_type": "MARL",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -386,7 +386,7 @@
     },
     {
       "config": {
-        "name": "mean_field_d150",
+        "name": "mean_field_d150_s42",
         "trainer_type": "MeanField",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -770,7 +770,7 @@
     },
     {
       "config": {
-        "name": "ctde_d150",
+        "name": "ctde_d150_s42",
         "trainer_type": "CTDE",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -1154,7 +1154,7 @@
     },
     {
       "config": {
-        "name": "gossip_d150",
+        "name": "gossip_d150_s42",
         "trainer_type": "Gossip",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -1538,7 +1538,7 @@
     },
     {
       "config": {
-        "name": "hierfed_d150",
+        "name": "hierfed_d150_s42",
         "trainer_type": "HierFed",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -1922,7 +1922,7 @@
     },
     {
       "config": {
-        "name": "feddistill_d150",
+        "name": "feddistill_d150_s42",
         "trainer_type": "FedDistill",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -2306,7 +2306,7 @@
     },
     {
       "config": {
-        "name": "fedrl_d150",
+        "name": "fedrl_d150_s42",
         "trainer_type": "FedRL",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -2690,7 +2690,7 @@
     },
     {
       "config": {
-        "name": "sarl_d150",
+        "name": "sarl_d150_s42",
         "trainer_type": "SARL",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -2718,7 +2718,7 @@
     },
     {
       "config": {
-        "name": "fixed_time_d150",
+        "name": "fixed_time_d150_s42",
         "trainer_type": "fixed-time",
         "topology": "grid-3x3",
         "n_episodes": 0,
@@ -2891,7 +2891,7 @@
     },
     {
       "config": {
-        "name": "max_pressure_d150",
+        "name": "max_pressure_d150_s42",
         "trainer_type": "max-pressure",
         "topology": "grid-3x3",
         "n_episodes": 0,
@@ -3064,7 +3064,7 @@
     },
     {
       "config": {
-        "name": "marl_d360",
+        "name": "marl_d360_s42",
         "trainer_type": "MARL",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -3448,7 +3448,7 @@
     },
     {
       "config": {
-        "name": "mean_field_d360",
+        "name": "mean_field_d360_s42",
         "trainer_type": "MeanField",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -3832,7 +3832,7 @@
     },
     {
       "config": {
-        "name": "ctde_d360",
+        "name": "ctde_d360_s42",
         "trainer_type": "CTDE",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -4216,7 +4216,7 @@
     },
     {
       "config": {
-        "name": "gossip_d360",
+        "name": "gossip_d360_s42",
         "trainer_type": "Gossip",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -4600,7 +4600,7 @@
     },
     {
       "config": {
-        "name": "hierfed_d360",
+        "name": "hierfed_d360_s42",
         "trainer_type": "HierFed",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -4984,7 +4984,7 @@
     },
     {
       "config": {
-        "name": "feddistill_d360",
+        "name": "feddistill_d360_s42",
         "trainer_type": "FedDistill",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -5368,7 +5368,7 @@
     },
     {
       "config": {
-        "name": "fedrl_d360",
+        "name": "fedrl_d360_s42",
         "trainer_type": "FedRL",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -5752,7 +5752,7 @@
     },
     {
       "config": {
-        "name": "sarl_d360",
+        "name": "sarl_d360_s42",
         "trainer_type": "SARL",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -6136,7 +6136,7 @@
     },
     {
       "config": {
-        "name": "fixed_time_d360",
+        "name": "fixed_time_d360_s42",
         "trainer_type": "fixed-time",
         "topology": "grid-3x3",
         "n_episodes": 0,
@@ -6309,7 +6309,7 @@
     },
     {
       "config": {
-        "name": "max_pressure_d360",
+        "name": "max_pressure_d360_s42",
         "trainer_type": "max-pressure",
         "topology": "grid-3x3",
         "n_episodes": 0,
@@ -6482,7 +6482,7 @@
     },
     {
       "config": {
-        "name": "marl_d600",
+        "name": "marl_d600_s42",
         "trainer_type": "MARL",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -6866,7 +6866,7 @@
     },
     {
       "config": {
-        "name": "mean_field_d600",
+        "name": "mean_field_d600_s42",
         "trainer_type": "MeanField",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -7250,7 +7250,7 @@
     },
     {
       "config": {
-        "name": "ctde_d600",
+        "name": "ctde_d600_s42",
         "trainer_type": "CTDE",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -7634,7 +7634,7 @@
     },
     {
       "config": {
-        "name": "gossip_d600",
+        "name": "gossip_d600_s42",
         "trainer_type": "Gossip",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -8018,7 +8018,7 @@
     },
     {
       "config": {
-        "name": "hierfed_d600",
+        "name": "hierfed_d600_s42",
         "trainer_type": "HierFed",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -8402,7 +8402,7 @@
     },
     {
       "config": {
-        "name": "feddistill_d600",
+        "name": "feddistill_d600_s42",
         "trainer_type": "FedDistill",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -8786,7 +8786,7 @@
     },
     {
       "config": {
-        "name": "fedrl_d600",
+        "name": "fedrl_d600_s42",
         "trainer_type": "FedRL",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -9170,7 +9170,7 @@
     },
     {
       "config": {
-        "name": "sarl_d600",
+        "name": "sarl_d600_s42",
         "trainer_type": "SARL",
         "topology": "grid-3x3",
         "n_episodes": 30,
@@ -9554,7 +9554,7 @@
     },
     {
       "config": {
-        "name": "fixed_time_d600",
+        "name": "fixed_time_d600_s42",
         "trainer_type": "fixed-time",
         "topology": "grid-3x3",
         "n_episodes": 0,
@@ -9727,7 +9727,7 @@
     },
     {
       "config": {
-        "name": "max_pressure_d600",
+        "name": "max_pressure_d600_s42",
         "trainer_type": "max-pressure",
         "topology": "grid-3x3",
         "n_episodes": 0,
