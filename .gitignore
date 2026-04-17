@@ -1,0 +1,19 @@
+node_modules/
+dist/
+.vite/
+__pycache__/
+*.pyc
+.env
+*.egg-info/
+.claude/
+
+# Large binary files — weights and training outputs
+BackEnd/example_weights/
+BackEnd/trained_weights/
+BackEnd/logs/
+*.pkl
+*.pt
+*.pth
+
+# Results (JSON, can be regenerated)
+BackEnd/results/
