@@ -6,6 +6,8 @@ __pycache__/
 .env
 *.egg-info/
 .claude/
+.mcp.json
+*.tsbuildinfo
 
 # Large binary files — weights and training outputs
 BackEnd/example_weights/

@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+:root {
+  /* Core palette (Deep Space Neon, matching Pencil design) */
+  --bg: #0a0e1a;
+  --surface: #0f1420;
+  --surface-2: #141828;
+  --border: #1f2937;
+  --border-2: #334155;
+
+  /* Accents */
+  --accent-cyan: #00e5ff;
+  --accent-purple: #a78bfa;
+
+  /* Semantic (traffic state + metrics) */
+  --signal-red: #ff4d5a;
+  --signal-yellow: #ffc857;
+  --signal-green: #38d97a;
+  --state-red: #ef4444;
+  --state-yellow: #fbbf24;
+  --state-green: #10b981;
+
+  /* Text */
+  --text-primary: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --text-faint: #475569;
+
+  /* Radii */
+  --r-sm: 4px;
+  --r-md: 6px;
+  --r-lg: 8px;
+}
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    color: var(--text-primary);
+    background: var(--bg);
+  }
+
+  .font-sans {
+    font-family: "Geist", ui-sans-serif, system-ui, sans-serif;
+  }
+
+  .font-mono {
+    font-family: "Geist Mono", ui-monospace, monospace;
+  }
+}

@@ -9,9 +9,11 @@ from .routes.simulate import router as simulate_router
 from .routes.train import router as train_router
 from .routes.results import router as results_router
 from .routes.evaluate import router as evaluate_router
+from .routes.compare import router as compare_router
 from .ws.simulate import router as ws_simulate_router
 from .ws.train import router as ws_train_router
 from .ws.evaluate import router as ws_evaluate_router
+from .ws.compare import router as ws_compare_router
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -45,11 +47,13 @@ app.include_router(simulate_router)
 app.include_router(train_router)
 app.include_router(results_router)
 app.include_router(evaluate_router)
+app.include_router(compare_router)
 
 # WebSocket routes
 app.include_router(ws_simulate_router)
 app.include_router(ws_train_router)
 app.include_router(ws_evaluate_router)
+app.include_router(ws_compare_router)
 
 
 @app.get("/")
